@@ -1,4 +1,15 @@
+
+package Pack; 
+import java_cup.runtime.Symbol;
+
+
 %%
+%public
+%cup
+%char
+%column
+%ignorecase
+%line
 %unicode
 %class Lexer
 %int
@@ -28,8 +39,8 @@ id = {letra}+("_"({letra}|{numero})+)*({letra}|{numero})*
 
 //values
 booleanValue=["t"|"T"]["r"|"R"]["u"|"U"]["e"|"E"] | ["F"|"f"]["a"|"A"]["l"|"L"]["s"|"S"]["e"|"E"]
-integerValue={numero}*
-floatValue={numero}*"."{numero}{1,38}
+integerValue={numero}+
+floatValue={numero}+"."{numero}{1,38}
 
 //delimitadores
 op_declaracion = ":"
@@ -51,6 +62,13 @@ str = "\"" ({letra} | {numero} | {signos} | {espacio}  )* "\""
 %%
 
 <YYINITIAL>{
+
+    {op_suma} { return new Symbol(sym.OPSUM, yycolumn, yyline, yytext()); }
+    {op_mult} { return new Symbol(sym.OPMULT, yycolumn, yyline, yytext()); }
+    {parentesis_izquierdo} { return new Symbol(sym.PARIZQ, yycolumn, yyline, yytext()); }
+    {parentesis_derecho} { return new Symbol(sym.PARDER, yycolumn, yyline, yytext()); }
+    {integerValue} { return new Symbol(sym.NUM, yycolumn, yyline, yytext()); }
+      
     {if}            {System.out.println("<IF> "+yytext());}
     {else}          {System.out.println("<ELSE> "+yytext());}
     {elsif}         {System.out.println("<ELSIF> "+yytext());}
@@ -61,9 +79,14 @@ str = "\"" ({letra} | {numero} | {signos} | {espacio}  )* "\""
     {puntoycoma}    {System.out.println("<puntoycoma> "+yytext());}
     {procedure}     {System.out.println("<procedure> "+yytext());}
     {booleanValue} {System.out.println("<booleanValue> "+yytext());}
-    {integerValue}  {System.out.println("<integerValue> "+yytext());}
+  
     {floatValue}    {System.out.println("<floatValues> "+yytext());}
     {id}            {System.out.println("<id> "+yytext());} 
     {espacio}       {}
-    .       {}
+    . { System.out.println("token no valido " + yytext()); }
+
+
+
+
+    
 }

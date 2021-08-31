@@ -1,0 +1,40 @@
+package Pack;
+
+import java_cup.runtime.Symbol;
+
+parser code
+{:
+	
+
+        
+	public void syntax_error(Symbol s) {
+		report_error("Error de sintaxis. Linea: " + (s.right + 1) + " Columna: " + s.left + ". Texto: \"" + s.value + "\"", null);
+	}
+
+	public void unrecovered_syntax_error(Symbol s) {
+		System.out.println("Error fatal de sintaxis. Se ha detenido el parseo.");
+
+	}
+:}
+
+
+
+//terminales
+terminal OPSUM, OPMULT, PARIZQ, PARDER;
+terminal NUM;
+
+//no terminales
+
+non terminal E, T, Eprime, Tprime, F;
+
+
+//gramatica
+
+E ::= T Eprime ;
+Eprime ::= OPSUM T Eprime  | ;
+T ::= F Tprime ;
+Tprime::= OPMULT F Tprime | ;
+F ::= NUM | PARIZQ E PARDER ;
+
+
+
