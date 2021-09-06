@@ -13,6 +13,11 @@ import java_cup.runtime.Symbol;
 %unicode
 %class Lexer
 %int
+%state comentarioLine
+
+//temp
+inicioComentarioLine = "--"
+finalComentarioLine = "\r\n"
 
 //set basico
 letra = [a-zA-Z]
@@ -23,7 +28,7 @@ signos="?"|"!"
 //palabras reservadas, no importa si esta en mayuscula o minsucula, o una mezcla de ambos
 if = ["i"|"I"]["f"|"F"]
 else = ["e"|"E"]["l"|"L"]["s"|"S"]["e"|"E"]
-elsif = ["e"|"E"]["l"|"L"]["s"|"S"]["i"|"I"]["f"|"F"]
+elsif = ["e"|"E"]["l"|"L"]["s"|"S"]["e"|"E"]["i"|"I"]["f"|"F"]
 end = ["e"|"E"]["n"|"N"]["d"|"D"]
 for = ["f"|"F"]["o"|"O"]["r"|"R"]
 while = ["w"|"W"]["h"|"H"]["i"|"I"]["l"|"L"]["e"|"E"]
@@ -79,14 +84,19 @@ str = "\"" ({letra} | {numero} | {signos} | {espacio}  )* "\""
     {puntoycoma}    {System.out.println("<puntoycoma> "+yytext());}
     {procedure}     {System.out.println("<procedure> "+yytext());}
     {booleanValue} {System.out.println("<booleanValue> "+yytext());}
-  
+    
     {floatValue}    {System.out.println("<floatValues> "+yytext());}
     {id}            {System.out.println("<id> "+yytext());} 
     {espacio}       {}
     . { System.out.println("token no valido " + yytext()); }
 
-
+    {inicioComentarioLine} {yybegin(comentarioLine);}
 
 
     
+}
+
+<comentarioLine>{
+    {finalComentarioLine}  {yybegin(YYINITIAL);}
+    .   {}
 }

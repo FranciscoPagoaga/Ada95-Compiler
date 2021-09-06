@@ -15,7 +15,7 @@ public class Out {
      */
     public static void main(String[] args) {
         try {
-            String texto=" . 5+2**(12)";
+            String texto="--hey male";
             System.out.println("iniciando analisis sintactico..\n");
             Lexer scan = new Lexer(new BufferedReader( new StringReader(texto)));
             parser par = new parser(scan);
