@@ -8,21 +8,69 @@ package Pack;
 /** CUP generated class containing symbol constants. */
 public class sym {
   /* terminals */
-  public static final int NUM = 6;
-  public static final int PARDER = 5;
-  public static final int error = 1;
-  public static final int PARIZQ = 4;
-  public static final int OPSUM = 2;
-  public static final int OPMULT = 3;
+  public static final int EXIT = 15;
+  public static final int PROCEDURE = 2;
+  public static final int AND = 17;
+  public static final int IS = 5;
+  public static final int ELSE = 10;
+  public static final int PYC = 23;
+  public static final int OR = 18;
+  public static final int ELSIF = 11;
+  public static final int THEN = 9;
+  public static final int WHILE = 13;
+  public static final int LOOP = 14;
+  public static final int PARIZQ = 21;
+  public static final int END = 7;
+  public static final int RETURN = 4;
+  public static final int PARDER = 22;
+  public static final int FUNCTION = 3;
+  public static final int IF = 8;
+  public static final int ID = 29;
+  public static final int PUT = 26;
+  public static final int NUM = 28;
+  public static final int OPMULT = 20;
+  public static final int BEGIN = 6;
+  public static final int COMA = 25;
   public static final int EOF = 0;
+  public static final int WHEN = 16;
+  public static final int error = 1;
+  public static final int STR = 30;
+  public static final int OPSUM = 19;
+  public static final int FOR = 12;
+  public static final int OPREL = 24;
+  public static final int GET = 27;
   public static final String[] terminalNames = new String[] {
   "EOF",
   "error",
+  "PROCEDURE",
+  "FUNCTION",
+  "RETURN",
+  "IS",
+  "BEGIN",
+  "END",
+  "IF",
+  "THEN",
+  "ELSE",
+  "ELSIF",
+  "FOR",
+  "WHILE",
+  "LOOP",
+  "EXIT",
+  "WHEN",
+  "AND",
+  "OR",
   "OPSUM",
   "OPMULT",
   "PARIZQ",
   "PARDER",
-  "NUM"
+  "PYC",
+  "OPREL",
+  "COMA",
+  "PUT",
+  "GET",
+  "NUM",
+  "ID",
+  "STR"
   };
 }
 
