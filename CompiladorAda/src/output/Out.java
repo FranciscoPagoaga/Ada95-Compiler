@@ -15,15 +15,31 @@ public class Out {
      */
     public static void main(String[] args) {
         try {
-            String texto="--hey male";
+            String texto="((5+3)+3)+1";
             System.out.println("iniciando analisis sintactico..\n");
             Lexer scan = new Lexer(new BufferedReader( new StringReader(texto)));
             parser par = new parser(scan);
             par.parse();
             
+            
+            //graficar directamente
+            
+            
+            
+            
+            
         } catch (Exception ex) {
             ex.printStackTrace();
         }
     }
+
+   
+    
+    
+   
+    
+    
+    
+    
     
 }

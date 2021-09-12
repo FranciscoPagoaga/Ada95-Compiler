@@ -5,14 +5,18 @@ import java_cup.runtime.Symbol;
 parser code
 {:
 	
-
+        public String resultado="";
+	public Nodo padre;
+	public int contador = 1;
         
 	public void syntax_error(Symbol s) {
 		report_error("Error de sintaxis. Linea: " + (s.right + 1) + " Columna: " + s.left + ". Texto: \"" + s.value + "\"", null);
+                MainGui.outputArea.append("Error de sintaxis. Linea: " + (s.right + 1) + " Columna: " + s.left + ". Texto: \"" + s.value + "\"" + "\n");
 	}
 
 	public void unrecovered_syntax_error(Symbol s) {
 		System.out.println("Error fatal de sintaxis. Se ha detenido el parseo.");
+                MainGui.outputArea.append("Error fatal de sintaxis. Se ha detenido el parseo.");
 
 	}
 :}
@@ -25,16 +29,76 @@ terminal NUM;
 
 //no terminales
 
-non terminal E, T, Eprime, Tprime, F;
+non terminal E, T, F;
 
+non terminal EXP;
 
 //gramatica
 
-E ::= T Eprime ;
-Eprime ::= OPSUM T Eprime  | ;
-T ::= F Tprime ;
-Tprime::= OPMULT F Tprime | ;
-F ::= NUM | PARIZQ E PARDER ;
+start with EXP;
+		
+EXP::=E:e{:
+	Nodo tmp = new Nodo("EXP");
+    tmp.setNumNodo(parser.contador++);
+    tmp.addHijo((Nodo)e);
+	parser.padre = (Nodo) tmp;
+	System.out.println("OK");
+    RESULT=tmp;
+:};
+
+E::= E:a OPSUM T: b{:
+	Nodo tmp = new Nodo("OPSUM");
+    tmp.setNumNodo(parser.contador++);
+    tmp.addHijo((Nodo)a);
+	tmp.addHijo((Nodo)b);
+    RESULT=tmp;
+:};
+
+E::= T :e{:
+	Nodo tmp = new Nodo("T");
+    tmp.setNumNodo(parser.contador++);
+    tmp.addHijo((Nodo)e);
+	parser.padre = (Nodo) tmp;
+	System.out.println("OK");
+    RESULT=tmp;
+:};
+
+T::= T:a OPMULT F : b{:
+	Nodo tmp = new Nodo("OPMULT");
+    tmp.setNumNodo(parser.contador++);
+    tmp.addHijo((Nodo)a);
+	tmp.addHijo((Nodo)b);
+    RESULT=tmp;
+:};
+T::= F :e{:
+	Nodo tmp = new Nodo("F");
+    tmp.setNumNodo(parser.contador++);
+    tmp.addHijo((Nodo)e);
+	parser.padre = (Nodo) tmp;
+	System.out.println("OK");
+    RESULT=tmp;
+:} ;
+
+F::= NUM:e{:
+	Nodo tmp = new Nodo("NUM");
+    tmp.setNumNodo(parser.contador++);
+    //tmp.addHijo((Nodo)e);
+	//parser.padre = (Nodo) tmp;
+        tmp.setValor(e.toString());
+	System.out.println("OK");
+    RESULT=tmp;
+:};
+
+F::= PARIZQ E:e{:
+	Nodo tmp = new Nodo("E");
+    tmp.setNumNodo(parser.contador++);
+    tmp.addHijo((Nodo)e);
+	parser.padre = (Nodo) tmp;
+	System.out.println("OK");
+    RESULT=tmp;
+:} PARDER ; 
+
+
 
 
 

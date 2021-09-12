@@ -1,0 +1,19 @@
+digraph G {node[shape=box, style=filled, color=blanchedalmond]; edge[color=chocolate3];rankdir=UD 
+
+"15_EXP -> null"->"14_OPSUM -> null"
+"14_OPSUM -> null"->"3_T -> null"
+"3_T -> null"->"2_F -> null"
+"2_F -> null"->"1_NUM -> 5"
+"14_OPSUM -> null"->"13_OPMULT -> null"
+"13_OPMULT -> null"->"5_F -> null"
+"5_F -> null"->"4_NUM -> 4"
+"13_OPMULT -> null"->"12_E -> null"
+"12_E -> null"->"11_OPSUM -> null"
+"11_OPSUM -> null"->"8_T -> null"
+"8_T -> null"->"7_F -> null"
+"7_F -> null"->"6_NUM -> 15"
+"11_OPSUM -> null"->"10_F -> null"
+"10_F -> null"->"9_NUM -> 1"
+
+
+}
