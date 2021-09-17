@@ -4,13 +4,13 @@ digraph G {node[shape=box, style=filled, color=blanchedalmond]; edge[color=choco
 "15_Inicio -> null"->"0_ID -> hello"
 "15_Inicio -> null"->"12_CONTENT -> null"
 "12_CONTENT -> null"->"11_PUT -> null"
-"11_PUT -> null"->"1_NUM -> 1"
+"11_PUT -> null"->"1_NUM -> 20"
 "11_PUT -> null"->"9_PUT -> null"
-"9_PUT -> null"->"2_NUM -> 2"
-"9_PUT -> null"->"7_PUT -> null"
-"7_PUT -> null"->"3_NUM -> 3"
-"7_PUT -> null"->"5_PUT -> null"
-"5_PUT -> null"->"4_NUM -> 4"
+"9_PUT -> null"->"2_STR -> hello"
+"9_PUT -> null"->"7_GET -> null"
+"7_GET -> null"->"3_ID -> x"
+"7_GET -> null"->"5_GET -> null"
+"5_GET -> null"->"4_ID -> variable"
 
 
 }

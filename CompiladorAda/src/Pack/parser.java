@@ -1588,6 +1588,25 @@ class CUP$parser$actions {
           case 56: // content ::= get content 
             {
               Object RESULT =null;
+		int aleft = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).left;
+		int aright = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).right;
+		Object a = (Object)((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-1)).value;
+		int bleft = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).left;
+		int bright = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).right;
+		Object b = (Object)((java_cup.runtime.Symbol) CUP$parser$stack.peek()).value;
+		
+   
+    Nodo tmp = new Nodo("GET");
+    tmp.setNumNodo(parser.contador++);
+    tmp.addHijo((Nodo)a);
+    tmp.setNumNodo(parser.contador++);
+    tmp.addHijo((Nodo)b);
+    
+  
+ 
+    System.out.println("get + content ");
+    RESULT=tmp;
+    
 
               CUP$parser$result = parser.getSymbolFactory().newSymbol("content",2, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
@@ -1597,6 +1616,15 @@ class CUP$parser$actions {
           case 57: // content ::= get 
             {
               Object RESULT =null;
+		int eleft = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).left;
+		int eright = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).right;
+		Object e = (Object)((java_cup.runtime.Symbol) CUP$parser$stack.peek()).value;
+		
+    Nodo tmp = new Nodo("GET");
+    tmp.setNumNodo(parser.contador++);
+    tmp.addHijo((Nodo)e);
+    System.out.println("get");
+    RESULT=tmp;
 
               CUP$parser$result = parser.getSymbolFactory().newSymbol("content",2, ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
@@ -2759,7 +2787,7 @@ RESULT = a;
     tmp.setValor(num);
     System.out.println("num in put");
     RESULT=tmp;
-
+    
               CUP$parser$result = parser.getSymbolFactory().newSymbol("put",28, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-4)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
           return CUP$parser$result;
@@ -2808,12 +2836,12 @@ RESULT = a;
 		int strright = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-2)).right;
 		Object str = (Object)((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-2)).value;
 		
-    Nodo tmp = new Nodo("STR");
-    tmp.setNumNodo(parser.contador++);
-    tmp.setValor(str.toString().replaceAll("\"",""));
-    System.out.println("str in put");
-    RESULT=tmp;
-
+        Nodo tmp = new Nodo("STR");
+        tmp.setNumNodo(parser.contador++);
+        tmp.setValor(str.toString().replaceAll("\"",""));
+        System.out.println("str in put");
+        RESULT=tmp;
+    
               CUP$parser$result = parser.getSymbolFactory().newSymbol("put",28, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-4)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
           return CUP$parser$result;
@@ -2849,7 +2877,16 @@ RESULT = a;
           case 186: // get ::= GET PARIZQ ID PARDER PYC 
             {
               Object RESULT =null;
-
+		int idleft = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-2)).left;
+		int idright = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-2)).right;
+		String id = (String)((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-2)).value;
+		
+    Nodo tmp = new Nodo("ID");
+    tmp.setNumNodo(parser.contador++);
+    tmp.setValor(id);
+    System.out.println("id in get");
+    RESULT=tmp;
+    
               CUP$parser$result = parser.getSymbolFactory().newSymbol("get",29, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-4)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
           return CUP$parser$result;
