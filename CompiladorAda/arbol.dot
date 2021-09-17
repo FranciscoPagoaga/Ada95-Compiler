@@ -1,0 +1,14 @@
+digraph G {node[shape=box, style=filled, color=blanchedalmond]; edge[color=chocolate3];rankdir=UD 
+
+"10_Inicio -> null"->"0_PROCEDURE -> null"
+"10_Inicio -> null"->"0_ID -> hello"
+"10_Inicio -> null"->"7_CONTENT -> null"
+"7_CONTENT -> null"->"6_PUT -> null"
+"6_PUT -> null"->"1_NUM -> 20"
+"6_PUT -> null"->"5_PUT -> null"
+"5_PUT -> null"->"2_STR -> hello"
+"5_PUT -> null"->"4_PUT -> null"
+"4_PUT -> null"->"3_STR -> 40"
+
+
+}

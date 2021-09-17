@@ -14,6 +14,12 @@ import java_cup.runtime.Symbol;
 %class Lexer
 %int
 
+%state comentarioLine
+
+//temp
+inicioComentarioLine = "--"
+finalComentarioLine = "\r\n"
+
 //set basico
 letra = [a-zA-Z]
 digito = [0-9]
@@ -115,10 +121,15 @@ str = "\"" ({letra} | {digito} | {signos} | {espacio}  )* "\""
     {coma}                  { return new Symbol(sym.COMA, yycolumn, yyline, yytext()); }
     {dospuntos}             { return new Symbol(sym.DOSPUNTOS, yycolumn, yyline, yytext()); }
     {str}                   { return new Symbol(sym.STR, yycolumn, yyline, yytext()); }  
-
     {id}                    { return new Symbol(sym.ID, yycolumn, yyline, yytext()); } 
     {numero}                { return new Symbol(sym.NUM, yycolumn, yyline, yytext()); }
     {espacio}               {}
+    {inicioComentarioLine} {yybegin(comentarioLine);}
     . { System.out.println("token no valido " + yytext()); }
     
+}
+
+<comentarioLine>{
+    {finalComentarioLine}  {yybegin(YYINITIAL);}
+    .   {}
 }
