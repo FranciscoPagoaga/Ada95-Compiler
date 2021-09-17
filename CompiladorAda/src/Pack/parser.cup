@@ -156,13 +156,20 @@ content ::= assignment content | assignment
 		| for_block content | for_block
 		| loop_block content | loop_block
 		
-| put: e content: a {:
-    Nodo tmp = new Nodo("PUT");
-    tmp.setNumNodo(parser.contador++);
-    tmp.addHijo((Nodo)e);
-    tmp.addHijo((Nodo)a);
+| put:a content: b {:
+    //Nodo tmp = new Nodo("CONTENT");
+    Nodo tmp2 = new Nodo("PUT");
+    tmp2.setNumNodo(parser.contador++);
+    tmp2.addHijo((Nodo)a);
+    tmp2.setNumNodo(parser.contador++);
+    tmp2.addHijo((Nodo)b);
+    
+    //tmp.setNumNodo(parser.contador++);
+    //tmp.addHijo((Nodo)tmp2);
+ 
     System.out.println("put + content ");
-    RESULT=tmp;
+    RESULT=tmp2;
+    
 :} 
 
 | put: e {:

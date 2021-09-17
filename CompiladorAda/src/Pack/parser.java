@@ -1541,19 +1541,26 @@ class CUP$parser$actions {
           case 54: // content ::= put content 
             {
               Object RESULT =null;
-		int eleft = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).left;
-		int eright = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).right;
-		Object e = (Object)((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-1)).value;
-		int aleft = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).left;
-		int aright = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).right;
-		Object a = (Object)((java_cup.runtime.Symbol) CUP$parser$stack.peek()).value;
+		int aleft = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).left;
+		int aright = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).right;
+		Object a = (Object)((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-1)).value;
+		int bleft = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).left;
+		int bright = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).right;
+		Object b = (Object)((java_cup.runtime.Symbol) CUP$parser$stack.peek()).value;
 		
-    Nodo tmp = new Nodo("PUT");
-    tmp.setNumNodo(parser.contador++);
-    tmp.addHijo((Nodo)e);
-    tmp.addHijo((Nodo)a);
+    //Nodo tmp = new Nodo("CONTENT");
+    Nodo tmp2 = new Nodo("PUT");
+    tmp2.setNumNodo(parser.contador++);
+    tmp2.addHijo((Nodo)a);
+    tmp2.setNumNodo(parser.contador++);
+    tmp2.addHijo((Nodo)b);
+    
+    //tmp.setNumNodo(parser.contador++);
+    //tmp.addHijo((Nodo)tmp2);
+ 
     System.out.println("put + content ");
-    RESULT=tmp;
+    RESULT=tmp2;
+    
 
               CUP$parser$result = parser.getSymbolFactory().newSymbol("content",2, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
