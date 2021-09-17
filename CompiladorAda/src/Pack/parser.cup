@@ -6,14 +6,19 @@ import java_cup.runtime.*;
 parser code
 {:
 	
-
+        
+        public String resultado="";
+	public Nodo padre;
+	public int contador = 1;
         
 	public void syntax_error(Symbol s) {
 		report_error("Error de sintaxis. Linea: " + (s.right + 1) + " Columna: " + s.left + ". Texto: \"" + s.value + "\"", null);
+                MainGui.outputArea.append("Error de sintaxis. Linea: " + (s.right + 1) + " Columna: " + s.left + ". Texto: \"" + s.value + "\"" + "\n");
 	}
 
 	public void unrecovered_syntax_error(Symbol s) {
 		System.out.println("Error fatal de sintaxis. Se ha detenido el parseo.");
+                MainGui.outputArea.append("Error fatal de sintaxis. Se ha detenido el parseo.");
 
 	}
 :}
@@ -25,7 +30,7 @@ terminal PROCEDURE, FUNCTION, RETURN, IS, BEGIN, END, IF, THEN, ELSE, ELSIF, FOR
 terminal String INT, BOOLEAN, FLOAT;
 terminal String OPSUM, OPMULT, OPASG, OPDEC, PARIZQ, PARDER, PYC, OPREL, COMA, DOSPUNTOS;
 terminal PUT, GET;
-terminal Integer NUM;
+terminal String NUM;
 terminal String ID;
 terminal STR; 
 
@@ -39,40 +44,65 @@ non terminal calling_subroutine, call_subroutine, parameter_values;
 non terminal condition, rel_operand, boolean_expr;
 non terminal assignment; 
 non terminal put, get;
-non terminal E, T, Eprime, Tprime, F;
+non terminal E, T, F;
 non terminal var_type;
 non terminal fin_parseo;
 
 precedence left OPREL;
-precedence left OPSUM;
-precedence left OPMULT;
+
 
 start with main_body;
 
 //Gramaticas
 
-main_body ::= PROCEDURE ID main_parameters IS begin_main_body
+main_body ::= PROCEDURE:pro ID:id main_parameters IS begin_main_body: beg  {:
+	Nodo tmp = new Nodo("Inicio");
+        tmp.setNumNodo(parser.contador++);
+        
+        Nodo tmp2 = new Nodo("PROCEDURE"); 
+        tmp.setNumNodo(parser.contador++);
+        tmp2.setValor("null");
+        
+        Nodo tmp3 = new Nodo("ID"); 
+        tmp.setNumNodo(parser.contador++);
+        tmp3.setValor(id);
+        
+        tmp.addHijo((Nodo)tmp2);
+        tmp.addHijo((Nodo)tmp3);
+        tmp.addHijo((Nodo)beg);
+        
+	parser.padre = (Nodo) tmp;
+	System.out.println("OK begin");
+        RESULT=tmp;
+:}
 				// Errores
 				| error ID main_parameters IS begin_main_body
 				| PROCEDURE error main_parameters IS begin_main_body
 				| PROCEDURE ID main_parameters error begin_main_body
 				// Caso de function_block
-				| FUNCTION ID main_parameters RETURN var_type IS begin_main_body
+				| FUNCTION  ID main_parameters RETURN var_type IS begin_main_body 
 				// Errores
 				| FUNCTION error main_parameters IS begin_main_body
 				| FUNCTION ID main_parameters error begin_main_body
 				;
 
-						begin_main_body ::= declaration_list BEGIN content END ID PYC
+						begin_main_body ::= declaration_list BEGIN content END ID PYC 
 												// Error
 												| declaration_list error content END ID PYC
 												| declaration_list BEGIN content error ID PYC
 												| declaration_list BEGIN content END error PYC
 												| declaration_list BEGIN content END ID error
 												// Caso sin declaraciones
-												| BEGIN content END ID PYC
+												| BEGIN content:e END ID PYC {:
+                                                                                                        Nodo tmp = new Nodo("CONTENT");
+                                                                                                        tmp.setNumNodo(parser.contador++);
+                                                                                                        tmp.addHijo((Nodo)e);
+                                                                                                            //parser.padre = (Nodo) tmp;
+                                                                                                            System.out.println("OK begin main body");
+                                                                                                        RESULT=tmp;
+                                                                                                                    :}
 												// Error
-												| error content END ID PYC
+												| error content END ID PYC 
 												| BEGIN content error ID PYC
 												| BEGIN content END error PYC
 												| BEGIN content END ID error
@@ -125,7 +155,23 @@ content ::= assignment content | assignment
 		| if_block content | if_block
 		| for_block content | for_block
 		| loop_block content | loop_block
-		| put content | put
+		
+| put: e content: a {:
+    Nodo tmp = new Nodo("PUT");
+    tmp.setNumNodo(parser.contador++);
+    tmp.addHijo((Nodo)e);
+    tmp.addHijo((Nodo)a);
+    System.out.println("put + content ");
+    RESULT=tmp;
+:} 
+
+| put: e {:
+    Nodo tmp = new Nodo("PUT");
+    tmp.setNumNodo(parser.contador++);
+    tmp.addHijo((Nodo)e);
+    System.out.println("put");
+    RESULT=tmp;
+:} 
 		| get content | get
 		| calling_subroutine content | calling_subroutine
 		;
@@ -149,7 +195,7 @@ function_block ::= FUNCTION ID parameters RETURN var_type IS declaration_list BE
 			| FUNCTION ID parameters RETURN var_type IS declaration_list BEGIN content END ID error
 			;
 		
-		main_parameters ::= PARIZQ parameters_specification PARDER
+		main_parameters ::= PARIZQ parameters_specification:a {:RESULT = a;:} PARDER
 								|
 								//Errores
 								| PARDER parameters_specification error
@@ -165,7 +211,7 @@ function_block ::= FUNCTION ID parameters RETURN var_type IS declaration_list BE
 												// Error
 												| ident_list error parameter_mode var_type PYC parameters_specification
 												//Caso final
-												| ident_list OPDEC parameter_mode var_type
+												| ident_list OPDEC parameter_mode var_type 
 												//Error
 												| ident_list error parameter_mode var_type
 											;
@@ -214,11 +260,59 @@ assignment ::= ID OPASG E PYC
 				| ID OPASG FALSE error			
 				;
 
-		E ::= T Eprime ;
-		Eprime ::= OPSUM T Eprime  | ;
-		T ::= F Tprime ;
-		Tprime::= OPMULT F Tprime | ;
-		F ::= ID | NUM | PARIZQ E PARDER ;
+	
+
+        E::= E:a OPSUM T: b{:
+                Nodo tmp = new Nodo("OPSUM");
+                tmp.setNumNodo(parser.contador++);
+                tmp.addHijo((Nodo)a);
+                tmp.addHijo((Nodo)b);
+                RESULT=tmp;
+        :};
+
+        E::= T :e{:
+                Nodo tmp = new Nodo("T");
+            tmp.setNumNodo(parser.contador++);
+            tmp.addHijo((Nodo)e);
+                //parser.padre = (Nodo) tmp;
+                System.out.println("OK");
+            RESULT=tmp;
+        :};
+
+        T::= T:a OPMULT F : b{:
+                Nodo tmp = new Nodo("OPMULT");
+            tmp.setNumNodo(parser.contador++);
+            tmp.addHijo((Nodo)a);
+                tmp.addHijo((Nodo)b);
+            RESULT=tmp;
+        :};
+        T::= F :e{:
+                Nodo tmp = new Nodo("F");
+            tmp.setNumNodo(parser.contador++);
+            tmp.addHijo((Nodo)e);
+                //parser.padre = (Nodo) tmp;
+                System.out.println("OK");
+            RESULT=tmp;
+        :} ;
+
+        F::= NUM:e{:
+            Nodo tmp = new Nodo("NUM");
+            tmp.setNumNodo(parser.contador++);
+            //tmp.addHijo((Nodo)e);
+            //parser.padre = (Nodo) tmp;
+            tmp.setValor(e);
+            System.out.println("OK");
+            RESULT=tmp;
+        :};
+
+        F::= PARIZQ E:e PARDER {:
+            Nodo tmp = new Nodo("E");
+            tmp.setNumNodo(parser.contador++);
+            tmp.addHijo((Nodo)e);
+            //parser.padre = (Nodo) tmp;
+            System.out.println("EOK");
+            RESULT=tmp;
+        :} ; 
 
 //bloque loop
 loop_block ::= LOOP content salir_ciclo END LOOP PYC
@@ -321,14 +415,26 @@ if_block ::= IF condition THEN content elsif_block else_block END IF PYC
 									| error
 									;
 
-put ::= PUT PARIZQ NUM PARDER PYC
+put ::= PUT PARIZQ NUM:num PARDER PYC {:
+    Nodo tmp = new Nodo("NUM");
+    tmp.setNumNodo(parser.contador++);
+    tmp.setValor(num);
+    System.out.println("num in put");
+    RESULT=tmp;
+:} 
 		//Errores
 		| PUT error NUM PARDER PYC
 		| PUT PARIZQ error PARDER PYC
 		| PUT PARIZQ NUM error PYC
 		| PUT PARIZQ NUM PARDER error
 		//Caso String
-		| PUT PARIZQ STR PARDER PYC
+		| PUT PARIZQ STR:str PARDER PYC {:
+    Nodo tmp = new Nodo("STR");
+    tmp.setNumNodo(parser.contador++);
+    tmp.setValor(str.toString().replaceAll("\"",""));
+    System.out.println("str in put");
+    RESULT=tmp;
+:} 
 		//Errores
 		| PUT error STR PARDER PYC
 		| PUT PARIZQ STR error PYC

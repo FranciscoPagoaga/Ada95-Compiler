@@ -1,4 +1,6 @@
-package Pack;
+package output;
+import Pack.Lexer;
+import Pack.parser;
 import java.io.BufferedReader;
 import java.io.StringReader;
 
