@@ -1,16 +1,20 @@
 digraph G {node[shape=box, style=filled, color=blanchedalmond]; edge[color=chocolate3];rankdir=UD 
 
-"15_Inicio -> null"->"0_PROCEDURE -> null"
-"15_Inicio -> null"->"0_ID -> hello"
-"15_Inicio -> null"->"12_CONTENT -> null"
-"12_CONTENT -> null"->"11_PUT -> null"
-"11_PUT -> null"->"1_NUM -> 20"
-"11_PUT -> null"->"9_PUT -> null"
-"9_PUT -> null"->"2_STR -> hello"
-"9_PUT -> null"->"7_GET -> null"
-"7_GET -> null"->"3_ID -> x"
-"7_GET -> null"->"5_GET -> null"
-"5_GET -> null"->"4_ID -> variable"
+"18_Inicio -> null"->"0_PROCEDURE -> null"
+"18_Inicio -> null"->"0_ID -> hey"
+"18_Inicio -> null"->"15_CONTENT -> null"
+"15_CONTENT -> null"->"14_WHILE-BLOCK -> null"
+"14_WHILE-BLOCK -> null"->"13_CONDITION-CONTENT -> null"
+"13_CONDITION-CONTENT -> null"->"4_BooleanExp -> null"
+"4_BooleanExp -> null"->"3_OPREL -> <"
+"3_OPREL -> <"->"1_ID -> x"
+"3_OPREL -> <"->"2_NUM -> 2"
+"13_CONDITION-CONTENT -> null"->"6_PUT -> null"
+"6_PUT -> null"->"5_STR -> a"
+"13_CONDITION-CONTENT -> null"->"10_BooleanExp -> null"
+"10_BooleanExp -> null"->"9_OPREL -> <"
+"9_OPREL -> <"->"7_ID -> x"
+"9_OPREL -> <"->"8_NUM -> 18"
 
 
 }
