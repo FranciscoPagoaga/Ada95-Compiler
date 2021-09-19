@@ -1509,7 +1509,23 @@ class CUP$parser$actions {
           case 48: // content ::= if_block content 
             {
               Object RESULT =null;
+		int aleft = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).left;
+		int aright = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).right;
+		Object a = (Object)((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-1)).value;
+		int bleft = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).left;
+		int bright = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).right;
+		Object b = (Object)((java_cup.runtime.Symbol) CUP$parser$stack.peek()).value;
+		
+            Nodo tmp2 = new Nodo("IF_BLOCK");
+			tmp2.setNumNodo(parser.contador++);
+			tmp2.addHijo((Nodo)a);
+			tmp2.setNumNodo(parser.contador++);
+			tmp2.addHijo((Nodo)b);
+			
+			System.out.println("if + content ");
+			RESULT=tmp2;
 
+        
               CUP$parser$result = parser.getSymbolFactory().newSymbol("content",2, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
           return CUP$parser$result;
@@ -1518,7 +1534,16 @@ class CUP$parser$actions {
           case 49: // content ::= if_block 
             {
               Object RESULT =null;
-
+		int eleft = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).left;
+		int eright = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).right;
+		Object e = (Object)((java_cup.runtime.Symbol) CUP$parser$stack.peek()).value;
+		 
+            Nodo tmp = new Nodo("IF_BLOCK");
+			tmp.setNumNodo(parser.contador++);
+			tmp.addHijo((Nodo)e);
+			System.out.println("if block");
+			RESULT=tmp;
+        
               CUP$parser$result = parser.getSymbolFactory().newSymbol("content",2, ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
           return CUP$parser$result;
@@ -1527,7 +1552,22 @@ class CUP$parser$actions {
           case 50: // content ::= for_block content 
             {
               Object RESULT =null;
-
+		int aleft = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).left;
+		int aright = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).right;
+		Object a = (Object)((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-1)).value;
+		int bleft = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).left;
+		int bright = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).right;
+		Object b = (Object)((java_cup.runtime.Symbol) CUP$parser$stack.peek()).value;
+		
+			Nodo tmp2 = new Nodo("FOR_BLOCK");
+			tmp2.setNumNodo(parser.contador++);
+			tmp2.addHijo((Nodo)a);
+			tmp2.setNumNodo(parser.contador++);
+			tmp2.addHijo((Nodo)b);
+			
+			System.out.println("put + content ");
+			RESULT=tmp2;
+		
               CUP$parser$result = parser.getSymbolFactory().newSymbol("content",2, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
           return CUP$parser$result;
@@ -1536,7 +1576,16 @@ class CUP$parser$actions {
           case 51: // content ::= for_block 
             {
               Object RESULT =null;
-
+		int eleft = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).left;
+		int eright = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).right;
+		Object e = (Object)((java_cup.runtime.Symbol) CUP$parser$stack.peek()).value;
+		
+			Nodo tmp = new Nodo("FOR_BLOCK");
+			tmp.setNumNodo(parser.contador++);
+			tmp.addHijo((Nodo)e);
+			System.out.println("for_block");
+			RESULT=tmp;
+		
               CUP$parser$result = parser.getSymbolFactory().newSymbol("content",2, ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
           return CUP$parser$result;
@@ -2334,7 +2383,7 @@ RESULT = a;
           case 123: // salir_ciclo ::= 
             {
               Object RESULT =null;
-
+		 
               CUP$parser$result = parser.getSymbolFactory().newSymbol("salir_ciclo",17, ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
           return CUP$parser$result;
@@ -2361,7 +2410,79 @@ RESULT = a;
           case 126: // for_block ::= FOR ID NUM DOSPUNTOS NUM LOOP content salir_ciclo END LOOP PYC 
             {
               Object RESULT =null;
+		int idleft = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-9)).left;
+		int idright = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-9)).right;
+		String id = (String)((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-9)).value;
+		int num1left = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-8)).left;
+		int num1right = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-8)).right;
+		String num1 = (String)((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-8)).value;
+		int num2left = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-6)).left;
+		int num2right = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-6)).right;
+		String num2 = (String)((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-6)).value;
+		int aleft = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-4)).left;
+		int aright = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-4)).right;
+		Object a = (Object)((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-4)).value;
+		int bleft = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-3)).left;
+		int bright = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-3)).right;
+		Object b = (Object)((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-3)).value;
+		 
+				Nodo tmp = new Nodo("for_block");
+    			tmp.setNumNodo(parser.contador++);
+    			
+				Nodo tmp2 = new Nodo("for");
+				tmp2.setValor("null");
+				tmp2.setNumNodo(parser.contador++);
+				tmp.addHijo((Nodo)tmp2);
 
+				Nodo tmp3 = new Nodo("ID");
+				tmp3.setValor(id);
+				tmp3.setNumNodo(parser.contador++);
+				tmp.addHijo((Nodo)tmp3);
+				
+				Nodo tmp4 = new Nodo("NUM");
+				tmp4.setValor(num1);
+				tmp4.setNumNodo(parser.contador++);
+				tmp.addHijo((Nodo)tmp4);
+				
+				Nodo tmp5 = new Nodo("DOSPUNTOS");
+				tmp5.setValor("null");
+				tmp5.setNumNodo(parser.contador++);
+				tmp.addHijo((Nodo)tmp5);
+
+				Nodo tmp6 = new Nodo("NUM");
+				tmp6.setValor(num2);
+				tmp6.setNumNodo(parser.contador++);
+				tmp.addHijo((Nodo)tmp6);
+				
+				Nodo tmp7 = new Nodo("LOOP");
+				tmp7.setValor("null");
+				tmp7.setNumNodo(parser.contador++);
+				tmp.addHijo((Nodo)tmp7);
+
+				Nodo tmp11 = new Nodo("CONTENT");
+				tmp11.setValor("null");
+				tmp11.addHijo((Nodo)a);
+				tmp11.setNumNodo(parser.contador++);
+				tmp.addHijo((Nodo)tmp11);
+
+                if(b != null){
+                    tmp.addHijo((Nodo)b);
+                }
+
+
+				Nodo tmp9 = new Nodo("END");
+				tmp9.setValor("null");
+				tmp9.setNumNodo(parser.contador++);
+				tmp.addHijo((Nodo)tmp9);
+				
+				Nodo tmp10 = new Nodo("LOOP");
+				tmp10.setValor("Null");
+				tmp10.setNumNodo(parser.contador++);
+				tmp.addHijo((Nodo)tmp10);
+
+    			System.out.println("for_block");
+    			RESULT=tmp;
+			
               CUP$parser$result = parser.getSymbolFactory().newSymbol("for_block",15, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-10)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
           return CUP$parser$result;
@@ -2442,7 +2563,78 @@ RESULT = a;
           case 135: // for_block ::= FOR ID ID DOSPUNTOS NUM LOOP content salir_ciclo END LOOP PYC 
             {
               Object RESULT =null;
+		int idleft = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-9)).left;
+		int idright = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-9)).right;
+		String id = (String)((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-9)).value;
+		int id1left = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-8)).left;
+		int id1right = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-8)).right;
+		String id1 = (String)((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-8)).value;
+		int num2left = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-6)).left;
+		int num2right = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-6)).right;
+		String num2 = (String)((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-6)).value;
+		int aleft = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-4)).left;
+		int aright = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-4)).right;
+		Object a = (Object)((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-4)).value;
+		int bleft = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-3)).left;
+		int bright = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-3)).right;
+		Object b = (Object)((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-3)).value;
+		
+					Nodo tmp = new Nodo("for_block");
+					tmp.setNumNodo(parser.contador++);
+					
+					Nodo tmp2 = new Nodo("for");
+					tmp2.setValor("null");
+					tmp2.setNumNodo(parser.contador++);
+					tmp.addHijo((Nodo)tmp2);
 
+					Nodo tmp3 = new Nodo("ID");
+					tmp3.setValor(id);
+					tmp3.setNumNodo(parser.contador++);
+					tmp.addHijo((Nodo)tmp3);
+					
+					Nodo tmp4 = new Nodo("ID");
+					tmp4.setValor(id1);
+					tmp4.setNumNodo(parser.contador++);
+					tmp.addHijo((Nodo)tmp4);
+					
+					Nodo tmp5 = new Nodo("DOSPUNTOS");
+					tmp5.setValor("null");
+					tmp5.setNumNodo(parser.contador++);
+					tmp.addHijo((Nodo)tmp5);
+
+					Nodo tmp6 = new Nodo("NUM");
+					tmp6.setValor(num2);
+					tmp6.setNumNodo(parser.contador++);
+					tmp.addHijo((Nodo)tmp6);
+					
+					Nodo tmp7 = new Nodo("LOOP");
+					tmp7.setValor("null");
+					tmp7.setNumNodo(parser.contador++);
+					tmp.addHijo((Nodo)tmp7);
+
+					Nodo tmp11 = new Nodo("CONTENT");
+					tmp11.setValor("null");
+					tmp11.addHijo((Nodo)a);
+					tmp11.setNumNodo(parser.contador++);
+					tmp.addHijo((Nodo)tmp11);
+
+                    if(b != null){
+                        tmp.addHijo((Nodo)b);
+                    }
+
+					Nodo tmp9 = new Nodo("END");
+					tmp9.setValor("null");
+					tmp9.setNumNodo(parser.contador++);
+					tmp.addHijo((Nodo)tmp9);
+					
+					Nodo tmp10 = new Nodo("LOOP");
+					tmp10.setValor("Null");
+					tmp10.setNumNodo(parser.contador++);
+					tmp.addHijo((Nodo)tmp10);
+
+					System.out.println("for_block");
+					RESULT=tmp;
+				
               CUP$parser$result = parser.getSymbolFactory().newSymbol("for_block",15, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-10)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
           return CUP$parser$result;
@@ -2514,7 +2706,78 @@ RESULT = a;
           case 143: // for_block ::= FOR ID NUM DOSPUNTOS ID LOOP content salir_ciclo END LOOP PYC 
             {
               Object RESULT =null;
+		int idleft = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-9)).left;
+		int idright = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-9)).right;
+		String id = (String)((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-9)).value;
+		int num1left = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-8)).left;
+		int num1right = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-8)).right;
+		String num1 = (String)((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-8)).value;
+		int id1left = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-6)).left;
+		int id1right = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-6)).right;
+		String id1 = (String)((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-6)).value;
+		int aleft = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-4)).left;
+		int aright = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-4)).right;
+		Object a = (Object)((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-4)).value;
+		int bleft = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-3)).left;
+		int bright = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-3)).right;
+		Object b = (Object)((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-3)).value;
+		 
+					Nodo tmp = new Nodo("for_block");
+					tmp.setNumNodo(parser.contador++);
+					
+					Nodo tmp2 = new Nodo("for");
+					tmp2.setValor("null");
+					tmp2.setNumNodo(parser.contador++);
+					tmp.addHijo((Nodo)tmp2);
 
+					Nodo tmp3 = new Nodo("ID");
+					tmp3.setValor(id);
+					tmp3.setNumNodo(parser.contador++);
+					tmp.addHijo((Nodo)tmp3);
+					
+					Nodo tmp4 = new Nodo("NUM");
+					tmp4.setValor(num1);
+					tmp4.setNumNodo(parser.contador++);
+					tmp.addHijo((Nodo)tmp4);
+					
+					Nodo tmp5 = new Nodo("DOSPUNTOS");
+					tmp5.setValor("null");
+					tmp5.setNumNodo(parser.contador++);
+					tmp.addHijo((Nodo)tmp5);
+
+					Nodo tmp6 = new Nodo("ID");
+					tmp6.setValor(id1);
+					tmp6.setNumNodo(parser.contador++);
+					tmp.addHijo((Nodo)tmp6);
+					
+					Nodo tmp7 = new Nodo("LOOP");
+					tmp7.setValor("null");
+					tmp7.setNumNodo(parser.contador++);
+					tmp.addHijo((Nodo)tmp7);
+
+					Nodo tmp11 = new Nodo("CONTENT");
+					tmp11.setValor("null");
+					tmp11.addHijo((Nodo)a);
+					tmp11.setNumNodo(parser.contador++);
+					tmp.addHijo((Nodo)tmp11);
+
+                    if(b != null){
+                        tmp.addHijo((Nodo)b);
+                    }
+
+					Nodo tmp9 = new Nodo("END");
+					tmp9.setValor("null");
+					tmp9.setNumNodo(parser.contador++);
+					tmp.addHijo((Nodo)tmp9);
+					
+					Nodo tmp10 = new Nodo("LOOP");
+					tmp10.setValor("Null");
+					tmp10.setNumNodo(parser.contador++);
+					tmp.addHijo((Nodo)tmp10);
+
+					System.out.println("for_block");
+					RESULT=tmp;
+				
               CUP$parser$result = parser.getSymbolFactory().newSymbol("for_block",15, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-10)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
           return CUP$parser$result;
@@ -2586,7 +2849,78 @@ RESULT = a;
           case 151: // for_block ::= FOR ID ID DOSPUNTOS ID LOOP content salir_ciclo END LOOP PYC 
             {
               Object RESULT =null;
+		int idleft = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-9)).left;
+		int idright = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-9)).right;
+		String id = (String)((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-9)).value;
+		int id1left = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-8)).left;
+		int id1right = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-8)).right;
+		String id1 = (String)((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-8)).value;
+		int id2left = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-6)).left;
+		int id2right = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-6)).right;
+		String id2 = (String)((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-6)).value;
+		int aleft = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-4)).left;
+		int aright = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-4)).right;
+		Object a = (Object)((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-4)).value;
+		int bleft = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-3)).left;
+		int bright = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-3)).right;
+		Object b = (Object)((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-3)).value;
+		 
+					Nodo tmp = new Nodo("for_block");
+					tmp.setNumNodo(parser.contador++);
+					
+					Nodo tmp2 = new Nodo("for");
+					tmp2.setValor("null");
+					tmp2.setNumNodo(parser.contador++);
+					tmp.addHijo((Nodo)tmp2);
 
+					Nodo tmp3 = new Nodo("ID");
+					tmp3.setValor(id);
+					tmp3.setNumNodo(parser.contador++);
+					tmp.addHijo((Nodo)tmp3);
+					
+					Nodo tmp4 = new Nodo("ID");
+					tmp4.setValor(id1);
+					tmp4.setNumNodo(parser.contador++);
+					tmp.addHijo((Nodo)tmp4);
+					
+					Nodo tmp5 = new Nodo("DOSPUNTOS");
+					tmp5.setValor("null");
+					tmp5.setNumNodo(parser.contador++);
+					tmp.addHijo((Nodo)tmp5);
+
+					Nodo tmp6 = new Nodo("ID");
+					tmp6.setValor(id2);
+					tmp6.setNumNodo(parser.contador++);
+					tmp.addHijo((Nodo)tmp6);
+					
+					Nodo tmp7 = new Nodo("LOOP");
+					tmp7.setValor("null");
+					tmp7.setNumNodo(parser.contador++);
+					tmp.addHijo((Nodo)tmp7);
+
+					Nodo tmp11 = new Nodo("CONTENT");
+					tmp11.setValor("null");
+					tmp11.addHijo((Nodo)a);
+					tmp11.setNumNodo(parser.contador++);
+					tmp.addHijo((Nodo)tmp11);
+
+                    if(b != null){
+                        tmp.addHijo((Nodo)b);
+                    }
+
+					Nodo tmp9 = new Nodo("END");
+					tmp9.setValor("null");
+					tmp9.setNumNodo(parser.contador++);
+					tmp.addHijo((Nodo)tmp9);
+					
+					Nodo tmp10 = new Nodo("LOOP");
+					tmp10.setValor("Null");
+					tmp10.setNumNodo(parser.contador++);
+					tmp.addHijo((Nodo)tmp10);
+
+					System.out.println("for_block");
+					RESULT=tmp;
+				
               CUP$parser$result = parser.getSymbolFactory().newSymbol("for_block",15, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-10)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
           return CUP$parser$result;
@@ -2649,7 +2983,65 @@ RESULT = a;
           case 158: // if_block ::= IF condition THEN content elsif_block else_block END IF PYC 
             {
               Object RESULT =null;
+		int eleft = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-7)).left;
+		int eright = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-7)).right;
+		Object e = (Object)((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-7)).value;
+		int fleft = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-5)).left;
+		int fright = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-5)).right;
+		Object f = (Object)((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-5)).value;
+		int aleft = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-4)).left;
+		int aright = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-4)).right;
+		Object a = (Object)((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-4)).value;
+		int bleft = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-3)).left;
+		int bright = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-3)).right;
+		Object b = (Object)((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-3)).value;
+		
+                Nodo tmp = new Nodo("if_block");
+				tmp.setNumNodo(parser.contador++);
 
+                Nodo tmp2 = new Nodo("if");
+                tmp2.setValor("null");
+                tmp2.setNumNodo(parser.contador++);
+                tmp.addHijo((Nodo)tmp2);
+
+                tmp.addHijo((Nodo)e);
+
+                Nodo tmp3 = new Nodo("THEN");
+                tmp3.setValor("null");
+                tmp3.setNumNodo(parser.contador++);
+                tmp.addHijo((Nodo)tmp3);
+
+                Nodo tmp4 = new Nodo("CONTENT");
+                tmp4.setValor("null");
+                tmp4.addHijo((Nodo)f);
+                tmp4.setNumNodo(parser.contador++);
+                tmp.addHijo((Nodo)tmp4);
+
+                if(a != null){
+                    tmp.addHijo((Nodo)a);
+                }
+
+                if(b != null){
+                    tmp.addHijo((Nodo)b);
+                }
+
+                Nodo tmp5 = new Nodo("END");
+                tmp5.setValor("null");
+                tmp5.setNumNodo(parser.contador++);
+                tmp.addHijo((Nodo)tmp5);
+
+                Nodo tmp6 = new Nodo("IF");
+                tmp6.setValor("null");
+                tmp6.setNumNodo(parser.contador++);
+                tmp.addHijo((Nodo)tmp6);
+
+                Nodo tmp7 = new Nodo("PYC");
+                tmp7.setValor("null");
+                tmp7.setNumNodo(parser.contador++);
+                tmp.addHijo((Nodo)tmp7);
+
+                RESULT=tmp;
+            
               CUP$parser$result = parser.getSymbolFactory().newSymbol("if_block",18, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-8)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
           return CUP$parser$result;
@@ -2694,7 +3086,47 @@ RESULT = a;
           case 163: // elsif_block ::= ELSIF condition THEN content elsif_block 
             {
               Object RESULT =null;
+		int eleft = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-3)).left;
+		int eright = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-3)).right;
+		Object e = (Object)((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-3)).value;
+		int fleft = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).left;
+		int fright = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).right;
+		Object f = (Object)((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-1)).value;
+		int rleft = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).left;
+		int rright = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).right;
+		Object r = (Object)((java_cup.runtime.Symbol) CUP$parser$stack.peek()).value;
+		
+                Nodo tmp = new Nodo("ELSIF_BLOCK");
+                tmp.setNumNodo(parser.contador++);
 
+                Nodo tmp2 = new Nodo("ELSIF");
+                tmp2.setValor("null");
+                tmp2.setNumNodo(parser.contador++);
+                tmp.addHijo((Nodo)tmp2);
+
+                tmp.addHijo((Nodo)e);
+
+                Nodo tmp3 = new Nodo("THEN");
+                tmp3.setValor("null");
+                tmp3.setNumNodo(parser.contador++);
+                tmp.addHijo((Nodo)tmp3);
+                
+                Nodo tmp4 = new Nodo("CONTENT");
+                tmp4.setValor("null");
+                tmp4.addHijo((Nodo)f);
+                tmp4.setNumNodo(parser.contador++);
+                tmp.addHijo((Nodo)tmp4);
+
+                if(r != null){
+                    tmp.addHijo((Nodo)r);
+                    /*Nodo tmp5 = new Nodo("ELSIF_BLOCK");
+                    tmp5.setNumNodo(parser.contador++);
+                    tmp5.addHijo((Nodo)r);
+                    tmp.addHijo((Nodo)tmp5);*/
+                }
+
+                RESULT=tmp;
+            
               CUP$parser$result = parser.getSymbolFactory().newSymbol("elsif_block",19, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-4)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
           return CUP$parser$result;
@@ -2703,7 +3135,7 @@ RESULT = a;
           case 164: // elsif_block ::= 
             {
               Object RESULT =null;
-
+		 
               CUP$parser$result = parser.getSymbolFactory().newSymbol("elsif_block",19, ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
           return CUP$parser$result;
@@ -2721,7 +3153,26 @@ RESULT = a;
           case 166: // else_block ::= ELSE content 
             {
               Object RESULT =null;
+		int fleft = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).left;
+		int fright = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).right;
+		Object f = (Object)((java_cup.runtime.Symbol) CUP$parser$stack.peek()).value;
+		
+                Nodo tmp = new Nodo("ELSE_BLOCK");
+                tmp.setNumNodo(parser.contador++);
+                
+                Nodo tmp2 = new Nodo("ELSE");
+                tmp2.setValor("null");
+                tmp2.setNumNodo(parser.contador++);
+                tmp.addHijo((Nodo)tmp2);
 
+                Nodo tmp3 = new Nodo("CONTENT");
+                tmp3.setValor("null");
+                tmp3.addHijo((Nodo)f);
+                tmp3.setNumNodo(parser.contador++);
+                tmp.addHijo((Nodo)tmp3);
+
+                RESULT=tmp;
+            
               CUP$parser$result = parser.getSymbolFactory().newSymbol("else_block",20, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
           return CUP$parser$result;
