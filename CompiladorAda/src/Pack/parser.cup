@@ -60,15 +60,16 @@ main_body ::= PROCEDURE ID:id main_parameters IS begin_main_body: beg  {:
         tmp.setNumNodo(parser.contador++);
         
         Nodo tmp2 = new Nodo("PROCEDURE"); 
-        tmp.setNumNodo(parser.contador++);
+        tmp2.setNumNodo(parser.contador++);
         tmp2.setValor("null");
-        
-        Nodo tmp3 = new Nodo("ID"); 
-        tmp.setNumNodo(parser.contador++);
-        tmp3.setValor(id);
-        
         tmp.addHijo((Nodo)tmp2);
+
+        Nodo tmp3 = new Nodo("ID"); 
+        tmp3.setNumNodo(parser.contador++);
+        tmp3.setValor(id);
         tmp.addHijo((Nodo)tmp3);
+       
+        
         tmp.addHijo((Nodo)beg);
         
 	parser.padre = (Nodo) tmp;
@@ -97,7 +98,6 @@ begin_main_body ::= declaration_list BEGIN content END ID PYC //node content
                         Nodo tmp = new Nodo("CONTENT");
                         tmp.setNumNodo(parser.contador++);
                         tmp.addHijo((Nodo)e);
-                        //parser.padre = (Nodo) tmp;
                         System.out.println("OK content");
                         RESULT=tmp;
                     :}
@@ -156,7 +156,6 @@ content ::= assignment content | assignment
             Nodo tmp = new Nodo("WHILE-BLOCK");
             tmp.setNumNodo(parser.contador++);
             tmp.addHijo((Nodo)a);
-            tmp.setNumNodo(parser.contador++);
             tmp.addHijo((Nodo)b);
 
             System.out.println("while + content ");
@@ -181,7 +180,6 @@ content ::= assignment content | assignment
             Nodo tmp2 = new Nodo("PUT");
             tmp2.setNumNodo(parser.contador++);
             tmp2.addHijo((Nodo)a);
-            tmp2.setNumNodo(parser.contador++);
             tmp2.addHijo((Nodo)b);
 
           
@@ -206,7 +204,6 @@ content ::= assignment content | assignment
             Nodo tmp = new Nodo("GET");
             tmp.setNumNodo(parser.contador++);
             tmp.addHijo((Nodo)a);
-            tmp.setNumNodo(parser.contador++);
             tmp.addHijo((Nodo)b);
 
 
@@ -378,9 +375,7 @@ while_block ::= WHILE condition:e  LOOP content: f  salir_ciclo:g  END LOOP PYC 
             Nodo tmp = new Nodo("CONDITION-CONTENT");
             tmp.setNumNodo(parser.contador++);
             tmp.addHijo((Nodo)e);
-            tmp.setNumNodo(parser.contador++);
             tmp.addHijo((Nodo)f);
-            tmp.setNumNodo(parser.contador++);
             tmp.addHijo((Nodo)g);
             System.out.println("ok in while-block ");
             RESULT=tmp;
