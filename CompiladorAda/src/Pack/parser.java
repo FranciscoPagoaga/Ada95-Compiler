@@ -1037,15 +1037,16 @@ class CUP$parser$actions {
         tmp.setNumNodo(parser.contador++);
         
         Nodo tmp2 = new Nodo("PROCEDURE"); 
-        tmp.setNumNodo(parser.contador++);
+        tmp2.setNumNodo(parser.contador++);
         tmp2.setValor("null");
-        
-        Nodo tmp3 = new Nodo("ID"); 
-        tmp.setNumNodo(parser.contador++);
-        tmp3.setValor(id);
-        
         tmp.addHijo((Nodo)tmp2);
+
+        Nodo tmp3 = new Nodo("ID"); 
+        tmp3.setNumNodo(parser.contador++);
+        tmp3.setValor(id);
         tmp.addHijo((Nodo)tmp3);
+       
+        
         tmp.addHijo((Nodo)beg);
         
 	parser.padre = (Nodo) tmp;
@@ -1166,7 +1167,6 @@ class CUP$parser$actions {
                         Nodo tmp = new Nodo("CONTENT");
                         tmp.setNumNodo(parser.contador++);
                         tmp.addHijo((Nodo)e);
-                        //parser.padre = (Nodo) tmp;
                         System.out.println("OK content");
                         RESULT=tmp;
                     
@@ -1477,7 +1477,6 @@ class CUP$parser$actions {
             Nodo tmp = new Nodo("WHILE-BLOCK");
             tmp.setNumNodo(parser.contador++);
             tmp.addHijo((Nodo)a);
-            tmp.setNumNodo(parser.contador++);
             tmp.addHijo((Nodo)b);
 
             System.out.println("while + content ");
@@ -1575,7 +1574,6 @@ class CUP$parser$actions {
             Nodo tmp2 = new Nodo("PUT");
             tmp2.setNumNodo(parser.contador++);
             tmp2.addHijo((Nodo)a);
-            tmp2.setNumNodo(parser.contador++);
             tmp2.addHijo((Nodo)b);
 
           
@@ -1623,7 +1621,6 @@ class CUP$parser$actions {
             Nodo tmp = new Nodo("GET");
             tmp.setNumNodo(parser.contador++);
             tmp.addHijo((Nodo)a);
-            tmp.setNumNodo(parser.contador++);
             tmp.addHijo((Nodo)b);
 
 
@@ -2275,9 +2272,7 @@ RESULT = a;
             Nodo tmp = new Nodo("CONDITION-CONTENT");
             tmp.setNumNodo(parser.contador++);
             tmp.addHijo((Nodo)e);
-            tmp.setNumNodo(parser.contador++);
             tmp.addHijo((Nodo)f);
-            tmp.setNumNodo(parser.contador++);
             tmp.addHijo((Nodo)g);
             System.out.println("ok in while-block ");
             RESULT=tmp;
