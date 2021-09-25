@@ -675,17 +675,7 @@ if_block ::= IF condition:e THEN content:f elsif_block:a else_block:b END IF PYC
                 Nodo tmp = new Nodo("if_block");
 				tmp.setNumNodo(parser.contador++);
 
-                Nodo tmp2 = new Nodo("if");
-                tmp2.setValor("null");
-                tmp2.setNumNodo(parser.contador++);
-                tmp.addHijo((Nodo)tmp2);
-
                 tmp.addHijo((Nodo)e);
-
-                Nodo tmp3 = new Nodo("THEN");
-                tmp3.setValor("null");
-                tmp3.setNumNodo(parser.contador++);
-                tmp.addHijo((Nodo)tmp3);
 
                 Nodo tmp4 = new Nodo("CONTENT");
                 tmp4.setValor("null");
@@ -701,21 +691,6 @@ if_block ::= IF condition:e THEN content:f elsif_block:a else_block:b END IF PYC
                     tmp.addHijo((Nodo)b);
                 }
 
-                Nodo tmp5 = new Nodo("END");
-                tmp5.setValor("null");
-                tmp5.setNumNodo(parser.contador++);
-                tmp.addHijo((Nodo)tmp5);
-
-                Nodo tmp6 = new Nodo("IF");
-                tmp6.setValor("null");
-                tmp6.setNumNodo(parser.contador++);
-                tmp.addHijo((Nodo)tmp6);
-
-                Nodo tmp7 = new Nodo("PYC");
-                tmp7.setValor("null");
-                tmp7.setNumNodo(parser.contador++);
-                tmp.addHijo((Nodo)tmp7);
-
                 RESULT=tmp;
             :}
             | IF condition error content elsif_block else_block END IF PYC
@@ -729,18 +704,8 @@ elsif_block ::= ELSIF condition:e THEN content:f elsif_block:r {:
                 Nodo tmp = new Nodo("ELSIF_BLOCK");
                 tmp.setNumNodo(parser.contador++);
 
-                Nodo tmp2 = new Nodo("ELSIF");
-                tmp2.setValor("null");
-                tmp2.setNumNodo(parser.contador++);
-                tmp.addHijo((Nodo)tmp2);
-
                 tmp.addHijo((Nodo)e);
 
-                Nodo tmp3 = new Nodo("THEN");
-                tmp3.setValor("null");
-                tmp3.setNumNodo(parser.contador++);
-                tmp.addHijo((Nodo)tmp3);
-                
                 Nodo tmp4 = new Nodo("CONTENT");
                 tmp4.setValor("null");
                 tmp4.addHijo((Nodo)f);
@@ -749,10 +714,6 @@ elsif_block ::= ELSIF condition:e THEN content:f elsif_block:r {:
 
                 if(r != null){
                     tmp.addHijo((Nodo)r);
-                    /*Nodo tmp5 = new Nodo("ELSIF_BLOCK");
-                    tmp5.setNumNodo(parser.contador++);
-                    tmp5.addHijo((Nodo)r);
-                    tmp.addHijo((Nodo)tmp5);*/
                 }
 
                 RESULT=tmp;
@@ -766,11 +727,6 @@ elsif_block ::= ELSIF condition:e THEN content:f elsif_block:r {:
 else_block ::= ELSE content:f {:
                 Nodo tmp = new Nodo("ELSE_BLOCK");
                 tmp.setNumNodo(parser.contador++);
-                
-                Nodo tmp2 = new Nodo("ELSE");
-                tmp2.setValor("null");
-                tmp2.setNumNodo(parser.contador++);
-                tmp.addHijo((Nodo)tmp2);
 
                 Nodo tmp3 = new Nodo("CONTENT");
                 tmp3.setValor("null");
