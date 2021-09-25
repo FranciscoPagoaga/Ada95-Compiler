@@ -506,11 +506,6 @@ exit_cycle ::=EXIT WHEN condition:e PYC {:
 for_block ::= FOR ID:id NUM:num1 DOSPUNTOS NUM:num2 LOOP content:a exit_cycle:b END LOOP PYC {: 
 				Nodo tmp = new Nodo("for_block");
     			tmp.setNumNodo(parser.contador++);
-    			
-				Nodo tmp2 = new Nodo("for");
-				tmp2.setValor("null");
-				tmp2.setNumNodo(parser.contador++);
-				tmp.addHijo((Nodo)tmp2);
 
 				Nodo tmp3 = new Nodo("ID");
 				tmp3.setValor(id);
@@ -521,22 +516,12 @@ for_block ::= FOR ID:id NUM:num1 DOSPUNTOS NUM:num2 LOOP content:a exit_cycle:b 
 				tmp4.setValor(num1);
 				tmp4.setNumNodo(parser.contador++);
 				tmp.addHijo((Nodo)tmp4);
-				
-				Nodo tmp5 = new Nodo("DOSPUNTOS");
-				tmp5.setValor("null");
-				tmp5.setNumNodo(parser.contador++);
-				tmp.addHijo((Nodo)tmp5);
 
 				Nodo tmp6 = new Nodo("NUM");
 				tmp6.setValor(num2);
 				tmp6.setNumNodo(parser.contador++);
 				tmp.addHijo((Nodo)tmp6);
 				
-				Nodo tmp7 = new Nodo("LOOP");
-				tmp7.setValor("null");
-				tmp7.setNumNodo(parser.contador++);
-				tmp.addHijo((Nodo)tmp7);
-
 				Nodo tmp11 = new Nodo("CONTENT");
 				tmp11.setValor("null");
 				tmp11.addHijo((Nodo)a);
@@ -546,17 +531,6 @@ for_block ::= FOR ID:id NUM:num1 DOSPUNTOS NUM:num2 LOOP content:a exit_cycle:b 
                 if(b != null){
                     tmp.addHijo((Nodo)b);
                 }
-
-
-				Nodo tmp9 = new Nodo("END");
-				tmp9.setValor("null");
-				tmp9.setNumNodo(parser.contador++);
-				tmp.addHijo((Nodo)tmp9);
-				
-				Nodo tmp10 = new Nodo("LOOP");
-				tmp10.setValor("Null");
-				tmp10.setNumNodo(parser.contador++);
-				tmp.addHijo((Nodo)tmp10);
 
     			System.out.println("for_block");
     			RESULT=tmp;
@@ -574,11 +548,6 @@ for_block ::= FOR ID:id NUM:num1 DOSPUNTOS NUM:num2 LOOP content:a exit_cycle:b 
 				| FOR ID:id ID:id1 DOSPUNTOS NUM:num2 LOOP content:a exit_cycle:b END LOOP PYC {:
 					Nodo tmp = new Nodo("for_block");
 					tmp.setNumNodo(parser.contador++);
-					
-					Nodo tmp2 = new Nodo("for");
-					tmp2.setValor("null");
-					tmp2.setNumNodo(parser.contador++);
-					tmp.addHijo((Nodo)tmp2);
 
 					Nodo tmp3 = new Nodo("ID");
 					tmp3.setValor(id);
@@ -590,21 +559,13 @@ for_block ::= FOR ID:id NUM:num1 DOSPUNTOS NUM:num2 LOOP content:a exit_cycle:b 
 					tmp4.setNumNodo(parser.contador++);
 					tmp.addHijo((Nodo)tmp4);
 					
-					Nodo tmp5 = new Nodo("DOSPUNTOS");
-					tmp5.setValor("null");
-					tmp5.setNumNodo(parser.contador++);
-					tmp.addHijo((Nodo)tmp5);
+
 
 					Nodo tmp6 = new Nodo("NUM");
 					tmp6.setValor(num2);
 					tmp6.setNumNodo(parser.contador++);
 					tmp.addHijo((Nodo)tmp6);
 					
-					Nodo tmp7 = new Nodo("LOOP");
-					tmp7.setValor("null");
-					tmp7.setNumNodo(parser.contador++);
-					tmp.addHijo((Nodo)tmp7);
-
 					Nodo tmp11 = new Nodo("CONTENT");
 					tmp11.setValor("null");
 					tmp11.addHijo((Nodo)a);
@@ -614,16 +575,6 @@ for_block ::= FOR ID:id NUM:num1 DOSPUNTOS NUM:num2 LOOP content:a exit_cycle:b 
                     if(b != null){
                         tmp.addHijo((Nodo)b);
                     }
-
-					Nodo tmp9 = new Nodo("END");
-					tmp9.setValor("null");
-					tmp9.setNumNodo(parser.contador++);
-					tmp.addHijo((Nodo)tmp9);
-					
-					Nodo tmp10 = new Nodo("LOOP");
-					tmp10.setValor("Null");
-					tmp10.setNumNodo(parser.contador++);
-					tmp.addHijo((Nodo)tmp10);
 
 					System.out.println("for_block");
 					RESULT=tmp;
@@ -640,11 +591,6 @@ for_block ::= FOR ID:id NUM:num1 DOSPUNTOS NUM:num2 LOOP content:a exit_cycle:b 
 				| FOR ID:id NUM:num1 DOSPUNTOS ID:id1 LOOP content:a exit_cycle:b END LOOP PYC {: 
 					Nodo tmp = new Nodo("for_block");
 					tmp.setNumNodo(parser.contador++);
-					
-					Nodo tmp2 = new Nodo("for");
-					tmp2.setValor("null");
-					tmp2.setNumNodo(parser.contador++);
-					tmp.addHijo((Nodo)tmp2);
 
 					Nodo tmp3 = new Nodo("ID");
 					tmp3.setValor(id);
@@ -654,23 +600,13 @@ for_block ::= FOR ID:id NUM:num1 DOSPUNTOS NUM:num2 LOOP content:a exit_cycle:b 
 					Nodo tmp4 = new Nodo("NUM");
 					tmp4.setValor(num1);
 					tmp4.setNumNodo(parser.contador++);
-					tmp.addHijo((Nodo)tmp4);
-					
-					Nodo tmp5 = new Nodo("DOSPUNTOS");
-					tmp5.setValor("null");
-					tmp5.setNumNodo(parser.contador++);
-					tmp.addHijo((Nodo)tmp5);
+					tmp.addHijo((Nodo)tmp4);					
 
 					Nodo tmp6 = new Nodo("ID");
 					tmp6.setValor(id1);
 					tmp6.setNumNodo(parser.contador++);
 					tmp.addHijo((Nodo)tmp6);
 					
-					Nodo tmp7 = new Nodo("LOOP");
-					tmp7.setValor("null");
-					tmp7.setNumNodo(parser.contador++);
-					tmp.addHijo((Nodo)tmp7);
-
 					Nodo tmp11 = new Nodo("CONTENT");
 					tmp11.setValor("null");
 					tmp11.addHijo((Nodo)a);
@@ -680,16 +616,6 @@ for_block ::= FOR ID:id NUM:num1 DOSPUNTOS NUM:num2 LOOP content:a exit_cycle:b 
                     if(b != null){
                         tmp.addHijo((Nodo)b);
                     }
-
-					Nodo tmp9 = new Nodo("END");
-					tmp9.setValor("null");
-					tmp9.setNumNodo(parser.contador++);
-					tmp.addHijo((Nodo)tmp9);
-					
-					Nodo tmp10 = new Nodo("LOOP");
-					tmp10.setValor("Null");
-					tmp10.setNumNodo(parser.contador++);
-					tmp.addHijo((Nodo)tmp10);
 
 					System.out.println("for_block");
 					RESULT=tmp;
@@ -706,11 +632,6 @@ for_block ::= FOR ID:id NUM:num1 DOSPUNTOS NUM:num2 LOOP content:a exit_cycle:b 
 				| FOR ID:id ID:id1 DOSPUNTOS ID:id2 LOOP content:a exit_cycle:b END LOOP PYC {: 
 					Nodo tmp = new Nodo("for_block");
 					tmp.setNumNodo(parser.contador++);
-					
-					Nodo tmp2 = new Nodo("for");
-					tmp2.setValor("null");
-					tmp2.setNumNodo(parser.contador++);
-					tmp.addHijo((Nodo)tmp2);
 
 					Nodo tmp3 = new Nodo("ID");
 					tmp3.setValor(id);
@@ -721,21 +642,11 @@ for_block ::= FOR ID:id NUM:num1 DOSPUNTOS NUM:num2 LOOP content:a exit_cycle:b 
 					tmp4.setValor(id1);
 					tmp4.setNumNodo(parser.contador++);
 					tmp.addHijo((Nodo)tmp4);
-					
-					Nodo tmp5 = new Nodo("DOSPUNTOS");
-					tmp5.setValor("null");
-					tmp5.setNumNodo(parser.contador++);
-					tmp.addHijo((Nodo)tmp5);
 
 					Nodo tmp6 = new Nodo("ID");
 					tmp6.setValor(id2);
 					tmp6.setNumNodo(parser.contador++);
 					tmp.addHijo((Nodo)tmp6);
-					
-					Nodo tmp7 = new Nodo("LOOP");
-					tmp7.setValor("null");
-					tmp7.setNumNodo(parser.contador++);
-					tmp.addHijo((Nodo)tmp7);
 
 					Nodo tmp11 = new Nodo("CONTENT");
 					tmp11.setValor("null");
@@ -746,16 +657,6 @@ for_block ::= FOR ID:id NUM:num1 DOSPUNTOS NUM:num2 LOOP content:a exit_cycle:b 
                     if(b != null){
                         tmp.addHijo((Nodo)b);
                     }
-
-					Nodo tmp9 = new Nodo("END");
-					tmp9.setValor("null");
-					tmp9.setNumNodo(parser.contador++);
-					tmp.addHijo((Nodo)tmp9);
-					
-					Nodo tmp10 = new Nodo("LOOP");
-					tmp10.setValor("Null");
-					tmp10.setNumNodo(parser.contador++);
-					tmp.addHijo((Nodo)tmp10);
 
 					System.out.println("for_block");
 					RESULT=tmp;
