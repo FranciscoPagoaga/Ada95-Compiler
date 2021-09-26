@@ -1,7 +1,9 @@
 package Pack;
 
+import java.util.*;
 import java.io.*;
 import java_cup.runtime.*;
+import java_cup.runtime.ComplexSymbolFactory.ComplexSymbol;
 
 parser code
 {:
@@ -35,18 +37,18 @@ terminal String ID;
 terminal STR; 
 
 //no terminales
-non terminal main_body, begin_main_body;
-non terminal content;
-non terminal declaration_list, function_declaration, variable_declaration, procedure_declaration, function_block, procedure_block;
-non terminal main_parameters, parameters, parameters_specification, ident_list, parameter_mode;
-non terminal loop_block, for_block, while_block, exit_cycle, if_block, elsif_block, else_block;
-non terminal calling_subroutine, call_subroutine, parameter_values;
-non terminal condition, rel_operand, boolean_expr;
-non terminal assignment; 
-non terminal put, get;
-non terminal E, T, F;
-non terminal var_type;
-non terminal fin_parseo;
+non terminal Nodo main_body, begin_main_body;
+non terminal List<Nodo> content;
+non terminal Nodo declaration_list, function_declaration, variable_declaration, procedure_declaration, function_block, procedure_block;
+non terminal Nodo main_parameters, parameters, parameters_specification, ident_list, parameter_mode;
+non terminal Nodo loop_block, for_block, while_block, exit_cycle, if_block, elsif_block, else_block;
+non terminal Nodo calling_subroutine, call_subroutine, parameter_values;
+non terminal Nodo condition, rel_operand, boolean_expr;
+non terminal Nodo assignment; 
+non terminal Nodo put, get;
+non terminal Nodo E, T, F;
+non terminal Nodo var_type;
+non terminal Nodo fin_parseo;
 
 precedence left OPREL;
 
@@ -93,11 +95,15 @@ begin_main_body ::= declaration_list BEGIN content END ID PYC //node content
                     | declaration_list BEGIN content error ID PYC
                     | declaration_list BEGIN content END error PYC
                     | declaration_list BEGIN content END ID error
+                    | declaration_list BEGIN error END ID PYC
                     // Caso sin declaraciones
                     | BEGIN content:e END ID PYC {:
                         Nodo tmp = new Nodo("CONTENT");
                         tmp.setNumNodo(parser.contador++);
-                        tmp.addHijo((Nodo)e);
+                        System.out.println(e);
+                        for(int i = e.size()-1; i>=0;i--){
+                            tmp.addHijo(e.get(i));
+                        }
                         System.out.println("OK content");
                         RESULT=tmp;
                     :}
@@ -106,6 +112,7 @@ begin_main_body ::= declaration_list BEGIN content END ID PYC //node content
                     | BEGIN content error ID PYC
                     | BEGIN content END error PYC
                     | BEGIN content END ID error
+                    | BEGIN error END ID PYC
                     ;
 
 												
@@ -151,16 +158,14 @@ function_declaration ::= FUNCTION ID parameters RETURN var_type PYC
 
 
 content ::= assignment content | assignment
-        | while_block:a content: b {:
-           
+        | while_block:a content: b {:           
             Nodo tmp = new Nodo("WHILE-BLOCK");
             tmp.setNumNodo(parser.contador++);
             tmp.addHijo((Nodo)a);
-            tmp.addHijo((Nodo)b);
 
+            b.add(tmp);
             System.out.println("while + content ");
-            RESULT=tmp;
-
+            RESULT=b;
         :}  
 
             
@@ -168,18 +173,19 @@ content ::= assignment content | assignment
             Nodo tmp = new Nodo("WHILE-BLOCK");
             tmp.setNumNodo(parser.contador++);
             tmp.addHijo((Nodo)e);
+            LinkedList list = new LinkedList<Nodo>();
+            list.add(tmp);
             System.out.println("ok while");
-            RESULT=tmp;
+            RESULT=list;
         :}
         | if_block:a content:b {:
-            Nodo tmp2 = new Nodo("IF_BLOCK");
-			tmp2.setNumNodo(parser.contador++);
-			tmp2.addHijo((Nodo)a);
-			tmp2.setNumNodo(parser.contador++);
-			tmp2.addHijo((Nodo)b);
+            Nodo tmp = new Nodo("IF_BLOCK");
+			tmp.setNumNodo(parser.contador++);
+			tmp.addHijo((Nodo)a);
+            b.add(tmp);
 			
 			System.out.println("if + content ");
-			RESULT=tmp2;
+			RESULT=b;
 
         :}
 
@@ -187,57 +193,60 @@ content ::= assignment content | assignment
             Nodo tmp = new Nodo("IF_BLOCK");
 			tmp.setNumNodo(parser.contador++);
 			tmp.addHijo((Nodo)e);
+            LinkedList list = new LinkedList<Nodo>();
+            list.add(tmp);
 			System.out.println("if block");
-			RESULT=tmp;
+			RESULT=list;
         :}
         | for_block:a content:b {:
-			Nodo tmp2 = new Nodo("FOR_BLOCK");
-			tmp2.setNumNodo(parser.contador++);
-			tmp2.addHijo((Nodo)a);
-			tmp2.setNumNodo(parser.contador++);
-			tmp2.addHijo((Nodo)b);
-			
+			Nodo tmp = new Nodo("FOR_BLOCK");
+			tmp.setNumNodo(parser.contador++);
+			tmp.addHijo((Nodo)a);
+			b.add(tmp);
+
 			System.out.println("for + content ");
-			RESULT=tmp2;
+			RESULT=b;
 		:} 
 
 		| for_block: e {:
 			Nodo tmp = new Nodo("FOR_BLOCK");
 			tmp.setNumNodo(parser.contador++);
 			tmp.addHijo((Nodo)e);
+            LinkedList list = new LinkedList<Nodo>();
+            list.add(tmp);
 			System.out.println("for_block");
-			RESULT=tmp;
+			RESULT=list;
 		:}
         
         | loop_block:a content:b {:
-            Nodo tmp2 = new Nodo("LOOP_BLOCK");
-			tmp2.setNumNodo(parser.contador++);
-			tmp2.addHijo((Nodo)a);
-			tmp2.setNumNodo(parser.contador++);
-			tmp2.addHijo((Nodo)b);
+            Nodo tmp = new Nodo("LOOP_BLOCK");
+			tmp.setNumNodo(parser.contador++);
+			tmp.addHijo((Nodo)a);
+			tmp.setNumNodo(parser.contador++);
+            b.add(tmp);
 			
 			System.out.println("loop + content ");
-			RESULT=tmp2;
+			RESULT=b;
         :} 
         
         | loop_block:e {: 
             Nodo tmp = new Nodo("LOOP_BLOCK");
 			tmp.setNumNodo(parser.contador++);
 			tmp.addHijo((Nodo)e);
+            LinkedList list = new LinkedList<Nodo>();
+            list.add(tmp);
 			System.out.println("loop_block");
-			RESULT=tmp;
+			RESULT=list;
         :}
 		
         | put:a content: b {:
-           
-            Nodo tmp2 = new Nodo("PUT");
-            tmp2.setNumNodo(parser.contador++);
-            tmp2.addHijo((Nodo)a);
-            tmp2.addHijo((Nodo)b);
-
+            Nodo tmp = new Nodo("PUT");
+            tmp.setNumNodo(parser.contador++);
+            tmp.addHijo((Nodo)a);
+            b.add(tmp);
           
             System.out.println("put + content ");
-            RESULT=tmp2;
+            RESULT=b;
 
         :} 
 
@@ -246,10 +255,10 @@ content ::= assignment content | assignment
             tmp.setNumNodo(parser.contador++);
             tmp.addHijo((Nodo)e);
             System.out.println("put");
+            LinkedList list = new LinkedList<Nodo>();
+            list.add(tmp);
             
-         
-            
-            RESULT=tmp;
+            RESULT=list;
         :} 
 
         | get:a content:b  {:
@@ -257,12 +266,10 @@ content ::= assignment content | assignment
             Nodo tmp = new Nodo("GET");
             tmp.setNumNodo(parser.contador++);
             tmp.addHijo((Nodo)a);
-            tmp.addHijo((Nodo)b);
-
-
+            b.add(tmp);
 
             System.out.println("get + content ");
-            RESULT=tmp;
+            RESULT=b;
 
         :} 
 
@@ -270,8 +277,10 @@ content ::= assignment content | assignment
             Nodo tmp = new Nodo("GET");
             tmp.setNumNodo(parser.contador++);
             tmp.addHijo((Nodo)e);
+            LinkedList list = new LinkedList<Nodo>();
+            list.add(tmp);
             System.out.println("get");
-            RESULT=tmp;
+            RESULT=list;
         :}  
         | calling_subroutine content | calling_subroutine
         ;
@@ -418,32 +427,23 @@ F::= PARIZQ E:e PARDER {:
 loop_block ::= LOOP content:a exit_cycle:b END LOOP PYC {: 
                     Nodo tmp = new Nodo("loop_block");
                     tmp.setNumNodo(parser.contador++);
-
-                    Nodo tmp2 = new Nodo("LOOP");
-                    tmp2.setValor("null");
-                    tmp2.setNumNodo(parser.contador++);
-                    tmp.addHijo((Nodo)tmp2);
-
+                    
                     Nodo tmp3 = new Nodo("CONTENT");
+                    tmp3.setNumNodo(parser.contador++);
+                    System.out.println(a);
+                    for(int i = a.size()-1; i>=0;i--){
+                        tmp3.addHijo((Nodo)a.get(i));
+                    }
+                    tmp.addHijo(tmp3);
+                    /*Nodo tmp3 = new Nodo("CONTENT");
                     tmp3.setValor("null");
                     tmp3.addHijo((Nodo)a);
                     tmp3.setNumNodo(parser.contador++);
-                    tmp.addHijo((Nodo)tmp3);
+                    tmp.addHijo((Nodo)tmp3);*/
 
                     if(b != null){
                         tmp.addHijo((Nodo)b);
                     }
-
-                    Nodo tmp9 = new Nodo("END");
-                    tmp9.setValor("null");
-                    tmp9.setNumNodo(parser.contador++);
-                    tmp.addHijo((Nodo)tmp9);
-                    
-                    Nodo tmp10 = new Nodo("LOOP");
-                    tmp10.setValor("Null");
-                    tmp10.setNumNodo(parser.contador++);
-                    tmp.addHijo((Nodo)tmp10);
-
                     System.out.println("loop_block");
                     RESULT=tmp;
 			
@@ -459,8 +459,14 @@ loop_block ::= LOOP content:a exit_cycle:b END LOOP PYC {:
 while_block ::= WHILE condition:e  LOOP content: f  exit_cycle:g  END LOOP PYC {:
             Nodo tmp = new Nodo("CONDITION-CONTENT");
             tmp.setNumNodo(parser.contador++);
-            tmp.addHijo((Nodo)e);
-            tmp.addHijo((Nodo)f);
+            //tmp.addHijo((Nodo)e);
+            Nodo tmp2 = new Nodo("CONTENT");
+            tmp2.setNumNodo(parser.contador++);
+            for(int i = f.size()-1; i>=0;i--){
+                tmp2.addHijo(f.get(i));
+            }
+            tmp.addHijo((Nodo)tmp2);
+
             tmp.addHijo((Nodo)g);
             System.out.println("ok in while-block ");
             RESULT=tmp;
@@ -477,22 +483,7 @@ exit_cycle ::=EXIT WHEN condition:e PYC {:
                 Nodo tmp = new Nodo("EXIT_CYCLE");
                 tmp.setNumNodo(parser.contador++);
 
-                Nodo tmp2 = new Nodo("EXIT");
-                tmp2.setValor("null");
-                tmp2.setNumNodo(parser.contador++);
-                tmp.addHijo((Nodo)tmp2);
-
-                Nodo tmp3 = new Nodo("WHEN");
-                tmp3.setValor("null");
-                tmp3.setNumNodo(parser.contador++);
-                tmp.addHijo((Nodo)tmp3);
-
                 tmp.addHijo((Nodo)e);
-                
-                Nodo tmp4 = new Nodo("PYC");
-                tmp4.setValor("null");
-                tmp4.setNumNodo(parser.contador++);
-                tmp.addHijo((Nodo)tmp4);
 
                 RESULT=tmp;
                 :}
@@ -506,11 +497,6 @@ exit_cycle ::=EXIT WHEN condition:e PYC {:
 for_block ::= FOR ID:id NUM:num1 DOSPUNTOS NUM:num2 LOOP content:a exit_cycle:b END LOOP PYC {: 
 				Nodo tmp = new Nodo("for_block");
     			tmp.setNumNodo(parser.contador++);
-    			
-				Nodo tmp2 = new Nodo("for");
-				tmp2.setValor("null");
-				tmp2.setNumNodo(parser.contador++);
-				tmp.addHijo((Nodo)tmp2);
 
 				Nodo tmp3 = new Nodo("ID");
 				tmp3.setValor(id);
@@ -521,42 +507,22 @@ for_block ::= FOR ID:id NUM:num1 DOSPUNTOS NUM:num2 LOOP content:a exit_cycle:b 
 				tmp4.setValor(num1);
 				tmp4.setNumNodo(parser.contador++);
 				tmp.addHijo((Nodo)tmp4);
-				
-				Nodo tmp5 = new Nodo("DOSPUNTOS");
-				tmp5.setValor("null");
-				tmp5.setNumNodo(parser.contador++);
-				tmp.addHijo((Nodo)tmp5);
 
 				Nodo tmp6 = new Nodo("NUM");
 				tmp6.setValor(num2);
 				tmp6.setNumNodo(parser.contador++);
 				tmp.addHijo((Nodo)tmp6);
-				
-				Nodo tmp7 = new Nodo("LOOP");
-				tmp7.setValor("null");
-				tmp7.setNumNodo(parser.contador++);
-				tmp.addHijo((Nodo)tmp7);
 
-				Nodo tmp11 = new Nodo("CONTENT");
-				tmp11.setValor("null");
-				tmp11.addHijo((Nodo)a);
-				tmp11.setNumNodo(parser.contador++);
-				tmp.addHijo((Nodo)tmp11);
+                Nodo tmp2 = new Nodo("CONTENT");
+                tmp2.setNumNodo(parser.contador++);
+                for(int i = a.size()-1; i>=0;i--){
+                    tmp2.addHijo(a.get(i));
+                }
+                tmp.addHijo((Nodo)tmp2);
 
                 if(b != null){
                     tmp.addHijo((Nodo)b);
                 }
-
-
-				Nodo tmp9 = new Nodo("END");
-				tmp9.setValor("null");
-				tmp9.setNumNodo(parser.contador++);
-				tmp.addHijo((Nodo)tmp9);
-				
-				Nodo tmp10 = new Nodo("LOOP");
-				tmp10.setValor("Null");
-				tmp10.setNumNodo(parser.contador++);
-				tmp.addHijo((Nodo)tmp10);
 
     			System.out.println("for_block");
     			RESULT=tmp;
@@ -574,11 +540,6 @@ for_block ::= FOR ID:id NUM:num1 DOSPUNTOS NUM:num2 LOOP content:a exit_cycle:b 
 				| FOR ID:id ID:id1 DOSPUNTOS NUM:num2 LOOP content:a exit_cycle:b END LOOP PYC {:
 					Nodo tmp = new Nodo("for_block");
 					tmp.setNumNodo(parser.contador++);
-					
-					Nodo tmp2 = new Nodo("for");
-					tmp2.setValor("null");
-					tmp2.setNumNodo(parser.contador++);
-					tmp.addHijo((Nodo)tmp2);
 
 					Nodo tmp3 = new Nodo("ID");
 					tmp3.setValor(id);
@@ -590,40 +551,24 @@ for_block ::= FOR ID:id NUM:num1 DOSPUNTOS NUM:num2 LOOP content:a exit_cycle:b 
 					tmp4.setNumNodo(parser.contador++);
 					tmp.addHijo((Nodo)tmp4);
 					
-					Nodo tmp5 = new Nodo("DOSPUNTOS");
-					tmp5.setValor("null");
-					tmp5.setNumNodo(parser.contador++);
-					tmp.addHijo((Nodo)tmp5);
+
 
 					Nodo tmp6 = new Nodo("NUM");
 					tmp6.setValor(num2);
 					tmp6.setNumNodo(parser.contador++);
 					tmp.addHijo((Nodo)tmp6);
 					
-					Nodo tmp7 = new Nodo("LOOP");
-					tmp7.setValor("null");
-					tmp7.setNumNodo(parser.contador++);
-					tmp.addHijo((Nodo)tmp7);
-
-					Nodo tmp11 = new Nodo("CONTENT");
-					tmp11.setValor("null");
-					tmp11.addHijo((Nodo)a);
-					tmp11.setNumNodo(parser.contador++);
-					tmp.addHijo((Nodo)tmp11);
+                    Nodo tmp2 = new Nodo("CONTENT");
+                    tmp2.setNumNodo(parser.contador++);
+                    System.out.println(a);
+                    for(int i = a.size()-1; i>=0;i--){
+                        tmp2.addHijo(a.get(i));
+                    }
+                    tmp.addHijo((Nodo)tmp2);
 
                     if(b != null){
                         tmp.addHijo((Nodo)b);
                     }
-
-					Nodo tmp9 = new Nodo("END");
-					tmp9.setValor("null");
-					tmp9.setNumNodo(parser.contador++);
-					tmp.addHijo((Nodo)tmp9);
-					
-					Nodo tmp10 = new Nodo("LOOP");
-					tmp10.setValor("Null");
-					tmp10.setNumNodo(parser.contador++);
-					tmp.addHijo((Nodo)tmp10);
 
 					System.out.println("for_block");
 					RESULT=tmp;
@@ -640,11 +585,6 @@ for_block ::= FOR ID:id NUM:num1 DOSPUNTOS NUM:num2 LOOP content:a exit_cycle:b 
 				| FOR ID:id NUM:num1 DOSPUNTOS ID:id1 LOOP content:a exit_cycle:b END LOOP PYC {: 
 					Nodo tmp = new Nodo("for_block");
 					tmp.setNumNodo(parser.contador++);
-					
-					Nodo tmp2 = new Nodo("for");
-					tmp2.setValor("null");
-					tmp2.setNumNodo(parser.contador++);
-					tmp.addHijo((Nodo)tmp2);
 
 					Nodo tmp3 = new Nodo("ID");
 					tmp3.setValor(id);
@@ -654,42 +594,24 @@ for_block ::= FOR ID:id NUM:num1 DOSPUNTOS NUM:num2 LOOP content:a exit_cycle:b 
 					Nodo tmp4 = new Nodo("NUM");
 					tmp4.setValor(num1);
 					tmp4.setNumNodo(parser.contador++);
-					tmp.addHijo((Nodo)tmp4);
-					
-					Nodo tmp5 = new Nodo("DOSPUNTOS");
-					tmp5.setValor("null");
-					tmp5.setNumNodo(parser.contador++);
-					tmp.addHijo((Nodo)tmp5);
+					tmp.addHijo((Nodo)tmp4);					
 
 					Nodo tmp6 = new Nodo("ID");
 					tmp6.setValor(id1);
 					tmp6.setNumNodo(parser.contador++);
 					tmp.addHijo((Nodo)tmp6);
 					
-					Nodo tmp7 = new Nodo("LOOP");
-					tmp7.setValor("null");
-					tmp7.setNumNodo(parser.contador++);
-					tmp.addHijo((Nodo)tmp7);
-
-					Nodo tmp11 = new Nodo("CONTENT");
-					tmp11.setValor("null");
-					tmp11.addHijo((Nodo)a);
-					tmp11.setNumNodo(parser.contador++);
-					tmp.addHijo((Nodo)tmp11);
+                    Nodo tmp2 = new Nodo("CONTENT");
+                    tmp2.setNumNodo(parser.contador++);
+                    System.out.println(a);
+                    for(int i = a.size()-1; i>=0;i--){
+                        tmp2.addHijo(a.get(i));
+                    }
+                    tmp.addHijo((Nodo)tmp2);
 
                     if(b != null){
                         tmp.addHijo((Nodo)b);
                     }
-
-					Nodo tmp9 = new Nodo("END");
-					tmp9.setValor("null");
-					tmp9.setNumNodo(parser.contador++);
-					tmp.addHijo((Nodo)tmp9);
-					
-					Nodo tmp10 = new Nodo("LOOP");
-					tmp10.setValor("Null");
-					tmp10.setNumNodo(parser.contador++);
-					tmp.addHijo((Nodo)tmp10);
 
 					System.out.println("for_block");
 					RESULT=tmp;
@@ -706,11 +628,6 @@ for_block ::= FOR ID:id NUM:num1 DOSPUNTOS NUM:num2 LOOP content:a exit_cycle:b 
 				| FOR ID:id ID:id1 DOSPUNTOS ID:id2 LOOP content:a exit_cycle:b END LOOP PYC {: 
 					Nodo tmp = new Nodo("for_block");
 					tmp.setNumNodo(parser.contador++);
-					
-					Nodo tmp2 = new Nodo("for");
-					tmp2.setValor("null");
-					tmp2.setNumNodo(parser.contador++);
-					tmp.addHijo((Nodo)tmp2);
 
 					Nodo tmp3 = new Nodo("ID");
 					tmp3.setValor(id);
@@ -721,41 +638,24 @@ for_block ::= FOR ID:id NUM:num1 DOSPUNTOS NUM:num2 LOOP content:a exit_cycle:b 
 					tmp4.setValor(id1);
 					tmp4.setNumNodo(parser.contador++);
 					tmp.addHijo((Nodo)tmp4);
-					
-					Nodo tmp5 = new Nodo("DOSPUNTOS");
-					tmp5.setValor("null");
-					tmp5.setNumNodo(parser.contador++);
-					tmp.addHijo((Nodo)tmp5);
 
 					Nodo tmp6 = new Nodo("ID");
 					tmp6.setValor(id2);
 					tmp6.setNumNodo(parser.contador++);
 					tmp.addHijo((Nodo)tmp6);
-					
-					Nodo tmp7 = new Nodo("LOOP");
-					tmp7.setValor("null");
-					tmp7.setNumNodo(parser.contador++);
-					tmp.addHijo((Nodo)tmp7);
 
-					Nodo tmp11 = new Nodo("CONTENT");
-					tmp11.setValor("null");
-					tmp11.addHijo((Nodo)a);
-					tmp11.setNumNodo(parser.contador++);
-					tmp.addHijo((Nodo)tmp11);
+                    Nodo tmp2 = new Nodo("CONTENT");
+                    tmp2.setNumNodo(parser.contador++);
+                    System.out.println(a);
+                    for(int i = a.size()-1; i>=0;i--){
+                        tmp2.addHijo(a.get(i));
+                    }
+
+                    tmp.addHijo((Nodo)tmp2);
 
                     if(b != null){
                         tmp.addHijo((Nodo)b);
                     }
-
-					Nodo tmp9 = new Nodo("END");
-					tmp9.setValor("null");
-					tmp9.setNumNodo(parser.contador++);
-					tmp.addHijo((Nodo)tmp9);
-					
-					Nodo tmp10 = new Nodo("LOOP");
-					tmp10.setValor("Null");
-					tmp10.setNumNodo(parser.contador++);
-					tmp.addHijo((Nodo)tmp10);
 
 					System.out.println("for_block");
 					RESULT=tmp;
@@ -774,23 +674,15 @@ if_block ::= IF condition:e THEN content:f elsif_block:a else_block:b END IF PYC
                 Nodo tmp = new Nodo("if_block");
 				tmp.setNumNodo(parser.contador++);
 
-                Nodo tmp2 = new Nodo("if");
-                tmp2.setValor("null");
-                tmp2.setNumNodo(parser.contador++);
-                tmp.addHijo((Nodo)tmp2);
-
                 tmp.addHijo((Nodo)e);
 
-                Nodo tmp3 = new Nodo("THEN");
-                tmp3.setValor("null");
-                tmp3.setNumNodo(parser.contador++);
-                tmp.addHijo((Nodo)tmp3);
+                Nodo tmp2 = new Nodo("CONTENT");
+                tmp2.setNumNodo(parser.contador++);
+                for(int i = f.size()-1; i>=0;i--){
+                    tmp2.addHijo(f.get(i));
+                }
 
-                Nodo tmp4 = new Nodo("CONTENT");
-                tmp4.setValor("null");
-                tmp4.addHijo((Nodo)f);
-                tmp4.setNumNodo(parser.contador++);
-                tmp.addHijo((Nodo)tmp4);
+                tmp.addHijo((Nodo)tmp2);
 
                 if(a != null){
                     tmp.addHijo((Nodo)a);
@@ -799,21 +691,6 @@ if_block ::= IF condition:e THEN content:f elsif_block:a else_block:b END IF PYC
                 if(b != null){
                     tmp.addHijo((Nodo)b);
                 }
-
-                Nodo tmp5 = new Nodo("END");
-                tmp5.setValor("null");
-                tmp5.setNumNodo(parser.contador++);
-                tmp.addHijo((Nodo)tmp5);
-
-                Nodo tmp6 = new Nodo("IF");
-                tmp6.setValor("null");
-                tmp6.setNumNodo(parser.contador++);
-                tmp.addHijo((Nodo)tmp6);
-
-                Nodo tmp7 = new Nodo("PYC");
-                tmp7.setValor("null");
-                tmp7.setNumNodo(parser.contador++);
-                tmp.addHijo((Nodo)tmp7);
 
                 RESULT=tmp;
             :}
@@ -828,30 +705,17 @@ elsif_block ::= ELSIF condition:e THEN content:f elsif_block:r {:
                 Nodo tmp = new Nodo("ELSIF_BLOCK");
                 tmp.setNumNodo(parser.contador++);
 
-                Nodo tmp2 = new Nodo("ELSIF");
-                tmp2.setValor("null");
-                tmp2.setNumNodo(parser.contador++);
-                tmp.addHijo((Nodo)tmp2);
-
                 tmp.addHijo((Nodo)e);
-
-                Nodo tmp3 = new Nodo("THEN");
-                tmp3.setValor("null");
-                tmp3.setNumNodo(parser.contador++);
-                tmp.addHijo((Nodo)tmp3);
                 
-                Nodo tmp4 = new Nodo("CONTENT");
-                tmp4.setValor("null");
-                tmp4.addHijo((Nodo)f);
-                tmp4.setNumNodo(parser.contador++);
-                tmp.addHijo((Nodo)tmp4);
+                Nodo tmp2 = new Nodo("CONTENT");
+                tmp2.setNumNodo(parser.contador++);
+                for(int i = f.size()-1; i>=0;i--){
+                    tmp2.addHijo(f.get(i));
+                }
+                tmp.addHijo((Nodo)tmp2);
 
                 if(r != null){
                     tmp.addHijo((Nodo)r);
-                    /*Nodo tmp5 = new Nodo("ELSIF_BLOCK");
-                    tmp5.setNumNodo(parser.contador++);
-                    tmp5.addHijo((Nodo)r);
-                    tmp.addHijo((Nodo)tmp5);*/
                 }
 
                 RESULT=tmp;
@@ -865,17 +729,13 @@ elsif_block ::= ELSIF condition:e THEN content:f elsif_block:r {:
 else_block ::= ELSE content:f {:
                 Nodo tmp = new Nodo("ELSE_BLOCK");
                 tmp.setNumNodo(parser.contador++);
-                
-                Nodo tmp2 = new Nodo("ELSE");
-                tmp2.setValor("null");
-                tmp2.setNumNodo(parser.contador++);
-                tmp.addHijo((Nodo)tmp2);
 
-                Nodo tmp3 = new Nodo("CONTENT");
-                tmp3.setValor("null");
-                tmp3.addHijo((Nodo)f);
-                tmp3.setNumNodo(parser.contador++);
-                tmp.addHijo((Nodo)tmp3);
+                Nodo tmp2 = new Nodo("CONTENT");
+                tmp2.setNumNodo(parser.contador++);
+                for(int i = f.size()-1; i>=0;i--){
+                    tmp2.addHijo(f.get(i));
+                }
+                tmp.addHijo((Nodo)tmp2);
 
                 RESULT=tmp;
             :}
