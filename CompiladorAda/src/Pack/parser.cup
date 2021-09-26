@@ -60,7 +60,7 @@ start with main_body;
 
 //Gramaticas
 
-main_body ::= PROCEDURE ID:id main_parameters IS begin_main_body: beg  {:
+main_body ::= PROCEDURE ID:id main_parameters IS begin_main_body: beg fin_parseo  {:
 	    Nodo tmp = new Nodo("Inicio");
         tmp.setNumNodo(parser.contador++);
 
@@ -84,11 +84,17 @@ main_body ::= PROCEDURE ID:id main_parameters IS begin_main_body: beg  {:
         | PROCEDURE error main_parameters IS begin_main_body
         | PROCEDURE ID main_parameters error begin_main_body
         // Caso de function_block
-        | FUNCTION  ID main_parameters RETURN var_type IS begin_main_body 
+        | FUNCTION  ID main_parameters RETURN var_type IS begin_main_body fin_parseo
         // Errores
         | FUNCTION error main_parameters IS begin_main_body
         | FUNCTION ID main_parameters error begin_main_body
         ;
+
+       
+    fin_parseo ::= {: System.out.println("Parseo ha finalizado.");
+        MainGui.outputArea.append("Parseo ha finalizado \n"); :};
+
+
 
 begin_main_body ::= declaration_list:a BEGIN content:e END ID PYC{: 
                         LinkedList list = new LinkedList<Nodo>();                        
