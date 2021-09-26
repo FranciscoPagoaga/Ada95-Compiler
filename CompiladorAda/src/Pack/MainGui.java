@@ -11,6 +11,7 @@ import static java.lang.Thread.sleep;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFileChooser;
+import javax.swing.JLabel;
 
 public class MainGui extends javax.swing.JFrame {
 
@@ -342,6 +343,8 @@ public class MainGui extends javax.swing.JFrame {
                 marco.setExtendedState(MAXIMIZED_BOTH); 
                 marco.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
                 marco.setVisible(true);
+                
+                
             }
         }
         else
