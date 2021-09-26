@@ -1,14 +1,24 @@
 digraph G {node[shape=box, style=filled, color=blanchedalmond]; edge[color=chocolate3];rankdir=UD 
 
-"8_Inicio -> null"->"9_PROCEDURE -> null"
-"8_Inicio -> null"->"10_ID -> Hello"
-"8_Inicio -> null"->"7_CONTENT -> null"
-"7_CONTENT -> null"->"6_PUT -> null"
-"6_PUT -> null"->"1_NUM -> 1"
-"7_CONTENT -> null"->"5_PUT -> null"
-"5_PUT -> null"->"2_NUM -> 1"
-"7_CONTENT -> null"->"4_PUT -> null"
-"4_PUT -> null"->"3_NUM -> 1"
+"18_Inicio -> null"->"19_PROCEDURE -> null"
+"18_Inicio -> null"->"20_ID -> Hello"
+"18_Inicio -> null"->"17_CONTENT -> null"
+"17_CONTENT -> null"->"14_ASSIGNMENT -> null"
+"14_ASSIGNMENT -> null"->"15_ID -> asd"
+"14_ASSIGNMENT -> null"->"16_MATHEMATICAL_EXPRESSION -> null"
+"16_MATHEMATICAL_EXPRESSION -> null"->"13_OPSUM -> +"
+"13_OPSUM -> +"->"4_PARENTHESIS -> null"
+"4_PARENTHESIS -> null"->"3_OPMULT -> /"
+"3_OPMULT -> /"->"1_NUM -> 2"
+"3_OPMULT -> /"->"2_NUM -> 3"
+"13_OPSUM -> +"->"12_OPMULT -> *"
+"12_OPMULT -> *"->"5_NUM -> 2"
+"12_OPMULT -> *"->"11_PARENTHESIS -> null"
+"11_PARENTHESIS -> null"->"10_OPSUM -> +"
+"10_OPSUM -> +"->"6_NUM -> 3"
+"10_OPSUM -> +"->"9_OPMULT -> *"
+"9_OPMULT -> *"->"7_NUM -> 5"
+"9_OPMULT -> *"->"8_NUM -> 2"
 
 
 }
