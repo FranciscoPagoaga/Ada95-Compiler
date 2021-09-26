@@ -1,0 +1,7 @@
+procedure hey is
+begin
+while x<2 loop
+put("a");
+exit when x<18;
+end loop;
+end hey;

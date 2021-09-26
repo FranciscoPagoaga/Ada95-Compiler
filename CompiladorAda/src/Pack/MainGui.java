@@ -1,5 +1,7 @@
 package Pack;
 
+import java.awt.Image;
+import java.awt.Toolkit;
 import java.io.FileReader;
 import java.io.BufferedReader;
 import java.io.File;
@@ -11,11 +13,13 @@ import static java.lang.Thread.sleep;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
 
 public class MainGui extends javax.swing.JFrame {
 
 
-    private final String proyectDirectory = "C:\\Users\\pc\\Desktop\\git repositories\\Ada95-Compiler\\CompiladorAda\\Examples";
+    private final String proyectDirectory = "C:\\Users\\pc\\Desktop\\git repositories\\Ada95-Compiler\\CompiladorAda";
     private File archivoAbierto;
 
     /** Creates new form Interfaz */
@@ -335,12 +339,26 @@ public class MainGui extends javax.swing.JFrame {
             if(par.padre != null){
                 graficar(par.padre);
                 System.out.println("Se ha graficado con exito");
+                JframeImagen marco = new JframeImagen();
+                marco.setExtendedState(MAXIMIZED_BOTH); 
+                marco.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+                marco.setVisible(true);
+                
+                
+                
             }
+            
+           
+            
         }
         else
             System.out.println("No se puede graficar!!!");
         
-
+        
+       
+        
+     
+        
     }//GEN-LAST:event_botonGraficarActionPerformed
 
     private void limpiarOutputActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_limpiarOutputActionPerformed
