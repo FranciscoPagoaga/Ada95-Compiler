@@ -335,6 +335,13 @@ public class MainGui extends javax.swing.JFrame {
             if(par.padre != null){
                 graficar(par.padre);
                 System.out.println("Se ha graficado con exito");
+                
+                
+                //crear la imagen
+                JframeImagen marco = new JframeImagen();
+                marco.setExtendedState(MAXIMIZED_BOTH); 
+                marco.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+                marco.setVisible(true);
             }
         }
         else
