@@ -170,30 +170,20 @@ content ::= assignment:a content:b {:
             RESULT=list;
         :}
         | while_block:a content: b {:           
-            Nodo tmp = new Nodo("WHILE-BLOCK");
-            tmp.setNumNodo(parser.contador++);
-            tmp.addHijo((Nodo)a);
-
-            b.add(tmp);
+            b.add(a);
             System.out.println("while + content ");
             RESULT=b;
         :}  
 
             
         | while_block:e {:
-            Nodo tmp = new Nodo("WHILE-BLOCK");
-            tmp.setNumNodo(parser.contador++);
-            tmp.addHijo((Nodo)e);
             LinkedList list = new LinkedList<Nodo>();
-            list.add(tmp);
+            list.add(e);
             System.out.println("ok while");
             RESULT=list;
         :}
         | if_block:a content:b {:
-            Nodo tmp = new Nodo("IF_BLOCK");
-			tmp.setNumNodo(parser.contador++);
-			tmp.addHijo((Nodo)a);
-            b.add(tmp);
+            b.add(a);
 			
 			System.out.println("if + content ");
 			RESULT=b;
@@ -201,51 +191,39 @@ content ::= assignment:a content:b {:
         :}
 
         | if_block: e {: 
-            Nodo tmp = new Nodo("IF_BLOCK");
-			tmp.setNumNodo(parser.contador++);
-			tmp.addHijo((Nodo)e);
             LinkedList list = new LinkedList<Nodo>();
-            list.add(tmp);
+            list.add(e);
 			System.out.println("if block");
 			RESULT=list;
         :}
         | for_block:a content:b {:
-			Nodo tmp = new Nodo("FOR_BLOCK");
-			tmp.setNumNodo(parser.contador++);
-			tmp.addHijo((Nodo)a);
-			b.add(tmp);
+			b.add(a);
 
 			System.out.println("for + content ");
 			RESULT=b;
 		:} 
 
 		| for_block: e {:
-			Nodo tmp = new Nodo("FOR_BLOCK");
-			tmp.setNumNodo(parser.contador++);
-			tmp.addHijo((Nodo)e);
             LinkedList list = new LinkedList<Nodo>();
-            list.add(tmp);
+            list.add(e);
 			System.out.println("for_block");
 			RESULT=list;
 		:}
         
         | loop_block:a content:b {:
-            Nodo tmp = new Nodo("LOOP_BLOCK");
+            /*Nodo tmp = new Nodo("LOOP_BLOCK");
 			tmp.setNumNodo(parser.contador++);
 			tmp.addHijo((Nodo)a);
-			tmp.setNumNodo(parser.contador++);
-            b.add(tmp);
+			tmp.setNumNodo(parser.contador++);*/
+            b.add(a);
 			
 			System.out.println("loop + content ");
 			RESULT=b;
         :} 
         
-        | loop_block:e {: 
-            Nodo tmp = new Nodo("LOOP_BLOCK");
-			tmp.setNumNodo(parser.contador++);
-			tmp.addHijo((Nodo)e);
+        | loop_block:e {:
             LinkedList list = new LinkedList<Nodo>();
-            list.add(tmp);
+            list.add(e);
 			System.out.println("loop_block");
 			RESULT=list;
         :}
@@ -304,7 +282,20 @@ content ::= assignment:a content:b {:
         :}
         ;
 
-procedure_block ::= PROCEDURE ID parameters IS declaration_list BEGIN content END ID PYC
+procedure_block ::= PROCEDURE ID:id parameters IS declaration_list BEGIN content:d END ID PYC{: 
+                    Nodo tmp = new Nodo("PROCEDURE_BLOCK");
+                    tmp.setNumNodo(parser.contador++);
+
+                    Nodo tmp2 = new Nodo("ID");
+                    tmp2.setNumNodo(parser.contador++);
+                    tmp2.setValor(id);
+
+                    tmp.addHijo(tmp2);
+
+                    tmp.addHijo(d);
+
+                    RESULT=tmp;
+                :}
                 // errores
                 | PROCEDURE error parameters IS declaration_list BEGIN content END ID PYC
                 | PROCEDURE ID parameters IS declaration_list error content END ID PYC
@@ -514,7 +505,7 @@ F::= NUM:e {:
 
 //bloque loop
 loop_block ::= LOOP content:a exit_cycle:b END LOOP PYC {: 
-                    Nodo tmp = new Nodo("loop_block");
+                    Nodo tmp = new Nodo("LOOP_BLOCK");
                     tmp.setNumNodo(parser.contador++);
                     
                     Nodo tmp3 = new Nodo("CONTENT");
@@ -540,9 +531,11 @@ loop_block ::= LOOP content:a exit_cycle:b END LOOP PYC {:
 
 // bloque while
 while_block ::= WHILE condition:e  LOOP content: f  exit_cycle:g  END LOOP PYC {:
-            Nodo tmp = new Nodo("CONDITION-CONTENT");
+            Nodo tmp = new Nodo("WHILE_BLOCK");
             tmp.setNumNodo(parser.contador++);
-            //tmp.addHijo((Nodo)e);
+            
+            tmp.addHijo((Nodo)e);
+            
             Nodo tmp2 = new Nodo("CONTENT");
             tmp2.setNumNodo(parser.contador++);
             for(int i = f.size()-1; i>=0;i--){
@@ -550,7 +543,9 @@ while_block ::= WHILE condition:e  LOOP content: f  exit_cycle:g  END LOOP PYC {
             }
             tmp.addHijo((Nodo)tmp2);
 
-            tmp.addHijo((Nodo)g);
+            if(g != null){
+                tmp.addHijo((Nodo)g);
+            }
             System.out.println("ok in while-block ");
             RESULT=tmp;
 
@@ -578,7 +573,7 @@ exit_cycle ::=EXIT WHEN condition:e PYC {:
 
 // Bloque for
 for_block ::= FOR ID:id NUM:num1 DOSPUNTOS NUM:num2 LOOP content:a exit_cycle:b END LOOP PYC {: 
-				Nodo tmp = new Nodo("for_block");
+				Nodo tmp = new Nodo("FOR_BLOCK");
     			tmp.setNumNodo(parser.contador++);
 
 				Nodo tmp3 = new Nodo("ID");
@@ -621,7 +616,7 @@ for_block ::= FOR ID:id NUM:num1 DOSPUNTOS NUM:num2 LOOP content:a exit_cycle:b 
 				| FOR ID NUM DOSPUNTOS NUM LOOP content exit_cycle END LOOP error
 				// Caso ID NUM
 				| FOR ID:id ID:id1 DOSPUNTOS NUM:num2 LOOP content:a exit_cycle:b END LOOP PYC {:
-					Nodo tmp = new Nodo("for_block");
+					Nodo tmp = new Nodo("FOR_BLOCK");
 					tmp.setNumNodo(parser.contador++);
 
 					Nodo tmp3 = new Nodo("ID");
@@ -667,7 +662,7 @@ for_block ::= FOR ID:id NUM:num1 DOSPUNTOS NUM:num2 LOOP content:a exit_cycle:b 
 				| FOR ID ID DOSPUNTOS NUM LOOP error exit_cycle END LOOP PYC
 				// Caso NUM ID
 				| FOR ID:id NUM:num1 DOSPUNTOS ID:id1 LOOP content:a exit_cycle:b END LOOP PYC {: 
-					Nodo tmp = new Nodo("for_block");
+					Nodo tmp = new Nodo("FOR_BLOCK");
 					tmp.setNumNodo(parser.contador++);
 
 					Nodo tmp3 = new Nodo("ID");
@@ -711,7 +706,7 @@ for_block ::= FOR ID:id NUM:num1 DOSPUNTOS NUM:num2 LOOP content:a exit_cycle:b 
 				| FOR ID NUM DOSPUNTOS ID LOOP error exit_cycle END LOOP PYC
 				// Caso ID ID
 				| FOR ID:id ID:id1 DOSPUNTOS ID:id2 LOOP content:a exit_cycle:b END LOOP PYC {: 
-					Nodo tmp = new Nodo("for_block");
+					Nodo tmp = new Nodo("FOR_BLOCK");
 					tmp.setNumNodo(parser.contador++);
 
 					Nodo tmp3 = new Nodo("ID");
@@ -757,7 +752,7 @@ for_block ::= FOR ID:id NUM:num1 DOSPUNTOS NUM:num2 LOOP content:a exit_cycle:b 
 
 // bloque if
 if_block ::= IF condition:e THEN content:f elsif_block:a else_block:b END IF PYC {:
-                Nodo tmp = new Nodo("if_block");
+                Nodo tmp = new Nodo("IF_BLOCK");
 				tmp.setNumNodo(parser.contador++);
 
                 tmp.addHijo((Nodo)e);

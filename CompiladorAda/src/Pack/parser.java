@@ -1537,11 +1537,7 @@ class CUP$parser$actions {
 		int bright = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).right;
 		List<Nodo> b = (List<Nodo>)((java_cup.runtime.Symbol) CUP$parser$stack.peek()).value;
 		           
-            Nodo tmp = new Nodo("WHILE-BLOCK");
-            tmp.setNumNodo(parser.contador++);
-            tmp.addHijo((Nodo)a);
-
-            b.add(tmp);
+            b.add(a);
             System.out.println("while + content ");
             RESULT=b;
         
@@ -1557,11 +1553,8 @@ class CUP$parser$actions {
 		int eright = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).right;
 		Nodo e = (Nodo)((java_cup.runtime.Symbol) CUP$parser$stack.peek()).value;
 		
-            Nodo tmp = new Nodo("WHILE-BLOCK");
-            tmp.setNumNodo(parser.contador++);
-            tmp.addHijo((Nodo)e);
             LinkedList list = new LinkedList<Nodo>();
-            list.add(tmp);
+            list.add(e);
             System.out.println("ok while");
             RESULT=list;
         
@@ -1580,10 +1573,7 @@ class CUP$parser$actions {
 		int bright = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).right;
 		List<Nodo> b = (List<Nodo>)((java_cup.runtime.Symbol) CUP$parser$stack.peek()).value;
 		
-            Nodo tmp = new Nodo("IF_BLOCK");
-			tmp.setNumNodo(parser.contador++);
-			tmp.addHijo((Nodo)a);
-            b.add(tmp);
+            b.add(a);
 			
 			System.out.println("if + content ");
 			RESULT=b;
@@ -1601,11 +1591,8 @@ class CUP$parser$actions {
 		int eright = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).right;
 		Nodo e = (Nodo)((java_cup.runtime.Symbol) CUP$parser$stack.peek()).value;
 		 
-            Nodo tmp = new Nodo("IF_BLOCK");
-			tmp.setNumNodo(parser.contador++);
-			tmp.addHijo((Nodo)e);
             LinkedList list = new LinkedList<Nodo>();
-            list.add(tmp);
+            list.add(e);
 			System.out.println("if block");
 			RESULT=list;
         
@@ -1624,10 +1611,7 @@ class CUP$parser$actions {
 		int bright = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).right;
 		List<Nodo> b = (List<Nodo>)((java_cup.runtime.Symbol) CUP$parser$stack.peek()).value;
 		
-			Nodo tmp = new Nodo("FOR_BLOCK");
-			tmp.setNumNodo(parser.contador++);
-			tmp.addHijo((Nodo)a);
-			b.add(tmp);
+			b.add(a);
 
 			System.out.println("for + content ");
 			RESULT=b;
@@ -1644,11 +1628,8 @@ class CUP$parser$actions {
 		int eright = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).right;
 		Nodo e = (Nodo)((java_cup.runtime.Symbol) CUP$parser$stack.peek()).value;
 		
-			Nodo tmp = new Nodo("FOR_BLOCK");
-			tmp.setNumNodo(parser.contador++);
-			tmp.addHijo((Nodo)e);
             LinkedList list = new LinkedList<Nodo>();
-            list.add(tmp);
+            list.add(e);
 			System.out.println("for_block");
 			RESULT=list;
 		
@@ -1667,11 +1648,11 @@ class CUP$parser$actions {
 		int bright = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).right;
 		List<Nodo> b = (List<Nodo>)((java_cup.runtime.Symbol) CUP$parser$stack.peek()).value;
 		
-            Nodo tmp = new Nodo("LOOP_BLOCK");
+            /*Nodo tmp = new Nodo("LOOP_BLOCK");
 			tmp.setNumNodo(parser.contador++);
 			tmp.addHijo((Nodo)a);
-			tmp.setNumNodo(parser.contador++);
-            b.add(tmp);
+			tmp.setNumNodo(parser.contador++);*/
+            b.add(a);
 			
 			System.out.println("loop + content ");
 			RESULT=b;
@@ -1687,12 +1668,9 @@ class CUP$parser$actions {
 		int eleft = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).left;
 		int eright = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).right;
 		Nodo e = (Nodo)((java_cup.runtime.Symbol) CUP$parser$stack.peek()).value;
-		 
-            Nodo tmp = new Nodo("LOOP_BLOCK");
-			tmp.setNumNodo(parser.contador++);
-			tmp.addHijo((Nodo)e);
+		
             LinkedList list = new LinkedList<Nodo>();
-            list.add(tmp);
+            list.add(e);
 			System.out.println("loop_block");
 			RESULT=list;
         
@@ -2401,9 +2379,6 @@ RESULT = a;
 		int eright = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).right;
 		Nodo e = (Nodo)((java_cup.runtime.Symbol) CUP$parser$stack.peek()).value;
 		 
-        /*Nodo tmp = new Nodo("T");
-        tmp.setNumNodo(parser.contador++);
-        tmp.addHijo((Nodo)e);*/
         System.out.println("OK");
         RESULT=e;    
     
@@ -2444,10 +2419,6 @@ RESULT = a;
 		int eright = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).right;
 		Nodo e = (Nodo)((java_cup.runtime.Symbol) CUP$parser$stack.peek()).value;
 		 
-        /*Nodo tmp = new Nodo("F");
-        tmp.setNumNodo(parser.contador++);
-        tmp.addHijo((Nodo)e);*/
-        //parser.padre = (Nodo) tmp;
         System.out.println("OK");
         RESULT=e;
     
@@ -2465,8 +2436,6 @@ RESULT = a;
 		
         Nodo tmp = new Nodo("NUM");
         tmp.setNumNodo(parser.contador++);
-        //tmp.addHijo((Nodo)e);
-        //parser.padre = (Nodo) tmp;
         tmp.setValor(e);
         System.out.println("OK");
         RESULT=tmp;
@@ -2504,7 +2473,7 @@ RESULT = a;
 		int bright = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-3)).right;
 		Nodo b = (Nodo)((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-3)).value;
 		 
-                    Nodo tmp = new Nodo("loop_block");
+                    Nodo tmp = new Nodo("LOOP_BLOCK");
                     tmp.setNumNodo(parser.contador++);
                     
                     Nodo tmp3 = new Nodo("CONTENT");
@@ -2514,12 +2483,6 @@ RESULT = a;
                         tmp3.addHijo((Nodo)a.get(i));
                     }
                     tmp.addHijo(tmp3);
-                    /*Nodo tmp3 = new Nodo("CONTENT");
-                    tmp3.setValor("null");
-                    tmp3.addHijo((Nodo)a);
-                    tmp3.setNumNodo(parser.contador++);
-                    tmp.addHijo((Nodo)tmp3);*/
-
                     if(b != null){
                         tmp.addHijo((Nodo)b);
                     }
@@ -2563,9 +2526,11 @@ RESULT = a;
 		int gright = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-3)).right;
 		Nodo g = (Nodo)((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-3)).value;
 		
-            Nodo tmp = new Nodo("CONDITION-CONTENT");
+            Nodo tmp = new Nodo("WHILE_BLOCK");
             tmp.setNumNodo(parser.contador++);
-            //tmp.addHijo((Nodo)e);
+            
+            tmp.addHijo((Nodo)e);
+            
             Nodo tmp2 = new Nodo("CONTENT");
             tmp2.setNumNodo(parser.contador++);
             for(int i = f.size()-1; i>=0;i--){
@@ -2573,7 +2538,9 @@ RESULT = a;
             }
             tmp.addHijo((Nodo)tmp2);
 
-            tmp.addHijo((Nodo)g);
+            if(g != null){
+                tmp.addHijo((Nodo)g);
+            }
             System.out.println("ok in while-block ");
             RESULT=tmp;
 
@@ -2684,7 +2651,7 @@ RESULT = a;
 		int bright = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-3)).right;
 		Nodo b = (Nodo)((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-3)).value;
 		 
-				Nodo tmp = new Nodo("for_block");
+				Nodo tmp = new Nodo("FOR_BLOCK");
     			tmp.setNumNodo(parser.contador++);
 
 				Nodo tmp3 = new Nodo("ID");
@@ -2812,7 +2779,7 @@ RESULT = a;
 		int bright = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-3)).right;
 		Nodo b = (Nodo)((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-3)).value;
 		
-					Nodo tmp = new Nodo("for_block");
+					Nodo tmp = new Nodo("FOR_BLOCK");
 					tmp.setNumNodo(parser.contador++);
 
 					Nodo tmp3 = new Nodo("ID");
@@ -2943,7 +2910,7 @@ RESULT = a;
 		int bright = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-3)).right;
 		Nodo b = (Nodo)((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-3)).value;
 		 
-					Nodo tmp = new Nodo("for_block");
+					Nodo tmp = new Nodo("FOR_BLOCK");
 					tmp.setNumNodo(parser.contador++);
 
 					Nodo tmp3 = new Nodo("ID");
@@ -3072,7 +3039,7 @@ RESULT = a;
 		int bright = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-3)).right;
 		Nodo b = (Nodo)((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-3)).value;
 		 
-					Nodo tmp = new Nodo("for_block");
+					Nodo tmp = new Nodo("FOR_BLOCK");
 					tmp.setNumNodo(parser.contador++);
 
 					Nodo tmp3 = new Nodo("ID");
@@ -3190,7 +3157,7 @@ RESULT = a;
 		int bright = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-3)).right;
 		Nodo b = (Nodo)((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-3)).value;
 		
-                Nodo tmp = new Nodo("if_block");
+                Nodo tmp = new Nodo("IF_BLOCK");
 				tmp.setNumNodo(parser.contador++);
 
                 tmp.addHijo((Nodo)e);
