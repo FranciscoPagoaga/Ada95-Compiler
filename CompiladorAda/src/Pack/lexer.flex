@@ -13,6 +13,10 @@ import java_cup.runtime.Symbol;
 %unicode
 %class Lexer
 %int
+%eofval{
+	return new Symbol(sym.EOF,new String("Fin del archivo"));
+%eofval}
+
 
 %state comentarioLine
 
