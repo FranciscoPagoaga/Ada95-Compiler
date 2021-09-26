@@ -37,18 +37,18 @@ terminal String ID;
 terminal STR; 
 
 //no terminales
-non terminal Nodo main_body, begin_main_body;
-non terminal List<Nodo> content;
-non terminal Nodo declaration_list, function_declaration, variable_declaration, procedure_declaration, function_block, procedure_block;
-non terminal Nodo main_parameters, parameters, parameters_specification, ident_list, parameter_mode;
+non terminal Nodo main_body;
+non terminal List<Nodo> declaration_list, ident_list, content, begin_main_body;
+non terminal Nodo function_declaration, procedure_declaration, function_block, procedure_block;
+non terminal Nodo main_parameters, parameters;
 non terminal Nodo loop_block, for_block, while_block, exit_cycle, if_block, elsif_block, else_block;
 non terminal Nodo calling_subroutine, call_subroutine; 
-non terminal List<Nodo> parameter_values;
+non terminal List<Nodo> parameters_specification, parameter_values , variable_declaration;
 non terminal Nodo condition, rel_operand, boolean_expr;
 non terminal Nodo assignment; 
 non terminal Nodo put, get;
 non terminal Nodo E, T, F;
-non terminal Nodo var_type;
+non terminal String var_type,  parameter_mode;
 non terminal Nodo fin_parseo;
 
 precedence left OPREL;
@@ -61,24 +61,22 @@ start with main_body;
 //Gramaticas
 
 main_body ::= PROCEDURE ID:id main_parameters IS begin_main_body: beg  {:
-	Nodo tmp = new Nodo("Inicio");
+	    Nodo tmp = new Nodo("Inicio");
         tmp.setNumNodo(parser.contador++);
-        
-        Nodo tmp2 = new Nodo("PROCEDURE"); 
-        tmp2.setNumNodo(parser.contador++);
-        tmp2.setValor("null");
-        tmp.addHijo((Nodo)tmp2);
 
         Nodo tmp3 = new Nodo("ID"); 
         tmp3.setNumNodo(parser.contador++);
         tmp3.setValor(id);
         tmp.addHijo((Nodo)tmp3);
-       
-        
-        tmp.addHijo((Nodo)beg);
-        
-	parser.padre = (Nodo) tmp;
-	System.out.println("OK begin");
+
+        System.out.println(beg);
+
+        for(int i = beg.size()-1; i>=0;i--){
+            tmp.addHijo(beg.get(i));
+        }
+
+        parser.padre = (Nodo) tmp;
+        System.out.println("OK begin");
         RESULT=tmp;
 :}
         // Errores
@@ -92,7 +90,28 @@ main_body ::= PROCEDURE ID:id main_parameters IS begin_main_body: beg  {:
         | FUNCTION ID main_parameters error begin_main_body
         ;
 
-begin_main_body ::= declaration_list BEGIN content END ID PYC //node content
+begin_main_body ::= declaration_list:a BEGIN content:e END ID PYC{: 
+                        LinkedList list = new LinkedList<Nodo>();                        
+                        
+                        Nodo tmp = new Nodo("DECLARATIONS");
+                        tmp.setNumNodo(parser.contador++);
+                        for(int i = a.size()-1; i>=0;i--){
+                            tmp.addHijo(a.get(i));
+                        }
+
+                        Nodo tmp2 = new Nodo("CONTENT");
+                        tmp2.setNumNodo(parser.contador++);
+                        System.out.println(e);
+                        for(int i = e.size()-1; i>=0;i--){
+                            tmp2.addHijo(e.get(i));
+                        }
+                        
+                        list.add(tmp);
+
+                        list.add(tmp2);
+                    
+                        RESULT=list;
+                    :}
                     // Error
                     | declaration_list error content END ID PYC
                     | declaration_list BEGIN content error ID PYC
@@ -108,7 +127,9 @@ begin_main_body ::= declaration_list BEGIN content END ID PYC //node content
                             tmp.addHijo(e.get(i));
                         }
                         System.out.println("OK content");
-                        RESULT=tmp;
+                        LinkedList list = new LinkedList<Nodo>();
+                        list.add(tmp);
+                        RESULT=list;
                     :}
                     // Error
                     | error content END ID PYC 
@@ -120,39 +141,135 @@ begin_main_body ::= declaration_list BEGIN content END ID PYC //node content
 
 												
 
-declaration_list ::= procedure_declaration declaration_list
-                    | procedure_declaration
-                    | variable_declaration declaration_list
-                    | variable_declaration
-                    | function_declaration declaration_list
-                    | function_declaration
-                    | procedure_block declaration_list
-                    | procedure_block
-                    | function_block declaration_list
-                    | function_block
+declaration_list ::= procedure_declaration:a declaration_list:b {: 
+                        b.add(a);
+                        RESULT=b;                    
+                    :}
+                    | procedure_declaration:e{: 
+                        LinkedList list = new LinkedList<Nodo>();
+                        list.add(e);
+                        RESULT=list;
+                    :}
+                    | variable_declaration:a declaration_list:b{: 
+                        Nodo tmp = new Nodo("VARIABLE_DECLARATION");
+                        tmp.setNumNodo(parser.contador++);
+                        for(int i = a.size()-1; i>=0;i--){
+                            tmp.addHijo(a.get(i));
+                        }
+                        b.add(tmp);
+                        RESULT=b;
+                    :}
+                    | variable_declaration:e {:
+                        Nodo tmp = new Nodo("VARIABLE_DECLARATION");
+                        tmp.setNumNodo(parser.contador++);
+                        for(int i = e.size()-1; i>=0;i--){
+                            tmp.addHijo(e.get(i));
+                        }
+                        LinkedList list = new LinkedList<Nodo>();
+                        list.add(tmp);
+                        RESULT=list;                
+                    :}
+                    | function_declaration:a declaration_list:b{: 
+                        b.add(a);
+                        RESULT=b;
+                    :}
+                    | function_declaration:e{: 
+                        LinkedList list = new LinkedList<Nodo>();
+                        list.add(e);
+                        RESULT=list;                        
+                    :}
+                    | procedure_block:a declaration_list:b{: 
+                        b.add(a);
+                        RESULT=b;
+                    :}
+                    | procedure_block:e{: 
+                        LinkedList list = new LinkedList<Nodo>();
+                        list.add(e);
+                        RESULT=list;                    
+                    :}
+                    | function_block:a declaration_list:b{: 
+                        b.add(a);
+                        RESULT=b;
+                    :}
+                    | function_block:e{: 
+                        LinkedList list = new LinkedList<Nodo>();
+                        System.out.println(e.getNombre());
+                        list.add(e);
+                        RESULT=list;                    
+                    :}
                     ;
 
-var_type ::= INT | BOOLEAN | FLOAT
+var_type ::= INT:a{:RESULT= a; :} | BOOLEAN:b {: RESULT=b; :} | FLOAT:c {: RESULT=c; :}
                 | error
                 ;
 
-procedure_declaration ::= PROCEDURE ID parameters PYC
+procedure_declaration ::= PROCEDURE ID:id parameters:a PYC {: 
+                        Nodo tmp = new Nodo("PROCEDURE_DECLARATION");
+                        tmp.setNumNodo(parser.contador++);
+                        
+                        Nodo tmp2 = new Nodo("ID");
+                        tmp2.setNumNodo(parser.contador++);
+                        tmp2.setValor(id);
+                        tmp.addHijo(tmp2);
+
+                        tmp.addHijo(a);
+                        RESULT = tmp;
+                    
+                    :}
                     // Errores 
                     | PROCEDURE error parameters PYC
                     | PROCEDURE ID parameters error
                     ;
 
-variable_declaration ::= ID COMA variable_declaration
+variable_declaration ::= ID:id COMA variable_declaration:b {: 
+                        Nodo father = new Nodo("ID");
+                        father.setNumNodo(parser.contador++);
+                        father.setValor(id);
+                        
+                        b.add(father);
+                        RESULT = b;
+                        
+                    :}
                     //Errores 
                     | ID error variable_declaration
                     // Caso final
-                    | ID OPDEC var_type PYC
+                    | ID:id OPDEC var_type:x PYC {: 
+                        Nodo tmp = new Nodo("ID"); 
+                        tmp.setNumNodo(parser.contador++);
+                        tmp.setValor(id);
+                        LinkedList list = new LinkedList<Nodo>();
+                        Nodo tmp2 = new Nodo("VAR_TYPE");
+                        tmp2.setNumNodo(parser.contador++);
+                        tmp2.setValor(x);
+                        list.add(tmp2);
+                        list.add(tmp);
+                        System.out.println("ok variable declaration caso final");
+
+                        RESULT = list;
+                    :}
                     //Errores
                     | ID error var_type PYC
                     | ID OPDEC var_type error
                     ;
 
-function_declaration ::= FUNCTION ID parameters RETURN var_type PYC
+function_declaration ::= FUNCTION ID:id parameters:a RETURN var_type:b PYC{: 
+                        Nodo tmp = new Nodo("FUNCTION_DECLARATION");
+                        tmp.setNumNodo(parser.contador++);
+                        
+                        Nodo tmp2 = new Nodo("ID");
+                        tmp2.setNumNodo(parser.contador++);
+                        tmp2.setValor(id);
+                        tmp.addHijo(tmp2);
+
+                        tmp.addHijo(a);
+
+                        Nodo tmp3 = new Nodo("RETURN_TYPE");
+                        tmp3.setNumNodo(parser.contador++);
+                        tmp3.setValor(b);
+                        tmp.addHijo(tmp3);
+
+                        RESULT = tmp;    
+                        :}
                         // Errores 
                         | FUNCTION error parameters RETURN var_type PYC
                         | FUNCTION ID parameters error var_type PYC
@@ -282,7 +399,7 @@ content ::= assignment:a content:b {:
         :}
         ;
 
-procedure_block ::= PROCEDURE ID:id parameters IS declaration_list BEGIN content:d END ID PYC{: 
+procedure_block ::= PROCEDURE ID:id parameters IS declaration_list:d BEGIN content:c END ID PYC{: 
                     Nodo tmp = new Nodo("PROCEDURE_BLOCK");
                     tmp.setNumNodo(parser.contador++);
 
@@ -292,7 +409,19 @@ procedure_block ::= PROCEDURE ID:id parameters IS declaration_list BEGIN content
 
                     tmp.addHijo(tmp2);
 
-                    tmp.addHijo(d);
+                    Nodo tmp4 = new Nodo("DECLARATIONS");
+                    tmp4.setNumNodo(parser.contador++);
+                    for(int i = d.size()-1; i>=0;i--){
+                        tmp4.addHijo(d.get(i));
+                    }
+                    tmp.addHijo(tmp4);
+
+                    Nodo tmp3 = new Nodo("CONTENT");
+                    tmp3.setNumNodo(parser.contador++);
+                    for(int i = c.size()-1; i>=0;i--){
+                        tmp3.addHijo(c.get(i));
+                    }
+                    tmp.addHijo((Nodo)tmp3);                    
 
                     RESULT=tmp;
                 :}
@@ -304,7 +433,41 @@ procedure_block ::= PROCEDURE ID:id parameters IS declaration_list BEGIN content
                 | PROCEDURE ID parameters IS declaration_list BEGIN content END ID error
                 ;
 
-function_block ::= FUNCTION ID parameters RETURN var_type IS declaration_list BEGIN content END ID PYC
+function_block ::= FUNCTION ID:id parameters:b RETURN var_type:a IS declaration_list:d BEGIN content:c END ID PYC{: 
+                    Nodo tmp = new Nodo("FUNCTION_BLOCK");
+                    tmp.setNumNodo(parser.contador++);
+                    tmp.setValor("null");
+
+                    Nodo tmp2 = new Nodo("ID");
+                    tmp2.setNumNodo(parser.contador++);
+                    tmp2.setValor(id);
+                    tmp.addHijo(tmp2);
+
+                    System.out.println("Prueba: "+ b);
+                    tmp.addHijo(b);
+
+                    Nodo tmp3 = new Nodo("RETURN_TYPE");
+                    tmp3.setNumNodo(parser.contador++);
+                    tmp3.setValor(a);
+                    tmp.addHijo(tmp3);
+                    
+                    Nodo tmp4 = new Nodo("DECLARATIONS");
+                    tmp4.setNumNodo(parser.contador++);
+                    for(int i = d.size()-1; i>=0;i--){
+                        tmp4.addHijo(d.get(i));
+                    }
+                    tmp.addHijo(tmp4);
+
+                    Nodo tmp5 = new Nodo("CONTENT");
+                    tmp5.setNumNodo(parser.contador++);
+                    for(int i = c.size()-1; i>=0;i--){
+                        tmp5.addHijo(c.get(i));
+                    }
+                    tmp.addHijo(tmp5);
+
+                    RESULT=tmp;
+                
+                :}
                 // Errores
                 | FUNCTION error parameters RETURN var_type IS declaration_list BEGIN content END ID PYC
                 | FUNCTION ID parameters error var_type IS declaration_list BEGIN content END ID PYC
@@ -314,36 +477,127 @@ function_block ::= FUNCTION ID parameters RETURN var_type IS declaration_list BE
                 | FUNCTION ID parameters RETURN var_type IS declaration_list BEGIN content END ID error
                 ;
 		
-main_parameters ::= PARIZQ parameters_specification:a {:RESULT = a;:} PARDER
+main_parameters ::= PARIZQ parameters_specification:a PARDER {:
+                    Nodo tmp = new Nodo("MAIN_PARAMETERS");
+                    tmp.setNumNodo(parser.contador++);
+
+                    for(int i = a.size()-1; i>=0;i--){
+                        tmp.addHijo(a.get(i));
+                        System.out.println(i+") "+a.get(i).getNombre() );
+                        
+                    }
+
+                    RESULT=tmp;
+
+                :}
                 |
                 //Errores
                 | PARDER parameters_specification error
                 ;
 
-parameters ::= PARIZQ parameters_specification PARDER
+parameters ::= PARIZQ parameters_specification:a PARDER {:  
+                    System.out.println(a);
+                    Nodo tmp = new Nodo("PARAMETERS");
+                    tmp.setNumNodo(parser.contador++);
+
+                    for(int i = a.size()-1; i>=0;i--){
+                        tmp.addHijo(a.get(i));
+                        System.out.println(i+") "+a.get(i).getNombre() );
+                    }
+
+                    RESULT=tmp;
+
+                :}
                 //Errores
                 | error parameters_specification PARDER
                 | PARIZQ parameters_specification error
                 ;
 
-parameters_specification ::= ident_list OPDEC parameter_mode var_type PYC parameters_specification
+parameters_specification ::= ident_list:b OPDEC parameter_mode:c var_type:a PYC parameters_specification:d{: 
+                                Nodo tmp = new Nodo("PARAMETERS_SPECIFICATION");
+                                tmp.setNumNodo(parser.contador++);
+
+                                Nodo tmp2 = new Nodo("ID_LIST");
+                                tmp2.setNumNodo(parser.contador++);
+                                for(int i = b.size()-1; i>=0;i--){
+                                    tmp2.addHijo(b.get(i));
+                                }
+                                tmp.addHijo((Nodo)tmp2);
+
+                                
+                                Nodo tmp3 = new Nodo("PARAMETER_MODE");
+                                tmp3.setNumNodo(parser.contador++);
+                                tmp3.setValor(c);   
+                                tmp.addHijo(tmp3);
+                                
+                                Nodo tmp4 = new Nodo("VARIABLE_TYPE");
+                                tmp4.setNumNodo(parser.contador++);
+                                tmp4.setValor(a);   
+                                tmp.addHijo(tmp4);
+
+                                d.add(tmp);
+
+                                RESULT=d;
+                            :}
                             // Error
                             | ident_list error parameter_mode var_type PYC parameters_specification
                             //Caso final
-                            | ident_list OPDEC parameter_mode var_type 
+                            | ident_list:b OPDEC parameter_mode:c var_type:a {: 
+                                Nodo tmp = new Nodo("PARAMETERS_SPECIFICATION");
+                                tmp.setNumNodo(parser.contador++);
+
+                                Nodo tmp2 = new Nodo("ID_LIST");
+                                tmp2.setNumNodo(parser.contador++);
+                                for(int i = b.size()-1; i>=0;i--){
+                                    tmp2.addHijo(b.get(i));
+                                }
+                                tmp.addHijo((Nodo)tmp2);
+
+                                
+                                Nodo tmp3 = new Nodo("PARAMETER_MODE");
+                                tmp3.setNumNodo(parser.contador++);
+                                tmp3.setValor(c);   
+                                tmp.addHijo(tmp3);
+                                
+                                Nodo tmp4 = new Nodo("VARIABLE_TYPE");
+                                tmp4.setNumNodo(parser.contador++);
+                                tmp4.setValor(a);   
+                                tmp.addHijo(tmp4);
+                                
+                                LinkedList list = new LinkedList<Nodo>();
+                                list.add(tmp);
+
+                                RESULT=list;
+                            :}
                             //Error
                             | ident_list error parameter_mode var_type
 											;
 												
-ident_list ::= ID COMA ident_list
-            | ID
+ident_list ::= ID:id COMA ident_list:b{: 
+                Nodo tmp = new Nodo("ID");
+                tmp.setNumNodo(parser.contador++);
+                tmp.setValor(id);   
+
+                b.add(tmp); 
+                RESULT=b;
+            :}
+            | ID: id{: 
+                Nodo tmp = new Nodo("ID");
+                tmp.setNumNodo(parser.contador++);
+                tmp.setValor(id);   
+
+                LinkedList list = new LinkedList<Nodo>();
+                list.add(tmp);
+                
+                RESULT = list;
+            :}
             //Errores
             | error
             | error COMA ident_list
             ;
 				
-parameter_mode ::= IN | OUT | IN OUT
-                |
+parameter_mode ::= IN:a {: RESULT="In"; :} | OUT:a{: RESULT="Out"; :} | IN OUT{: RESULT="In Out"; :}
+                |{: RESULT="null"; :}
                 ;
 
 
