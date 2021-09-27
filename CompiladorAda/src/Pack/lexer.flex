@@ -22,7 +22,7 @@ import java_cup.runtime.Symbol;
 
 //temp
 inicioComentarioLine = "--"
-finalComentarioLine = "\r\n"
+finalComentarioLine = "\n"
 
 //set basico
 letra = [a-zA-Z]
