@@ -44,7 +44,7 @@ non terminal Nodo main_parameters, return_statement;
 non terminal Nodo loop_block, for_block, while_block, exit_cycle, if_block, elsif_block, else_block;
 non terminal Nodo calling_subroutine, call_subroutine; 
 non terminal List<Nodo> parameters_specification, parameter_values , variable_declaration;
-non terminal Nodo condition, rel_operand, boolean_expr;
+non terminal Nodo condition, boolean_expr;
 non terminal Nodo assignment; 
 non terminal Nodo put, get;
 non terminal Nodo E, T, F;
@@ -54,6 +54,8 @@ non terminal Nodo fin_parseo;
 precedence left OPREL;
 precedence left OPSUM;
 precedence left OPMULT;
+precedence left AND;
+precedence left OR;
 
 
 start with main_body;
@@ -87,6 +89,8 @@ main_body ::= PROCEDURE ID:id main_parameters:b IS begin_main_body: beg fin_pars
         | error ID main_parameters IS begin_main_body
         | PROCEDURE error main_parameters IS begin_main_body
         | PROCEDURE ID main_parameters error begin_main_body
+        | PROCEDURE ID main_parameters IS error
+        |error        
         // Caso de function_block
         | FUNCTION  ID:id main_parameters:b RETURN var_type:a IS begin_main_body: beg fin_parseo{: 
             Nodo tmp = new Nodo("Inicio");
@@ -118,6 +122,7 @@ main_body ::= PROCEDURE ID:id main_parameters:b IS begin_main_body: beg fin_pars
         // Errores
         | FUNCTION error main_parameters IS begin_main_body
         | FUNCTION ID main_parameters error begin_main_body
+        | FUNCTION ID main_parameters IS error
         ;
 
        
@@ -154,6 +159,7 @@ begin_main_body ::= declaration_list:a BEGIN content:e END ID PYC{:
                     | declaration_list BEGIN content END error PYC
                     | declaration_list BEGIN content END ID error
                     | declaration_list BEGIN error END ID PYC
+                    | error BEGIN content END ID PYC
                     // Caso sin declaraciones
                     | BEGIN content:e END ID PYC {:
                         Nodo tmp = new Nodo("CONTENT");
@@ -444,9 +450,18 @@ content ::= assignment:a content:b {:
             list.add(e);
             RESULT=list;
         :}
+        | exit_cycle:a content:b {: 
+            b.add(a);
+            RESULT=b;
+        :}
+        | exit_cycle: e {: 
+            LinkedList list = new LinkedList<Nodo>();
+            list.add(e);
+            RESULT=list;
+        :}
         ;
 
-procedure_block ::= PROCEDURE ID:id main_parameters IS declaration_list:d BEGIN content:c END ID PYC{: 
+procedure_block ::= PROCEDURE ID:id main_parameters:b IS declaration_list:d BEGIN content:c END ID PYC{: 
                     Nodo tmp = new Nodo("PROCEDURE_BLOCK");
                     tmp.setNumNodo(parser.contador++);
 
@@ -455,6 +470,9 @@ procedure_block ::= PROCEDURE ID:id main_parameters IS declaration_list:d BEGIN 
                     tmp2.setValor(id);
 
                     tmp.addHijo(tmp2);
+                    if(b != null){
+                        tmp.addHijo(b);
+                    }
 
                     Nodo tmp4 = new Nodo("DECLARATIONS");
                     tmp4.setNumNodo(parser.contador++);
@@ -479,7 +497,8 @@ procedure_block ::= PROCEDURE ID:id main_parameters IS declaration_list:d BEGIN 
                 | PROCEDURE ID main_parameters IS declaration_list BEGIN content END error PYC
                 | PROCEDURE ID main_parameters IS declaration_list BEGIN content END ID error
                 | PROCEDURE ID main_parameters IS declaration_list BEGIN error END ID PYC
-                | PROCEDURE ID:id main_parameters IS BEGIN content:c END ID PYC {: 
+                | PROCEDURE ID main_parameters IS error BEGIN content END ID PYC
+                | PROCEDURE ID:id main_parameters:b IS BEGIN content:c END ID PYC {: 
                     Nodo tmp = new Nodo("PROCEDURE_BLOCK");
                     tmp.setNumNodo(parser.contador++);
 
@@ -488,6 +507,10 @@ procedure_block ::= PROCEDURE ID:id main_parameters IS declaration_list:d BEGIN 
                     tmp2.setValor(id);
 
                     tmp.addHijo(tmp2);
+
+                    if(b != null){
+                        tmp.addHijo(b);
+                    }
 
                     Nodo tmp3 = new Nodo("CONTENT");
                     tmp3.setNumNodo(parser.contador++);
@@ -517,8 +540,9 @@ function_block ::= FUNCTION ID:id main_parameters:b RETURN var_type:a IS declara
                     tmp2.setValor(id);
                     tmp.addHijo(tmp2);
 
-                    System.out.println("Prueba: "+ b);
-                    tmp.addHijo(b);
+                    if(b != null){
+                        tmp.addHijo(b);
+                    }
 
                     Nodo tmp3 = new Nodo("RETURN_TYPE");
                     tmp3.setNumNodo(parser.contador++);
@@ -561,8 +585,9 @@ function_block ::= FUNCTION ID:id main_parameters:b RETURN var_type:a IS declara
                     tmp2.setValor(id);
                     tmp.addHijo(tmp2);
 
-                    System.out.println("Prueba: "+ b);
-                    tmp.addHijo(b);
+                    if(b != null){
+                        tmp.addHijo(b);
+                    }
 
                     Nodo tmp3 = new Nodo("RETURN_TYPE");
                     tmp3.setNumNodo(parser.contador++);
@@ -599,6 +624,9 @@ return_statement ::= RETURN TRUE PYC {:
                         tmp.addHijo(tmp2);
                         RESULT = tmp;
                     :}
+                    //Error
+                    | RETURN TRUE error
+                    //Return False
                     | RETURN FALSE PYC{: 
                         Nodo tmp = new Nodo("RETURN_STATEMENT");
                         tmp.setNumNodo(parser.contador++);
@@ -610,26 +638,21 @@ return_statement ::= RETURN TRUE PYC {:
                         tmp.addHijo(tmp2);
                         RESULT = tmp;
                     :}
-                    | RETURN ID:id PYC{: 
+                    // Error
+                    | RETURN FALSE error
+                    // Return operaciones
+                    | RETURN E:e PYC{: 
                         Nodo tmp = new Nodo("RETURN_STATEMENT");
                         tmp.setNumNodo(parser.contador++);
 
-                        Nodo tmp2 = new Nodo("ID");
-                        tmp2.setNumNodo(parser.contador++);
-                        tmp2.setValor(id);
-
-                        tmp.addHijo(tmp2);
+                        tmp.addHijo(e);
 
                         RESULT = tmp;
                     :}
-                    | RETURN call_subroutine:e PYC {: 
-                        Nodo tmp = new Nodo("RETURN_STATEMENT");
-                        tmp.setNumNodo(parser.contador++);
-
-
-                        tmp.addHijo(e);
-                        RESULT = tmp;
-                    :};
+                    //Error
+                    | RETURN E error
+                    | RETURN error PYC
+                    ;
 
 main_parameters ::= PARIZQ parameters_specification:a PARDER {:
                     Nodo tmp = new Nodo("MAIN_PARAMETERS");
@@ -641,11 +664,11 @@ main_parameters ::= PARIZQ parameters_specification:a PARDER {:
                     }
 
                     RESULT=tmp;
-
                 :}
                 |
                 //Errores
-                | PARDER parameters_specification error
+                | PARIZQ parameters_specification error
+                | PARIZQ error PARDER
                 ;
 
 parameters_specification ::= ident_list:b OPDEC parameter_mode:c var_type:a PYC parameters_specification:d{: 
@@ -845,7 +868,10 @@ E::= E:a OPSUM:c T: b{:
     | T:e {: 
         System.out.println("OK");
         RESULT=e;    
-    :};
+    :}
+    | E OPSUM error
+    | error OPSUM T
+    ;
 
 T::= T:a OPMULT:c F : b{:
         Nodo tmp = new Nodo("OPMULT");
@@ -858,7 +884,10 @@ T::= T:a OPMULT:c F : b{:
     | F:e{: 
         System.out.println("OK");
         RESULT=e;
-    :};
+    :}
+    | T OPMULT error
+    | error OPMULT F
+    ;
 
 F::= NUM:e {:
         Nodo tmp = new Nodo("NUM");
@@ -886,7 +915,7 @@ F::= NUM:e {:
     :}; 
 
 //bloque loop
-loop_block ::= LOOP content:a exit_cycle:b END LOOP PYC {: 
+loop_block ::= LOOP content:a END LOOP PYC {: 
                     Nodo tmp = new Nodo("LOOP_BLOCK");
                     tmp.setNumNodo(parser.contador++);
                     
@@ -897,23 +926,22 @@ loop_block ::= LOOP content:a exit_cycle:b END LOOP PYC {:
                         tmp3.addHijo((Nodo)a.get(i));
                     }
                     tmp.addHijo(tmp3);
-                    if(b != null){
-                        tmp.addHijo((Nodo)b);
-                    }
+                    
                     System.out.println("loop_block");
                     RESULT=tmp;
 			
                 :}
 				//Errores
-				| LOOP content exit_cycle error LOOP PYC
-				| LOOP content exit_cycle END LOOP error
-				| LOOP error exit_cycle END LOOP PYC
+				| LOOP content error LOOP PYC
+				| LOOP content END LOOP error
+				| LOOP error END LOOP PYC
+				| LOOP content END error PYC
 				;
 
 
 
 // bloque while
-while_block ::= WHILE condition:e  LOOP content: f  exit_cycle:g  END LOOP PYC {:
+while_block ::= WHILE condition:e  LOOP content: f    END LOOP PYC {:
             Nodo tmp = new Nodo("WHILE_BLOCK");
             tmp.setNumNodo(parser.contador++);
             
@@ -926,19 +954,17 @@ while_block ::= WHILE condition:e  LOOP content: f  exit_cycle:g  END LOOP PYC {
             }
             tmp.addHijo((Nodo)tmp2);
 
-            if(g != null){
-                tmp.addHijo((Nodo)g);
-            }
+            
             System.out.println("ok in while-block ");
             RESULT=tmp;
 
         :}
                 //Error
-                | WHILE condition error content exit_cycle END LOOP PYC
-                | WHILE condition LOOP content exit_cycle error LOOP PYC
-                | WHILE condition LOOP content exit_cycle END error PYC
-                | WHILE condition LOOP content exit_cycle END LOOP error
-                | WHILE condition LOOP error exit_cycle END LOOP error
+                | WHILE condition error content END LOOP PYC
+                | WHILE condition LOOP error END LOOP PYC
+                | WHILE condition LOOP content error LOOP PYC
+                | WHILE condition LOOP content END error PYC
+                | WHILE condition LOOP content END LOOP error
                 ;
 
 exit_cycle ::=EXIT WHEN condition:e PYC {:
@@ -949,14 +975,13 @@ exit_cycle ::=EXIT WHEN condition:e PYC {:
 
                 RESULT=tmp;
                 :}
-                | {: :}
                 //Errores
                 | EXIT error condition PYC
                 | EXIT WHEN condition error
 				;
 
 // Bloque for
-for_block ::= FOR ID:id NUM:num1 DOSPUNTOS NUM:num2 LOOP content:a exit_cycle:b END LOOP PYC {: 
+for_block ::= FOR ID:id IN NUM:num1 DOSPUNTOS NUM:num2 LOOP content:a END LOOP PYC {: 
 				Nodo tmp = new Nodo("FOR_BLOCK");
     			tmp.setNumNodo(parser.contador++);
 
@@ -982,25 +1007,22 @@ for_block ::= FOR ID:id NUM:num1 DOSPUNTOS NUM:num2 LOOP content:a exit_cycle:b 
                 }
                 tmp.addHijo((Nodo)tmp2);
 
-                if(b != null){
-                    tmp.addHijo((Nodo)b);
-                }
-
     			System.out.println("for_block");
     			RESULT=tmp;
 			:}
 				//Errores
-				| FOR error NUM DOSPUNTOS NUM LOOP content exit_cycle END LOOP PYC
-				| FOR ID error DOSPUNTOS NUM LOOP content exit_cycle END LOOP PYC
-				| FOR ID NUM error NUM LOOP content exit_cycle END LOOP PYC
-				| FOR ID NUM DOSPUNTOS error LOOP content exit_cycle END LOOP PYC
-				| FOR ID NUM DOSPUNTOS NUM error content exit_cycle END LOOP PYC
-				| FOR ID NUM DOSPUNTOS NUM LOOP content exit_cycle error LOOP PYC
-				| FOR ID NUM DOSPUNTOS NUM LOOP content exit_cycle END error PYC
-				| FOR ID NUM DOSPUNTOS NUM LOOP content exit_cycle END LOOP error
-				| FOR ID NUM DOSPUNTOS NUM LOOP error exit_cycle END LOOP PYC
+				| FOR error IN NUM DOSPUNTOS NUM LOOP content END LOOP PYC
+				| FOR ID error NUM DOSPUNTOS NUM LOOP content END LOOP PYC
+				| FOR ID IN error DOSPUNTOS NUM LOOP content END LOOP PYC
+				| FOR ID IN NUM error NUM LOOP content END LOOP PYC
+				| FOR ID IN NUM DOSPUNTOS error LOOP content END LOOP PYC
+				| FOR ID IN NUM DOSPUNTOS NUM error content END LOOP PYC
+				| FOR ID IN NUM DOSPUNTOS NUM LOOP content error LOOP PYC
+				| FOR ID IN NUM DOSPUNTOS NUM LOOP content END error PYC
+				| FOR ID IN NUM DOSPUNTOS NUM LOOP content END LOOP error
+				| FOR ID IN NUM DOSPUNTOS NUM LOOP error END LOOP PYC
 				// Caso ID NUM
-				| FOR ID:id ID:id1 DOSPUNTOS NUM:num2 LOOP content:a exit_cycle:b END LOOP PYC {:
+				| FOR ID:id IN ID:id1 DOSPUNTOS NUM:num2 LOOP content:a END LOOP PYC {:
 					Nodo tmp = new Nodo("FOR_BLOCK");
 					tmp.setNumNodo(parser.contador++);
 
@@ -1029,24 +1051,21 @@ for_block ::= FOR ID:id NUM:num1 DOSPUNTOS NUM:num2 LOOP content:a exit_cycle:b 
                     }
                     tmp.addHijo((Nodo)tmp2);
 
-                    if(b != null){
-                        tmp.addHijo((Nodo)b);
-                    }
-
 					System.out.println("for_block");
 					RESULT=tmp;
 				:}
 				// Errores
-				| FOR error ID DOSPUNTOS NUM LOOP content exit_cycle END LOOP PYC
-				| FOR ID ID error NUM LOOP content exit_cycle END LOOP PYC
-				| FOR ID ID DOSPUNTOS error LOOP content exit_cycle END LOOP PYC
-				| FOR ID ID DOSPUNTOS NUM error content exit_cycle END LOOP PYC
-				| FOR ID ID DOSPUNTOS NUM LOOP content exit_cycle error LOOP PYC
-				| FOR ID ID DOSPUNTOS NUM LOOP content exit_cycle END error PYC
-				| FOR ID ID DOSPUNTOS NUM LOOP content exit_cycle END LOOP error
-				| FOR ID ID DOSPUNTOS NUM LOOP error exit_cycle END LOOP PYC
+				| FOR error IN ID DOSPUNTOS NUM LOOP content END LOOP PYC
+				| FOR ID error ID DOSPUNTOS NUM LOOP content END LOOP PYC
+				| FOR ID IN ID error NUM LOOP content END LOOP PYC
+				| FOR ID IN ID DOSPUNTOS error LOOP content END LOOP PYC
+				| FOR ID IN ID DOSPUNTOS NUM error content END LOOP PYC
+				| FOR ID IN ID DOSPUNTOS NUM LOOP error END LOOP PYC
+				| FOR ID IN ID DOSPUNTOS NUM LOOP content error LOOP PYC
+				| FOR ID IN ID DOSPUNTOS NUM LOOP content END error PYC
+				| FOR ID IN ID DOSPUNTOS NUM LOOP content END LOOP error
 				// Caso NUM ID
-				| FOR ID:id NUM:num1 DOSPUNTOS ID:id1 LOOP content:a exit_cycle:b END LOOP PYC {: 
+				| FOR ID:id IN NUM:num1 DOSPUNTOS ID:id1 LOOP content:a END LOOP PYC {: 
 					Nodo tmp = new Nodo("FOR_BLOCK");
 					tmp.setNumNodo(parser.contador++);
 
@@ -1073,24 +1092,21 @@ for_block ::= FOR ID:id NUM:num1 DOSPUNTOS NUM:num2 LOOP content:a exit_cycle:b 
                     }
                     tmp.addHijo((Nodo)tmp2);
 
-                    if(b != null){
-                        tmp.addHijo((Nodo)b);
-                    }
-
 					System.out.println("for_block");
 					RESULT=tmp;
 				:}
 				// Error
-				| FOR error NUM DOSPUNTOS ID LOOP content exit_cycle END LOOP PYC
-				| FOR ID error DOSPUNTOS ID LOOP content exit_cycle END LOOP PYC
-				| FOR ID NUM error ID LOOP content exit_cycle END LOOP PYC
-				| FOR ID NUM DOSPUNTOS ID error content exit_cycle END LOOP PYC
-				| FOR ID NUM DOSPUNTOS ID LOOP content exit_cycle error LOOP PYC
-				| FOR ID NUM DOSPUNTOS ID LOOP content exit_cycle END error PYC
-				| FOR ID NUM DOSPUNTOS ID LOOP content exit_cycle END LOOP error
-				| FOR ID NUM DOSPUNTOS ID LOOP error exit_cycle END LOOP PYC
+				| FOR error IN NUM DOSPUNTOS ID LOOP content END LOOP PYC
+				| FOR ID error NUM DOSPUNTOS ID LOOP content END LOOP PYC
+				| FOR ID IN error DOSPUNTOS ID LOOP content END LOOP PYC
+				| FOR ID IN NUM error ID LOOP content END LOOP PYC
+				| FOR ID IN NUM DOSPUNTOS ID error content END LOOP PYC
+				| FOR ID IN NUM DOSPUNTOS ID LOOP content error LOOP PYC
+				| FOR ID IN NUM DOSPUNTOS ID LOOP content END error PYC
+				| FOR ID IN NUM DOSPUNTOS ID LOOP content END LOOP error
+				| FOR ID IN NUM DOSPUNTOS ID LOOP error END LOOP PYC
 				// Caso ID ID
-				| FOR ID:id ID:id1 DOSPUNTOS ID:id2 LOOP content:a exit_cycle:b END LOOP PYC {: 
+				| FOR ID:id IN ID:id1 DOSPUNTOS ID:id2 LOOP content:a END LOOP PYC {: 
 					Nodo tmp = new Nodo("FOR_BLOCK");
 					tmp.setNumNodo(parser.contador++);
 
@@ -1118,21 +1134,18 @@ for_block ::= FOR ID:id NUM:num1 DOSPUNTOS NUM:num2 LOOP content:a exit_cycle:b 
 
                     tmp.addHijo((Nodo)tmp2);
 
-                    if(b != null){
-                        tmp.addHijo((Nodo)b);
-                    }
-
 					System.out.println("for_block");
 					RESULT=tmp;
 				:}
 				//Error
-				| FOR error ID DOSPUNTOS ID LOOP content exit_cycle END LOOP PYC
-				| FOR ID ID error ID LOOP content exit_cycle END LOOP PYC
-				| FOR ID ID DOSPUNTOS ID error content exit_cycle END LOOP PYC
-				| FOR ID ID DOSPUNTOS ID LOOP content exit_cycle error LOOP PYC
-				| FOR ID ID DOSPUNTOS ID LOOP content exit_cycle END error PYC
-				| FOR ID ID DOSPUNTOS ID LOOP content exit_cycle END LOOP error
-				| FOR ID ID DOSPUNTOS ID LOOP error exit_cycle END LOOP PYC
+				| FOR error IN ID DOSPUNTOS ID LOOP content END LOOP PYC
+				| FOR ID error ID DOSPUNTOS ID LOOP content END LOOP PYC
+				| FOR ID IN ID error ID LOOP content END LOOP PYC
+				| FOR ID IN ID DOSPUNTOS ID error content END LOOP PYC
+				| FOR ID IN ID DOSPUNTOS ID LOOP content error LOOP PYC
+				| FOR ID IN ID DOSPUNTOS ID LOOP content END error PYC
+				| FOR ID IN ID DOSPUNTOS ID LOOP content END LOOP error
+				| FOR ID IN ID DOSPUNTOS ID LOOP error END LOOP PYC
 				;
 
 // bloque if
@@ -1164,6 +1177,7 @@ if_block ::= IF condition:e THEN content:f elsif_block:a else_block:b END IF PYC
             | IF condition THEN content elsif_block else_block error IF PYC
             | IF condition THEN content elsif_block else_block END error PYC
             | IF condition THEN content elsif_block else_block END IF error
+            | IF condition THEN error elsif_block else_block END IF PYC
             ;
 
 //Bloque elsif
@@ -1189,6 +1203,7 @@ elsif_block ::= ELSIF condition:e THEN content:f elsif_block:r {:
             | {: :}
             // errores
             | ELSIF condition error content elsif_block
+            | ELSIF condition THEN error elsif_block
             ;
 	
 //bloque else
@@ -1206,6 +1221,7 @@ else_block ::= ELSE content:f {:
                 RESULT=tmp;
             :}
             |
+            | ELSE error
             ;
 
 condition ::= boolean_expr: boolExp OR condition:a {:
@@ -1251,34 +1267,19 @@ condition ::= boolean_expr: boolExp OR condition:a {:
             :}
             //errores
             | error
+            | error AND condition
+            | error OR condition
             ;
 
-boolean_expr ::= rel_operand:a OPREL:oprel_val rel_operand:b {:
+boolean_expr ::= E:a OPREL:oprel_val E:b {:
     Nodo tmp = new Nodo("OPREL");
     tmp.setNumNodo(parser.contador++);
     tmp.addHijo((Nodo)a);
     tmp.addHijo((Nodo)b);
     tmp.setValor(oprel_val.toString());
     RESULT=tmp;
-   :};
-
-rel_operand ::= ID: id{:
-        Nodo tmp = new Nodo("ID");
-        tmp.setNumNodo(parser.contador++);
-        tmp.setValor(id);
-        System.out.println("id rel operando");
-        RESULT=tmp;
-    :} 
-    |NUM:num {:
-        Nodo tmp = new Nodo("NUM");
-        tmp.setNumNodo(parser.contador++);
-        tmp.setValor(num);
-        System.out.println("num rel operando");
-        RESULT=tmp;
-    :} 
-    | call_subroutine
-    | error
-                ;
+   :}
+   ;
 
 put ::= PUT PARIZQ NUM:num PARDER PYC {:
     Nodo tmp = new Nodo("NUM");
@@ -1329,9 +1330,6 @@ get ::= GET PARIZQ ID :id PARDER PYC {:
     | GET PARIZQ error PARDER PYC
     | GET PARIZQ ID error PYC
     | GET PARIZQ ID PARDER error
-    
-
-    
     ;
 
 
@@ -1362,44 +1360,38 @@ call_subroutine ::= ID:id PARIZQ parameter_values:f PARDER {:
 
                         RESULT = tmp;
                     :}
+                    |ID:id PARIZQ PARDER{: 
+                        Nodo tmp = new Nodo("Call_Subroutine");
+                        tmp.setNumNodo(parser.contador++);
+                        tmp.setValor("NULL");
+
+                        Nodo tmp2 = new Nodo("ID");
+                        tmp2.setNumNodo(parser.contador++);
+                        tmp2.setValor(id);
+                        tmp.addHijo((Nodo)tmp2);
+
+                        Nodo tmp3 = new Nodo("PARAMETER_VALUES");
+                        tmp3.setNumNodo(parser.contador++);
+                        tmp.addHijo(tmp3);
+
+                        RESULT = tmp;
+
+                    :}
                     //Error
                     | ID PARIZQ parameter_values error
                     ;
 
-parameter_values ::= ID:id COMA parameter_values:e {:
-                        Nodo tmp = new Nodo("ID");
-                        tmp.setNumNodo(parser.contador++);
-                        tmp.setValor(id);
-                        e.add(tmp);
-                        
+parameter_values ::= E:b COMA parameter_values:e {:
+                        e.add(b);
                         RESULT=e;
                     
                     :}
-                    | ID: id {:
-                        Nodo tmp = new Nodo("ID");
-                        tmp.setNumNodo(parser.contador++);
-                        tmp.setValor(id);
+                    | E:b {:
                         LinkedList list = new LinkedList<Nodo>();
-                        list.add(tmp);
+                        list.add(b);
                         RESULT= list;
                     :}
                     // Errores
                     | error COMA parameter_values
                     | error
-                    //Caso Numero
-                    | NUM:n COMA parameter_values:e {: 
-                        Nodo tmp = new Nodo("NUM");
-                        tmp.setNumNodo(parser.contador++);
-                        tmp.setValor(n);
-                        e.add(tmp);
-                        RESULT=e;
-                    :}
-                    | NUM:n  {:
-                        Nodo tmp = new Nodo("NUM");
-                        tmp.setNumNodo(parser.contador++);
-                        tmp.setValor(n);
-                        LinkedList list = new LinkedList<Nodo>();
-                        list.add(tmp);
-                        RESULT= list;
-                    :}
                     ;
