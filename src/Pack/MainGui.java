@@ -51,7 +51,7 @@ public class MainGui extends javax.swing.JFrame {
         botonGraficar = new javax.swing.JButton();
         limpiarOutput = new javax.swing.JButton();
         CompilarCup = new javax.swing.JButton();
-        jButton1 = new javax.swing.JButton();
+        compilarJflex = new javax.swing.JButton();
         menuBar = new javax.swing.JMenuBar();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -134,10 +134,10 @@ public class MainGui extends javax.swing.JFrame {
             }
         });
 
-        jButton1.setText("C JFLEX");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        compilarJflex.setText("C JFLEX");
+        compilarJflex.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                compilarJflexActionPerformed(evt);
             }
         });
         setJMenuBar(menuBar);
@@ -153,13 +153,12 @@ public class MainGui extends javax.swing.JFrame {
                     .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 669, Short.MAX_VALUE))
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                        .addComponent(CompilarCup, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(abrirArchivo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(compilarCodigo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(botonGraficar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(limpiarOutput, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                    .addComponent(compilarJflex, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                    .addComponent(CompilarCup, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(abrirArchivo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(compilarCodigo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(botonGraficar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(limpiarOutput, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(18, 18, 18))
             .addGroup(layout.createSequentialGroup()
                 .addGap(85, 85, 85)
@@ -180,7 +179,7 @@ public class MainGui extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(limpiarOutput, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(compilarJflex, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(CompilarCup, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(12, 12, 12))
@@ -388,7 +387,7 @@ public class MainGui extends javax.swing.JFrame {
             outputArea.append("archivo .cup compilado exitosamente. \n");
     }//GEN-LAST:event_CompilarCupActionPerformed
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+    private void compilarJflexActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_compilarJflexActionPerformed
         // TODO add your handling code here:
          //compilacion flex
             
@@ -409,7 +408,7 @@ public class MainGui extends javax.swing.JFrame {
             System.out.println("------- end Flex --------");
             
             
-    }//GEN-LAST:event_jButton1ActionPerformed
+    }//GEN-LAST:event_compilarJflexActionPerformed
 
     /**
     * @param args the command line arguments
@@ -433,8 +432,8 @@ public class MainGui extends javax.swing.JFrame {
     private javax.swing.JButton botonGraficar;
     private javax.swing.JLabel colLabel;
     private javax.swing.JButton compilarCodigo;
+    private javax.swing.JButton compilarJflex;
     protected static javax.swing.JTextPane inputArea;
-    private javax.swing.JButton jButton1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JButton limpiarOutput;
