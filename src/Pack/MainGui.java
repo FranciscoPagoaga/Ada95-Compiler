@@ -12,11 +12,12 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
+import jflex.exceptions.SilentExit;
 
 public class MainGui extends javax.swing.JFrame {
 
 
-    private final String proyectDirectory = "C:\\Users\\pc\\Desktop\\git repositories\\Ada95-Compiler\\CompiladorAda\\Examples";
+    private final String proyectDirectory = "C:\\Users\\pc\\Desktop\\git repositories\\Ada95-Compiler\\Ejemplos";
     private File archivoAbierto;
 
     /** Creates new form Interfaz */
@@ -49,6 +50,8 @@ public class MainGui extends javax.swing.JFrame {
         compilarCodigo = new javax.swing.JButton();
         botonGraficar = new javax.swing.JButton();
         limpiarOutput = new javax.swing.JButton();
+        CompilarCup = new javax.swing.JButton();
+        jButton1 = new javax.swing.JButton();
         menuBar = new javax.swing.JMenuBar();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -123,6 +126,20 @@ public class MainGui extends javax.swing.JFrame {
                 limpiarOutputActionPerformed(evt);
             }
         });
+
+        CompilarCup.setText("C CUP");
+        CompilarCup.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                CompilarCupActionPerformed(evt);
+            }
+        });
+
+        jButton1.setText("C JFLEX");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
         setJMenuBar(menuBar);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -135,11 +152,14 @@ public class MainGui extends javax.swing.JFrame {
                     .addComponent(jScrollPane3)
                     .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 669, Short.MAX_VALUE))
                 .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(compilarCodigo, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(abrirArchivo, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(limpiarOutput)
-                    .addComponent(botonGraficar))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addComponent(CompilarCup, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(abrirArchivo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(compilarCodigo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(botonGraficar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(limpiarOutput, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addGap(18, 18, 18))
             .addGroup(layout.createSequentialGroup()
                 .addGap(85, 85, 85)
@@ -150,17 +170,21 @@ public class MainGui extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap(51, Short.MAX_VALUE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(abrirArchivo, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(abrirArchivo, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(compilarCodigo, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(botonGraficar, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(compilarCodigo, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(limpiarOutput, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(7, 7, 7))
-                    .addComponent(jScrollPane3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 270, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(botonGraficar, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(limpiarOutput, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(CompilarCup, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(12, 12, 12))
+                    .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 270, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(1, 1, 1)
                 .addComponent(colLabel)
                 .addGap(3, 3, 3)
@@ -210,43 +234,7 @@ public class MainGui extends javax.swing.JFrame {
     
     private void compilarCodigoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_compilarCodigoActionPerformed
         
-        
-        
-        try {
-            
-            //compilacion flex
-            
-            outputArea.setText(""); // clear
-            outputArea.setText("Compilando archivo .flex ... \n");
-            
-            
-            String ruta = "src/Pack/"; //ruta donde tenemos los archivos con extension .jflex y .cup
-            String opcFlex[] = { ruta + "lexer.flex", "-d", ruta };
-            jflex.Main.generate(opcFlex);
-            
-            outputArea.append("archivo .flex compilado exitosamente. \n");
-            
-            System.out.println("------- end Flex --------");
-            System.out.println("------- start Cup --------");
-            sleep(2000);
-            
-            //compilacion cup
-            
-            
-            outputArea.setText(""); // Clear
-            outputArea.setText("Compilando archivo .cup ... \n");
-            
-            String opcCUP[] = { "-destdir", ruta, "-parser", "parser", ruta + "parser.cup" };
-            java_cup.Main.main(opcCUP);
-            
-            outputArea.append("archivo .cup compilado exitosamente. \n");
-            
-            sleep(2000);
-            
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        
+                    
         
         
         String texto= inputArea.getText();
@@ -379,6 +367,50 @@ public class MainGui extends javax.swing.JFrame {
        
     }//GEN-LAST:event_inputAreaCaretUpdate
 
+    String ruta = "src/Pack/"; //ruta donde tenemos los archivos con extension .jflex y .cup
+    
+    
+    private void CompilarCupActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CompilarCupActionPerformed
+        // TODO add your handling code here:
+            System.out.println("------- start Cup --------");
+            outputArea.setText(""); // Clear
+            outputArea.setText("Compilando archivo .cup ... \n");
+            
+            String opcCUP[] = { "-destdir", ruta, "-parser", "parser", ruta + "parser.cup" };
+        try {
+            java_cup.Main.main(opcCUP);
+        } catch (IOException ex) {
+            Logger.getLogger(MainGui.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (Exception ex) {
+            Logger.getLogger(MainGui.class.getName()).log(Level.SEVERE, null, ex);
+        }
+            
+            outputArea.append("archivo .cup compilado exitosamente. \n");
+    }//GEN-LAST:event_CompilarCupActionPerformed
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        // TODO add your handling code here:
+         //compilacion flex
+            
+            outputArea.setText(""); // clear
+            outputArea.setText("Compilando archivo .flex ... \n");
+            
+            
+            
+            String opcFlex[] = { ruta + "lexer.flex", "-d", ruta };
+        try {
+            jflex.Main.generate(opcFlex);
+        } catch (SilentExit ex) {
+            Logger.getLogger(MainGui.class.getName()).log(Level.SEVERE, null, ex);
+        }
+            
+            outputArea.append("archivo .flex compilado exitosamente. \n");
+            
+            System.out.println("------- end Flex --------");
+            
+            
+    }//GEN-LAST:event_jButton1ActionPerformed
+
     /**
     * @param args the command line arguments
     */
@@ -396,11 +428,13 @@ public class MainGui extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton CompilarCup;
     private javax.swing.JButton abrirArchivo;
     private javax.swing.JButton botonGraficar;
     private javax.swing.JLabel colLabel;
     private javax.swing.JButton compilarCodigo;
     protected static javax.swing.JTextPane inputArea;
+    private javax.swing.JButton jButton1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JButton limpiarOutput;
