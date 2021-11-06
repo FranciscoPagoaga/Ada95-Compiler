@@ -14,7 +14,7 @@ public class SymbolTable {
     }
 
     public static int sizeOf(String type){
-        if(type.equals("int")){
+        if(type.equals("integer")){
             return integer_size;
         } else if(type.equals("float")){
             return float_size;

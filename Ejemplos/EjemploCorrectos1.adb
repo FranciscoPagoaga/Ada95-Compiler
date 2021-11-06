@@ -5,7 +5,7 @@ Procedure Hello is
 		Put(1); 
 	end Hola;
 	
-	Function Prueba (asd: Out Float) Return Integer 
+	Function Prueba (asd: Out Float; prueba: In Integer) Return Integer 
 	is 
 		asd,asd1:Float;
 		cvzzc,dasf:Integer;
