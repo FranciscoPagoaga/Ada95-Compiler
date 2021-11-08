@@ -1,7 +1,7 @@
 package Pack;
 
 public class VariableTableNode extends SymbolTableNode {
-    private String type;
+    private String type; 
     private int form;
 
     public static final int PARAM = 0;
