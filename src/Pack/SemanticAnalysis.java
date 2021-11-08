@@ -25,7 +25,7 @@ public class SemanticAnalysis {
     public void Traverse(Nodo nodo){
         if(nodo.getNombre().equals("VARIABLE_DECLARATION")){
             addVariableDeclaration(nodo);
-        }else if(nodo.getNombre().equals("FUNCTION_BLOCK")){
+        }else if(nodo.getNombre().equals("FUNCTION_BLOCK")||nodo.getNombre().equals("PROCEDURE_BLOCK")){
             addFunctionBlock(nodo);
         }else{
             for (Nodo hijos : nodo.getHijos()) {
@@ -52,12 +52,12 @@ public class SemanticAnalysis {
     }
 
     public void addFunctionBlock(Nodo nodo){
-        String returnType="";
+        String returnType="void";// si es un procedure el tipo de valor de retorno es void
         Nodo parametros=null;
         //Nodo id_list = null;
         
         for (Nodo hijo : nodo.getHijos()) {
-            if(hijo.getNombre().equals("RETURN_TYPE")){
+            if(hijo.getNombre().equals("RETURN_TYPE")){//solo en FUNCTION_BLOCK
                 returnType = hijo.getValor();
             }
             if (hijo.getNombre().equals("MAIN_PARAMETERS")) {
