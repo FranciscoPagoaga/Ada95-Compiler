@@ -79,7 +79,7 @@ public class SemanticAnalysis {
          
         
         for (int i = 0; i < parametros.getHijos().size(); i++) {
-            Nodo actualNode = parametros.getHijos().get(0); 
+            Nodo actualNode = parametros.getHijos().get(i); 
             System.out.println(actualNode.getNombre());
             agregar_parametros_a_tmpfnode(tmpfnode, actualNode);
         }
