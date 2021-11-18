@@ -1,5 +1,6 @@
 package Pack;
 
+import com.sun.org.apache.xalan.internal.xsltc.compiler.Template;
 import java.util.ArrayList;
 
 public class SemanticAnalysis {
@@ -66,26 +67,26 @@ public class SemanticAnalysis {
             
         }
         
-        // parametros 
         
-       
-        
-        // por aqui deber ir la funcion para añadir los parametros
-        
-        
-        //por aqui se va agregando todo al objeto funtionTableNode
-        
+        //la funcion mantiene una lista de parametros
         FunctionTableNode tmpfnode = new FunctionTableNode(nodo.getHijos().get(0).getValor(), "s0", returnType, "s0");
-         
-        
+      
+        //se agrega cada parametro a tmpfnode
         for (int i = 0; i < parametros.getHijos().size(); i++) {
-            Nodo actualNode = parametros.getHijos().get(i); 
+            Nodo actualNode = parametros.getHijos().get(i);//EVERY PARAMETER
             System.out.println(actualNode.getNombre());
-            agregar_parametros_a_tmpfnode(tmpfnode, actualNode);
+            agregar_parametros_a_tmpfnode(tmpfnode, actualNode);// return arraylist
         }
         
+        //asignar parametros
         
         
+        System.out.println(tmpfnode.getId()+ "-> " + tmpfnode.getParams().size());
+        
+        //añadir funcion a la tabla de simbolos mas general
+        if (!this.symbolTable.addSymbol(tmpfnode)) {
+            System.out.println("esta funcion ya existe");
+        }
     }
     
     
@@ -98,10 +99,10 @@ public class SemanticAnalysis {
         }
     }*/
     
-    public void agregar_parametros_a_tmpfnode(FunctionTableNode tmpnode, Nodo nodo/*each parameter_specification*/){
+    public void agregar_parametros_a_tmpfnode(FunctionTableNode tmpfnode, Nodo nodo/*each parameter_specification*/){
         //Se necesita el ultimo nodo para saber el tipo
         String tipo = nodo.getHijos().get(nodo.getHijos().size()-1).getValor();
-        //Se debe iterar todos menos el ultimo tipo, debido a que no es un id 
+        //parameter mode es el penultimo nodo
         String parameter_mode = nodo.getHijos().get(nodo.getHijos().size()-2).getValor();
         
         int parameter_mode_int ; 
@@ -123,7 +124,6 @@ public class SemanticAnalysis {
         
         Nodo ID_LIST = nodo.getHijos().get(0);
         
-        ArrayList<VariableTableNode> params = new ArrayList<>();
         
         //iterar sobre ID_LIST
         for (int i = 0; i < ID_LIST.getHijos().size(); i++) {
@@ -133,6 +133,7 @@ public class SemanticAnalysis {
             System.out.println(tmpvnode.getId());
             System.out.println(tmpvnode.getType());
             System.out.println(tmpvnode.getForm());
+            
             /*if (!this.symbolTable.addSymbol(tmpvnode)) {
                 System.out.println("El identificador ya esta declarado");
             }else{
@@ -140,14 +141,26 @@ public class SemanticAnalysis {
                 params.add(tmpvnode);
             }*/
             
-            params.add(tmpvnode);
+            //params.add(tmpvnode);
+            
+            //asinar directamente al arraylist de variables dentro de la funcion, si no esta repetida (falta validar)
+            //tmpfnode.getParams().add(tmpvnode);
+            
+            //intento de validar 
+            //recorrer los nombres de los parametros
+            
+            
+            
+            tmpfnode.getParams().add(tmpvnode);
         }
         
-        //set params
-        tmpnode.setParams(params);
+        
+        
+        
         
         
     }
+    
     
     
     
