@@ -24,15 +24,33 @@ public class SemanticAnalysis {
     }
 
     public void Traverse(Nodo nodo){
-        if(nodo.getNombre().equals("VARIABLE_DECLARATION")){
-            addVariableDeclaration(nodo);
-        }else if(nodo.getNombre().equals("FUNCTION_BLOCK")||nodo.getNombre().equals("PROCEDURE_BLOCK")){
-            addFunctionBlock(nodo);
-        }else{
-            for (Nodo hijos : nodo.getHijos()) {
-                Traverse(hijos);
-            }
+        switch (nodo.getNombre()){
+            case "VARIABLE_DECLARATION":
+                addVariableDeclaration(nodo);
+            break;
+            
+            case "FUNCTION_BLOCK":
+            case "PROCEDURE_BLOCK":
+                addFunctionBlock(nodo);
+            break;
+            case "ASSIGNMENT":
+                
+            break;
+            default:
+                for (Nodo hijos : nodo.getHijos()) {
+                    Traverse(hijos);
+                }
+            break;
         }
+        // if(nodo.getNombre().equals("VARIABLE_DECLARATION")){
+        //     addVariableDeclaration(nodo);
+        // }else if(nodo.getNombre().equals("FUNCTION_BLOCK")||nodo.getNombre().equals("PROCEDURE_BLOCK")){
+        //     addFunctionBlock(nodo);
+        // }else{
+        //     for (Nodo hijos : nodo.getHijos()) {
+        //         Traverse(hijos);
+        //     }
+        // }
     }
 
     // Itera sobre el nodo VARIABLE_DECLARATION para agregar id con sus tipos
@@ -58,13 +76,19 @@ public class SemanticAnalysis {
         //Nodo id_list = null;
         
         for (Nodo hijo : nodo.getHijos()) {
-            if(hijo.getNombre().equals("RETURN_TYPE")){//solo en FUNCTION_BLOCK
-                returnType = hijo.getValor();
+            switch(hijo.getNombre()){
+                case "RETURN_TYPE": //solo en FUNCTION_BLOCK
+                    returnType = hijo.getValor();
+                break;
+
+                case "MAIN_PARAMETERS":
+                    parametros = hijo; // parametros.parameters 
+                break;
+
+                case "CONTENT":
+                    Traverse(hijo);
+                break;
             }
-            if (hijo.getNombre().equals("MAIN_PARAMETERS")) {
-                parametros = hijo; // parametros.parameters 
-            }  
-            
         }
         
         
@@ -75,7 +99,7 @@ public class SemanticAnalysis {
         for (int i = 0; i < parametros.getHijos().size(); i++) {
             Nodo actualNode = parametros.getHijos().get(i);//EVERY PARAMETER
             System.out.println(actualNode.getNombre());
-            agregar_parametros_a_tmpfnode(tmpfnode, actualNode);// return arraylist
+            AddParameters(tmpfnode, actualNode);// return arraylist
         }
         
         //asignar parametros
@@ -99,7 +123,7 @@ public class SemanticAnalysis {
         }
     }*/
     
-    public void agregar_parametros_a_tmpfnode(FunctionTableNode tmpfnode, Nodo nodo/*each parameter_specification*/){
+    public void AddParameters(FunctionTableNode tmpfnode, Nodo nodo/*each parameter_specification*/){
         //Se necesita el ultimo nodo para saber el tipo
         String tipo = nodo.getHijos().get(nodo.getHijos().size()-1).getValor();
         //parameter mode es el penultimo nodo
@@ -153,12 +177,6 @@ public class SemanticAnalysis {
             
             tmpfnode.getParams().add(tmpvnode);
         }
-        
-        
-        
-        
-        
-        
     }
     
     
