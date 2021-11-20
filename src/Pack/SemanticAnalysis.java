@@ -27,7 +27,9 @@ public class SemanticAnalysis {
 
     public void Traverse(Nodo nodo, String scopeActual){
         scope = scopeActual;
-        symbolTable.activateWithScope(scopeActual);
+        if(!scopeActual.equals("")){
+            symbolTable.activateWithScope(scopeActual);
+        }
         switch (nodo.getNombre()){
             case "VARIABLE_DECLARATION":
                 addVariableDeclaration(nodo, scopeActual);
