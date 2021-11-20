@@ -26,11 +26,45 @@ public class SymbolTable {
             return -1;
         }
     }
+    
+    // pendiente: se encarga de activar las variables del scope actual
+    // y desactivar variables en scopes padres con mismo nombre
+    // o variables en scope diferente 
+    public void activateWithScope(String scope){
+        
+    }
 
     public SymbolTableNode findSymbol(String id, String scope){
         for (int i = 0; i < symbolList.size(); i++) {
-            if( symbolList.get(i).getId().equals(id) && scope.startsWith(symbolList.get(i).getScope())){
-              return symbolList.get(i);
+            //pendiente: a este if agregarle && symbolList.get(i).isActive()
+            if( symbolList.get(i).getId().equals(id)){
+                //comparar scopes
+                if(symbolList.get(i).getScope().equals(scope)){
+                    //ya existe
+                    return symbolList.get(i);
+                }
+                else {
+                    String []existingScope = symbolList.get(i).getScope().split(".");
+                    String []testScope = scope.split(".");
+                    
+                    // si tienen el mismo tamaño son scopes hermanos
+                    if(!(existingScope.length == testScope.length)){
+                        boolean ancestry = true;
+                        for (int j = 0; j < existingScope.length && j < testScope.length; j++) {
+                            if(!existingScope[j].equals(testScope[j])){
+                                ancestry = false;
+                                break;
+                            }
+                        }
+                        if(ancestry){
+                            // test scope lenght aqui deberia ser mas grande de todos modos activateWithScope deberia
+                            // desactivar la variable en el scope padre cuando se llega al hermano
+                            if(testScope.length > existingScope.length){
+                                symbolList.get(i).setActive(false);
+                            }
+                        }
+                    }
+                }
             }
         }
         return null;

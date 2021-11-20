@@ -324,7 +324,7 @@ public class MainGui extends javax.swing.JFrame {
                 graficar(par.padre);
                 System.out.println("Se ha graficado con exito");
                 SemanticAnalysis analysis = new SemanticAnalysis(new SymbolTable());
-                analysis.Traverse(par.padre);
+                analysis.Traverse(par.padre, "");
                 //crear la imagen
                 JframeImagen marco = new JframeImagen();
                 marco.setExtendedState(MAXIMIZED_BOTH); 
