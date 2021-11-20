@@ -75,14 +75,12 @@ main_body ::= PROCEDURE ID:id main_parameters:b IS begin_main_body: beg fin_pars
             tmp.addHijo(b);        
         }
 
-        System.out.println(beg);
 
         for(int i = beg.size()-1; i>=0;i--){
             tmp.addHijo(beg.get(i));
         }
 
         parser.padre = (Nodo) tmp;
-        System.out.println("OK begin");
         RESULT=tmp;
 :}
         // Errores
@@ -116,7 +114,6 @@ main_body ::= PROCEDURE ID:id main_parameters:b IS begin_main_body: beg fin_pars
             }
 
             parser.padre = (Nodo) tmp;
-            System.out.println("OK begin");
             RESULT=tmp;
         :}
         // Errores
@@ -142,7 +139,6 @@ begin_main_body ::= declaration_list:a BEGIN content:e END ID PYC{:
 
                         Nodo tmp2 = new Nodo("CONTENT");
                         tmp2.setNumNodo(parser.contador++);
-                        System.out.println(e);
                         for(int i = e.size()-1; i>=0;i--){
                             tmp2.addHijo(e.get(i));
                         }
@@ -164,11 +160,9 @@ begin_main_body ::= declaration_list:a BEGIN content:e END ID PYC{:
                     | BEGIN content:e END ID PYC {:
                         Nodo tmp = new Nodo("CONTENT");
                         tmp.setNumNodo(parser.contador++);
-                        System.out.println(e);
                         for(int i = e.size()-1; i>=0;i--){
                             tmp.addHijo(e.get(i));
                         }
-                        System.out.println("OK content");
                         LinkedList list = new LinkedList<Nodo>();
                         list.add(tmp);
                         RESULT=list;
@@ -197,7 +191,6 @@ declaration_list ::= procedure_declaration:a declaration_list:b {:
                         tmp.setNumNodo(parser.contador++);
                         for(int i = a.size()-1; i>=0;i--){
                             tmp.addHijo(a.get(i));
-                            System.out.println(a.get(i).getNombre());
                         }
                         b.add((Nodo)tmp);
                         RESULT=b;
@@ -236,7 +229,6 @@ declaration_list ::= procedure_declaration:a declaration_list:b {:
                     :}
                     | function_block:e{: 
                         LinkedList list = new LinkedList<Nodo>();
-                        System.out.println(e.getNombre());
                         list.add(e);
                         RESULT=list;                    
                     :}
@@ -268,7 +260,6 @@ variable_declaration ::= ID:id COMA variable_declaration:b {:
                         Nodo tmp = new Nodo("ID");
                         tmp.setNumNodo(parser.contador++);
                         tmp.setValor(id);
-                        System.out.println(tmp);
                         b.add(tmp);
 
                         RESULT = b;
@@ -287,7 +278,6 @@ variable_declaration ::= ID:id COMA variable_declaration:b {:
                         tmp2.setValor(x);
                         list.add(tmp2);
                         list.add(tmp);
-                        System.out.println("ok variable declaration caso final");
 
                         RESULT = list;
                     :}
@@ -332,7 +322,6 @@ content ::= assignment:a content:b {:
         :}
         | while_block:a content: b {:           
             b.add(a);
-            System.out.println("while + content ");
             RESULT=b;
         :}  
 
@@ -340,13 +329,11 @@ content ::= assignment:a content:b {:
         | while_block:e {:
             LinkedList list = new LinkedList<Nodo>();
             list.add(e);
-            System.out.println("ok while");
             RESULT=list;
         :}
         | if_block:a content:b {:
             b.add(a);
 			
-			System.out.println("if + content ");
 			RESULT=b;
 
         :}
@@ -354,20 +341,17 @@ content ::= assignment:a content:b {:
         | if_block: e {: 
             LinkedList list = new LinkedList<Nodo>();
             list.add(e);
-			System.out.println("if block");
 			RESULT=list;
         :}
         | for_block:a content:b {:
 			b.add(a);
 
-			System.out.println("for + content ");
 			RESULT=b;
 		:} 
 
 		| for_block: e {:
             LinkedList list = new LinkedList<Nodo>();
             list.add(e);
-			System.out.println("for_block");
 			RESULT=list;
 		:}
         
@@ -378,14 +362,12 @@ content ::= assignment:a content:b {:
 			tmp.setNumNodo(parser.contador++);*/
             b.add(a);
 			
-			System.out.println("loop + content ");
 			RESULT=b;
         :} 
         
         | loop_block:e {:
             LinkedList list = new LinkedList<Nodo>();
             list.add(e);
-			System.out.println("loop_block");
 			RESULT=list;
         :}
 		
@@ -395,7 +377,6 @@ content ::= assignment:a content:b {:
             tmp.addHijo((Nodo)a);
             b.add(tmp);
           
-            System.out.println("put + content ");
             RESULT=b;
 
         :} 
@@ -404,7 +385,6 @@ content ::= assignment:a content:b {:
             Nodo tmp = new Nodo("PUT");
             tmp.setNumNodo(parser.contador++);
             tmp.addHijo((Nodo)e);
-            System.out.println("put");
             LinkedList list = new LinkedList<Nodo>();
             list.add(tmp);
             
@@ -418,7 +398,6 @@ content ::= assignment:a content:b {:
             tmp.addHijo((Nodo)a);
             b.add(tmp);
 
-            System.out.println("get + content ");
             RESULT=b;
 
         :} 
@@ -429,7 +408,6 @@ content ::= assignment:a content:b {:
             tmp.addHijo((Nodo)e);
             LinkedList list = new LinkedList<Nodo>();
             list.add(tmp);
-            System.out.println("get");
             RESULT=list;
         :}  
         | calling_subroutine:a content:b {:
@@ -660,7 +638,6 @@ main_parameters ::= PARIZQ parameters_specification:a PARDER {:
 
                     for(int i = a.size()-1; i>=0;i--){
                         tmp.addHijo(a.get(i));
-                        System.out.println(i+") "+a.get(i).getNombre() );
                     }
 
                     RESULT=tmp;
@@ -866,7 +843,6 @@ E::= E:a OPSUM:c T: b{:
     :}
 
     | T:e {: 
-        System.out.println("OK");
         RESULT=e;    
     :}
     | E OPSUM error
@@ -882,7 +858,6 @@ T::= T:a OPMULT:c F : b{:
         RESULT=tmp;
     :}
     | F:e{: 
-        System.out.println("OK");
         RESULT=e;
     :}
     | T OPMULT error
@@ -893,14 +868,12 @@ F::= NUM:e {:
         Nodo tmp = new Nodo("NUM");
         tmp.setNumNodo(parser.contador++);
         tmp.setValor(e);
-        System.out.println("OK");
         RESULT=tmp;
     :}
     | ID:e {: 
         Nodo tmp = new Nodo("ID");
         tmp.setNumNodo(parser.contador++);
         tmp.setValor(e);
-        System.out.println("OK");
         RESULT=tmp;
     :}
     | call_subroutine: e {: 
@@ -910,7 +883,6 @@ F::= NUM:e {:
         Nodo tmp = new Nodo("PARENTHESIS");
         tmp.setNumNodo(parser.contador++);
         tmp.addHijo((Nodo)e);
-        System.out.println("EOK");
         RESULT=tmp;
     :}; 
 
@@ -921,13 +893,11 @@ loop_block ::= LOOP content:a END LOOP PYC {:
                     
                     Nodo tmp3 = new Nodo("CONTENT");
                     tmp3.setNumNodo(parser.contador++);
-                    System.out.println(a);
                     for(int i = a.size()-1; i>=0;i--){
                         tmp3.addHijo((Nodo)a.get(i));
                     }
                     tmp.addHijo(tmp3);
                     
-                    System.out.println("loop_block");
                     RESULT=tmp;
 			
                 :}
@@ -955,7 +925,6 @@ while_block ::= WHILE condition:e  LOOP content: f    END LOOP PYC {:
             tmp.addHijo((Nodo)tmp2);
 
             
-            System.out.println("ok in while-block ");
             RESULT=tmp;
 
         :}
@@ -1007,7 +976,6 @@ for_block ::= FOR ID:id IN NUM:num1 DOSPUNTOS NUM:num2 LOOP content:a END LOOP P
                 }
                 tmp.addHijo((Nodo)tmp2);
 
-    			System.out.println("for_block");
     			RESULT=tmp;
 			:}
 				//Errores
@@ -1045,13 +1013,11 @@ for_block ::= FOR ID:id IN NUM:num1 DOSPUNTOS NUM:num2 LOOP content:a END LOOP P
 					
                     Nodo tmp2 = new Nodo("CONTENT");
                     tmp2.setNumNodo(parser.contador++);
-                    System.out.println(a);
                     for(int i = a.size()-1; i>=0;i--){
                         tmp2.addHijo(a.get(i));
                     }
                     tmp.addHijo((Nodo)tmp2);
 
-					System.out.println("for_block");
 					RESULT=tmp;
 				:}
 				// Errores
@@ -1086,13 +1052,11 @@ for_block ::= FOR ID:id IN NUM:num1 DOSPUNTOS NUM:num2 LOOP content:a END LOOP P
 					
                     Nodo tmp2 = new Nodo("CONTENT");
                     tmp2.setNumNodo(parser.contador++);
-                    System.out.println(a);
                     for(int i = a.size()-1; i>=0;i--){
                         tmp2.addHijo(a.get(i));
                     }
                     tmp.addHijo((Nodo)tmp2);
 
-					System.out.println("for_block");
 					RESULT=tmp;
 				:}
 				// Error
@@ -1127,14 +1091,12 @@ for_block ::= FOR ID:id IN NUM:num1 DOSPUNTOS NUM:num2 LOOP content:a END LOOP P
 
                     Nodo tmp2 = new Nodo("CONTENT");
                     tmp2.setNumNodo(parser.contador++);
-                    System.out.println(a);
                     for(int i = a.size()-1; i>=0;i--){
                         tmp2.addHijo(a.get(i));
                     }
 
                     tmp.addHijo((Nodo)tmp2);
 
-					System.out.println("for_block");
 					RESULT=tmp;
 				:}
 				//Error
@@ -1238,7 +1200,6 @@ condition ::= boolean_expr: boolExp OR condition:a {:
                 
                 
 
-                System.out.println("just booleanExp");
                 RESULT=tmp;
             :}
 
@@ -1254,7 +1215,6 @@ condition ::= boolean_expr: boolExp OR condition:a {:
 
                 tmp.addHijo((Nodo)a);
 
-                System.out.println("just booleanExp");
                 RESULT=tmp;
             :}
 
@@ -1262,7 +1222,6 @@ condition ::= boolean_expr: boolExp OR condition:a {:
                 Nodo tmp = new Nodo("BooleanExp");
                 tmp.setNumNodo(parser.contador++);
                 tmp.addHijo((Nodo)boolExp);
-                System.out.println("just booleanExp");
                 RESULT=tmp;
             :}
             //errores
@@ -1285,7 +1244,6 @@ put ::= PUT PARIZQ NUM:num PARDER PYC {:
     Nodo tmp = new Nodo("NUM");
     tmp.setNumNodo(parser.contador++);
     tmp.setValor(num);
-    System.out.println("num in put");
     RESULT=tmp;
     :} 
     //Errores
@@ -1298,7 +1256,6 @@ put ::= PUT PARIZQ NUM:num PARDER PYC {:
         Nodo tmp = new Nodo("STR");
         tmp.setNumNodo(parser.contador++);
         tmp.setValor(str.toString().replaceAll("\"",""));
-        System.out.println("str in put");
         RESULT=tmp;
     :} 
     //Errores
@@ -1322,7 +1279,6 @@ get ::= GET PARIZQ ID :id PARDER PYC {:
     Nodo tmp = new Nodo("ID");
     tmp.setNumNodo(parser.contador++);
     tmp.setValor(id);
-    System.out.println("id in get");
     RESULT=tmp;
     :} 
     //Errores
