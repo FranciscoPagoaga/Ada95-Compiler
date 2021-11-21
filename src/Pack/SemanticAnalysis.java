@@ -101,13 +101,13 @@ public class SemanticAnalysis {
                     returnType = hijo.getValor();
                 break;
                 case "DECLARATIONS":
-                    Traverse(hijo, scopeActual);
+                    Traverse(hijo, scopeHijos);
                 break;
                 case "MAIN_PARAMETERS":
                     parametros = hijo; // parametros.parameters 
                 break;
                 case "CONTENT":
-                    Traverse(hijo, scopeActual);
+                    Traverse(hijo, scopeHijos);
                     validateReturn(hijo, nodo.getNombre());
                 break;
             }
