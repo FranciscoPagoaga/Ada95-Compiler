@@ -3,9 +3,11 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/home/francisco/Documents/Ada95-Compiler/nbproject/build-impl.xml</file>
-            <file>file:/home/francisco/Documents/Ada95-Compiler/src/Pack/MainGui.java</file>
-            <file>file:/home/francisco/Documents/Ada95-Compiler/src/Pack/parser.java</file>
+            <file>file:/C:/Users/andre/Documents/Proyecto%20Compi%202/Ada95-Compiler/src/Pack/FunctionTableNode.java</file>
+            <file>file:/C:/Users/andre/Documents/Proyecto%20Compi%202/Ada95-Compiler/src/Pack/parser.cup</file>
+            <file>file:/C:/Users/andre/Documents/Proyecto%20Compi%202/Ada95-Compiler/src/Pack/Nodo.java</file>
+            <file>file:/C:/Users/andre/Documents/Proyecto%20Compi%202/Ada95-Compiler/src/Pack/SymbolTable.java</file>
+            <file>file:/C:/Users/andre/Documents/Proyecto%20Compi%202/Ada95-Compiler/src/Pack/SemanticAnalysis.java</file>
         </group>
     </open-files>
 </project-private>

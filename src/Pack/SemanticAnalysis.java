@@ -25,14 +25,23 @@ public class SemanticAnalysis {
         this.symbolTable = symbolTable;
     }
 
-    public void Traverse(Nodo nodo){
+    public void Traverse(Nodo nodo, String scopeActual){
+        scope = scopeActual;
+        if(!scopeActual.equals("")){
+            symbolTable.activateWithScope(scopeActual);//llamar antes de entrar a a la tabla
+        }
         switch (nodo.getNombre()){
             case "VARIABLE_DECLARATION":
-                addVariableDeclaration(nodo);
+                addVariableDeclaration(nodo, scopeActual);
+                
             break;
+            
+            case "Inicio":
+                addFunctionBlock(nodo, "");
+                break;
             case "FUNCTION_BLOCK":
             case "PROCEDURE_BLOCK":
-                addFunctionBlock(nodo);
+                addFunctionBlock(nodo, scopeActual);
             break;
             case "ASSIGNMENT":
                 typeValidation(nodo);
@@ -41,7 +50,7 @@ public class SemanticAnalysis {
                 typeValidation(nodo);
             default:
                 for (Nodo hijos : nodo.getHijos()) {
-                    Traverse(hijos);
+                    Traverse(hijos, scopeActual);
                 }
             break;
         }
@@ -57,60 +66,77 @@ public class SemanticAnalysis {
     }
 
     // Itera sobre el nodo VARIABLE_DECLARATION para agregar id con sus tipos
-    public void addVariableDeclaration(Nodo nodo){
+    public void addVariableDeclaration(Nodo nodo, String scopeActual){
         //Se necesita el ultimo nodo para saber el tipo
         String tipo = nodo.getHijos().get(nodo.getHijos().size()-1).getValor();
         //Se debe iterar todos menos el ultimo tipo, debido a que no es un id 
 
         for (int i = 0; i <= nodo.getHijos().size()-2; i++) {
             Nodo actualNode = nodo.getHijos().get(i);
-            VariableTableNode tmpvnode = new VariableTableNode(actualNode.getValor(), "s0", tipo, 0);
+            VariableTableNode tmpvnode = new VariableTableNode(actualNode.getValor(), scopeActual, tipo, 0);//0 indica que no es un parametro
             //agrega variable a lista de simbolos, retorna true si se pudo, false si ya existia
             if (!this.symbolTable.addSymbol(tmpvnode)) {
-                System.out.println("El identificador ya esta declarado");
+                System.out.println("El identificador \""+tmpvnode.Id+"\" en el scope "+tmpvnode.Scope+" ya esta declarado");
             }
         }
     }
+    
+    
 
-    public void addFunctionBlock(Nodo nodo){
+    public void addFunctionBlock(Nodo nodo, String scopeActual){
+        
         String returnType="void";// si es un procedure el tipo de valor de retorno es void
         Nodo parametros=null;
         //Nodo id_list = null;
+        String scopeHijos = "Missing ID";
         for (Nodo hijo : nodo.getHijos()) {
             switch(hijo.getNombre()){
+                case "ID":
+                    //el id se usa para 
+                    if(nodo.getNombre().equals("Inicio")){
+                        scope = hijo.getValor();//scope raiz
+                        scopeHijos = hijo.getValor();
+                    }
+                    else{
+                        scopeHijos = scopeActual +"."+ hijo.getValor();
+                    }
+                    break;
                 case "RETURN_TYPE": //solo en FUNCTION_BLOCK
                     returnType = hijo.getValor();
                 break;
                 case "DECLARATIONS":
-                    Traverse(hijo);
+                    Traverse(hijo, scopeHijos);
                 break;
                 case "MAIN_PARAMETERS":
                     parametros = hijo; // parametros.parameters 
                 break;
                 case "CONTENT":
-                    Traverse(hijo);
+                    Traverse(hijo, scopeHijos);
                     validateReturn(hijo, nodo.getNombre());
                 break;
             }
         }
+       
+        
+        FunctionTableNode tmpfnode = new FunctionTableNode(nodo.getHijos().get(0).getValor(),scopeActual, returnType, scopeHijos);//fila tipo funcion
+                     
         
         
-        //la funcion mantiene una lista de parametros
-        FunctionTableNode tmpfnode = new FunctionTableNode(nodo.getHijos().get(0).getValor(), "s0", returnType, "s0");
-      
-        //se agrega cada parametro a tmpfnode
-        for (int i = 0; i < parametros.getHijos().size(); i++) {
-            Nodo actualNode = parametros.getHijos().get(i);//EVERY PARAMETER
-            AddParameters(tmpfnode, actualNode);// return arraylist
+        if (parametros!=null) {// validacion porque el (case: "ID") no tiene parametros
+                               // al parecer function y procedure deben llevar parametros obligatoriamente, hay un error de sintaxis si no se mandan.
+                               
+            System.out.println(parametros.getNombre());                  
+             for (int i = 0; i < parametros.getHijos().size(); i++) {
+                Nodo actualNode = parametros.getHijos().get(i);//EVERY PARAMETER
+                AddParameters(tmpfnode,actualNode,scopeHijos);
+            }
         }
-        
-        //asignar parametros
-        
-        
+       
+             
         
         //añadir funcion a la tabla de simbolos mas general
         if (!this.symbolTable.addSymbol(tmpfnode)) {
-            System.out.println("esta funcion ya existe");
+            System.out.println("la funcion \""+tmpfnode.Id+"\" en el scope "+tmpfnode.Scope+" ya esta declarada");
         }
     }
     
@@ -124,13 +150,14 @@ public class SemanticAnalysis {
         }
     }*/
     
-    public void AddParameters(FunctionTableNode tmpfnode, Nodo nodo/*each parameter_specification*/){
+    public void AddParameters(FunctionTableNode tmpfnode, Nodo nodo, String scopeActual/*each parameter_specification*/){
+            
         //Se necesita el ultimo nodo para saber el tipo
         String tipo = nodo.getHijos().get(nodo.getHijos().size()-1).getValor();
         //parameter mode es el penultimo nodo
         String parameter_mode = nodo.getHijos().get(nodo.getHijos().size()-2).getValor();
         
-        int parameter_mode_int ; 
+        int parameter_mode_int; 
         
         switch (parameter_mode) {
             case "In":
@@ -143,37 +170,52 @@ public class SemanticAnalysis {
                 parameter_mode_int = 3; 
                 break;
             default:
-                parameter_mode_int = 0;// en caso de null ahora 1
+                parameter_mode_int = 1;// en caso de null ahora 1 
                 break;
         }
         
         Nodo ID_LIST = nodo.getHijos().get(0);
-        
+       
         
         //iterar sobre ID_LIST
         for (int i = 0; i < ID_LIST.getHijos().size(); i++) {
             Nodo actualNode = ID_LIST.getHijos().get(i);
-            VariableTableNode tmpvnode = new VariableTableNode(actualNode.getValor(), "s0", tipo,parameter_mode_int );
-            //agrega variable a lista de simbolos, retorna true si se pudo, false si ya existia
+            VariableTableNode tmpvnode = new VariableTableNode(actualNode.getValor(), scopeActual, tipo,parameter_mode_int );
             
-            /*if (!this.symbolTable.addSymbol(tmpvnode)) {
-                System.out.println("El identificador ya esta declarado");
+            //se agregan los parametros en tabla de simbolos general
+            if (!this.symbolTable.addSymbol(tmpvnode)) {
+               System.out.println("El identificador \""+tmpvnode.Id+"\" en el scope "+tmpvnode.Scope+" ya esta declarado");
+            }
+           
+            
+            /*validacion interna, con arraylist params
+            boolean ok=true;
+            
+            
+            for (int j = 0; j < tmpfnode.getParams().size(); j++) {
+                if (tmpfnode.getParams().get(j).getId().equals(tmpvnode.getId())) {
+                    ok=false;//se encontro una declaracion previa
+                }
+            }
+            
+            //no se agregan parametros repetidos
+            if (ok) {
+                tmpfnode.getParams().add(tmpvnode);
             }else{
-                //si agrega
-                params.add(tmpvnode);
+                System.out.println("el parametro : "+tmpvnode.getId()+ " en el scope: "+tmpvnode.getScope()+" ya esta declarado");
+            }
+            
+            
+            
+            
+               
             }*/
             
-            //params.add(tmpvnode);
-            
-            //asinar directamente al arraylist de variables dentro de la funcion, si no esta repetida (falta validar)
-            //tmpfnode.getParams().add(tmpvnode);
-            
-            //intento de validar 
-            //recorrer los nombres de los parametros
             
             
             
-            tmpfnode.getParams().add(tmpvnode);
+            
+            
         }
     }
     
@@ -183,7 +225,7 @@ public class SemanticAnalysis {
         for (Nodo hijos : nodo.getHijos()){
             switch(hijos.getNombre()){
                 case "NUM":
-                    // Verifica si el valor es tipo int o float
+                    // Verifica si el valor es tipo int o float 
                     System.out.println(hijos.getValor());
                     if (type != ""){
                         if (type.equals(numType(hijos.getValor()))) {

@@ -12,10 +12,12 @@ package Pack;
 public class SymbolTableNode {
     protected String Id;
     protected String Scope;
+    protected boolean active;
 
     public SymbolTableNode(String Id, String Scope) {
         this.Id = Id;
         this.Scope= Scope;
+        this.active = true;
     }
 
     public String getId() {
@@ -32,5 +34,13 @@ public class SymbolTableNode {
 
     public void setScope(String Scope) {
         this.Scope = Scope;
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
     }
 }

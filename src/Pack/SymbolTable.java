@@ -26,11 +26,95 @@ public class SymbolTable {
             return -1;
         }
     }
+    
+    // Se encarga de activar las variables del scope actual
+    // y desactivar variables en scopes padres con mismo nombre
+    // o variables en scope diferente 
+    public void activateWithScope(String scope){
+        String []tmp = scope.split("");
+        for (int i = 0; i < symbolList.size(); i++) {
+            symbolList.get(i).setActive(false);
+        }
+        if(tmp.length > 0){
+            String current = tmp[0];
+            for (int i = 0; i < tmp.length; i++) {
+                if(i>0){
+                    current += "." + tmp[i];
+                }
+                for (int j = 0; j < symbolList.size(); j++) {
+                    if(symbolList.get(j).getScope().equals(current)){
+                        symbolList.get(j).setActive(true);
+                        hideParents(j);
+                    }
+                }
+            }
+        }
+    }
+    
+    public void hideParents(int index){
+        for (int i = 0; i < symbolList.size(); i++) {
+            
+            // evitar ocultarse a si mismo y variables en el mismo scope
+            if(i != index && !symbolList.get(index).getScope().equals(symbolList.get(i).getScope())){
+                
+                //mismo nombre
+                if(symbolList.get(i).getId().equals(symbolList.get(index).getId())){
+                    String []indexScope = symbolList.get(index).getScope().split(".");
+                    String []iScope = symbolList.get(i).getScope().split(".");
+                    
+                    // si tienen el mismo tamaño son scopes hermanos
+                    if(!(indexScope.length == iScope.length)){
+                        boolean ancestry = true;
+                        for (int j = 0; j < indexScope.length && j < iScope.length; j++) {
+                            if(!indexScope[j].equals(iScope[j])){
+                                ancestry = false;
+                                break;
+                            }
+                        }
+                        if(ancestry){
+                            // index scope length aqui deberia ser mas grande para desactivar iScope
+                            // desactivar la variable en el scope padre cuando se llega al hermano
+                            if(indexScope.length > iScope.length){
+                                symbolList.get(i).setActive(false);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
 
     public SymbolTableNode findSymbol(String id, String scope){
         for (int i = 0; i < symbolList.size(); i++) {
-            if( symbolList.get(i).getId().equals(id) && scope.startsWith(symbolList.get(i).getScope())){
-              return symbolList.get(i);
+            //pendiente: a este if agregarle && symbolList.get(i).isActive()
+            if( symbolList.get(i).getId().equals(id)){
+                //comparar scopes
+                if(symbolList.get(i).getScope().equals(scope)){
+                    //ya existe
+                    return symbolList.get(i);
+                }
+                else {
+                    String []existingScope = symbolList.get(i).getScope().split(".");
+                    String []testScope = scope.split(".");
+                    
+                    // si tienen el mismo tamaño son scopes hermanos
+                    if(!(existingScope.length == testScope.length)){
+                        boolean ancestry = true;
+                        for (int j = 0; j < existingScope.length && j < testScope.length; j++) {
+                            if(!existingScope[j].equals(testScope[j])){
+                                ancestry = false;
+                                break;
+                            }
+                        }
+                        if(ancestry){
+                            // test scope length aqui deberia ser mas grande de todos modos activateWithScope deberia
+                            // desactivar la variable en el scope padre cuando se llega al hermano
+                            if(testScope.length > existingScope.length){
+                                symbolList.get(i).setActive(false);
+                            }
+                        }
+                    }
+                }
             }
         }
         return null;
