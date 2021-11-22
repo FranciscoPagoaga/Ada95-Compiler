@@ -325,12 +325,15 @@ public class MainGui extends javax.swing.JFrame {
                 System.out.println("Se ha graficado con exito");
                 SemanticAnalysis analysis = new SemanticAnalysis(new SymbolTable());
                 analysis.Traverse(par.padre, "");
+                
+                /*no mostrar el frame por ahora
                 //crear la imagen
+                
                 JframeImagen marco = new JframeImagen();
                 marco.setExtendedState(MAXIMIZED_BOTH); 
                 marco.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
                 marco.setVisible(true);
-                
+                */
                 
             }
         }
