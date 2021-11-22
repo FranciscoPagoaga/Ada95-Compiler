@@ -175,9 +175,6 @@ public class SemanticAnalysis {
         }
         
         Nodo ID_LIST = nodo.getHijos().get(0);
-        
-         // si es funcion debe tener valor de retorno, el modo de parametro es in en ambos casos
-         
        
         
         //iterar sobre ID_LIST
@@ -189,8 +186,7 @@ public class SemanticAnalysis {
             if (!this.symbolTable.addSymbol(tmpvnode)) {
                System.out.println("El identificador \""+tmpvnode.Id+"\" en el scope "+tmpvnode.Scope+" ya esta declarado");
             }
-            
-            System.out.println("param mode in function:"+tmpvnode.getForm());
+           
             
             /*validacion interna, con arraylist params
             boolean ok=true;
