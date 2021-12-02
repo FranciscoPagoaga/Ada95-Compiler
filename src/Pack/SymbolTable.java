@@ -51,6 +51,10 @@ public class SymbolTable {
         }
     }
     
+    public ArrayList<SymbolTableNode> getList(){
+        return symbolList;
+    }
+    
     public void hideParents(int index){
         for (int i = 0; i < symbolList.size(); i++) {
             
