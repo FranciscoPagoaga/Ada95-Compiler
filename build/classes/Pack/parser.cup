@@ -112,7 +112,6 @@ main_body ::= PROCEDURE ID:id main_parameters:b IS begin_main_body: beg fin_pars
             for(int i = beg.size()-1; i>=0;i--){
                 tmp.addHijo(beg.get(i));
             }
-
             parser.padre = (Nodo) tmp;
             RESULT=tmp;
         :}
@@ -143,9 +142,9 @@ begin_main_body ::= declaration_list:a BEGIN content:e END ID PYC{:
                             tmp2.addHijo(e.get(i));
                         }
                         
-                        list.add(tmp);
-
                         list.add(tmp2);
+
+                        list.add(tmp);
                     
                         RESULT=list;
                     :}
@@ -439,7 +438,7 @@ content ::= assignment:a content:b {:
         :}
         ;
 
-procedure_block ::= PROCEDURE ID:id main_parameters:b IS declaration_list:d BEGIN content:c END ID PYC{: 
+procedure_block ::= PROCEDURE ID:id main_parameters:b IS declaration_list:d BEGIN content:c END ID:id2 PYC{: 
                     Nodo tmp = new Nodo("PROCEDURE_BLOCK");
                     tmp.setNumNodo(parser.contador++);
 
@@ -466,6 +465,12 @@ procedure_block ::= PROCEDURE ID:id main_parameters:b IS declaration_list:d BEGI
                     }
                     tmp.addHijo((Nodo)tmp3);                    
 
+                    Nodo tmp5 = new Nodo("FINAL_ID");
+                    tmp5.setNumNodo(parser.contador++);
+                    tmp5.setValor(id2);
+
+                    tmp.addHijo(tmp5);
+
                     RESULT=tmp;
                 :}
                 // errores
@@ -476,7 +481,7 @@ procedure_block ::= PROCEDURE ID:id main_parameters:b IS declaration_list:d BEGI
                 | PROCEDURE ID main_parameters IS declaration_list BEGIN content END ID error
                 | PROCEDURE ID main_parameters IS declaration_list BEGIN error END ID PYC
                 | PROCEDURE ID main_parameters IS error BEGIN content END ID PYC
-                | PROCEDURE ID:id main_parameters:b IS BEGIN content:c END ID PYC {: 
+                | PROCEDURE ID:id main_parameters:b IS BEGIN content:c END ID:id2 PYC {: 
                     Nodo tmp = new Nodo("PROCEDURE_BLOCK");
                     tmp.setNumNodo(parser.contador++);
 
@@ -497,6 +502,12 @@ procedure_block ::= PROCEDURE ID:id main_parameters:b IS declaration_list:d BEGI
                     }
                     tmp.addHijo((Nodo)tmp3);                    
 
+                    Nodo tmp5 = new Nodo("FINAL_ID");
+                    tmp5.setNumNodo(parser.contador++);
+                    tmp5.setValor(id2);
+
+                    tmp.addHijo(tmp5);
+
                     RESULT=tmp;
                 :}
                 //Error
@@ -508,7 +519,7 @@ procedure_block ::= PROCEDURE ID:id main_parameters:b IS declaration_list:d BEGI
                 | PROCEDURE ID main_parameters IS BEGIN error END ID PYC
                 ;
 
-function_block ::= FUNCTION ID:id main_parameters:b RETURN var_type:a IS declaration_list:d BEGIN content:c  END ID PYC{: 
+function_block ::= FUNCTION ID:id main_parameters:b RETURN var_type:a IS declaration_list:d BEGIN content:c  END ID:id2 PYC{: 
                     Nodo tmp = new Nodo("FUNCTION_BLOCK");
                     tmp.setNumNodo(parser.contador++);
                     tmp.setValor("null");
@@ -541,6 +552,13 @@ function_block ::= FUNCTION ID:id main_parameters:b RETURN var_type:a IS declara
                     }
                     tmp.addHijo(tmp5);
 
+                    Nodo tmp6 = new Nodo("FINAL_ID");
+                    tmp6.setNumNodo(parser.contador++);
+                    tmp6.setValor(id2);
+
+                    tmp.addHijo(tmp6);
+
+
                     RESULT=tmp;
                 
                 :}
@@ -553,7 +571,7 @@ function_block ::= FUNCTION ID:id main_parameters:b RETURN var_type:a IS declara
                 | FUNCTION ID main_parameters RETURN var_type IS declaration_list BEGIN content END ID error
                 | FUNCTION ID main_parameters RETURN var_type IS declaration_list BEGIN error END ID PYC
                 // caso sin declaraciones
-                | FUNCTION ID:id main_parameters:b RETURN var_type:a IS BEGIN content:c  END ID PYC{: 
+                | FUNCTION ID:id main_parameters:b RETURN var_type:a IS BEGIN content:c  END ID:id2 PYC{: 
                     Nodo tmp = new Nodo("FUNCTION_BLOCK");
                     tmp.setNumNodo(parser.contador++);
                     tmp.setValor("null");
@@ -578,6 +596,12 @@ function_block ::= FUNCTION ID:id main_parameters:b RETURN var_type:a IS declara
                         tmp5.addHijo(c.get(i));
                     }
                     tmp.addHijo(tmp5);
+
+                    Nodo tmp6 = new Nodo("FINAL_ID");
+                    tmp6.setNumNodo(parser.contador++);
+                    tmp6.setValor(id2);
+
+                    tmp.addHijo(tmp6);
 
                     RESULT=tmp;
                 :}
