@@ -51,11 +51,13 @@ non terminal Nodo E, T, F;
 non terminal String var_type,  parameter_mode;
 non terminal Nodo fin_parseo;
 
+
 precedence left OPREL;
-precedence left OPSUM;
-precedence left OPMULT;
+//precedence left OPSUM;
+//precedence left OPMULT;
 precedence left AND;
 precedence left OR;
+
 
 
 start with main_body;
@@ -857,7 +859,7 @@ assignment ::= ID:id OPASG E:e PYC{:
 
 	
 
-E::= E:a OPSUM:c T: b{:
+E::= E:a OPSUM:c T: b{:   //MATH
         Nodo tmp = new Nodo("OPSUM");
         tmp.setNumNodo(parser.contador++);
         tmp.setValor(c);

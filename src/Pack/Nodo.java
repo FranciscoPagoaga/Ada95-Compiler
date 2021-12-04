@@ -10,6 +10,7 @@ public class Nodo {
     private ArrayList<Nodo> hijos;
     private String valor;
     private int numNodo;
+    private String e_lugar ; 
     
     public Nodo(String nombre)
     {
@@ -17,7 +18,19 @@ public class Nodo {
         hijos = new ArrayList<>();
         //setValor("");
         setNumNodo(0);
+        String e_lugar  = null;
     }
+
+    public void setE_lugar(String e_lugar) {
+        this.e_lugar = e_lugar;
+    }
+
+    public String getE_lugar() {
+        return e_lugar;
+    }
+    
+    
+    
     
     public void addHijo(Nodo hijo)
     {
