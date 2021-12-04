@@ -56,15 +56,6 @@ public class SemanticAnalysis {
                 }
             break;
         }
-        // if(nodo.getNombre().equals("VARIABLE_DECLARATION")){
-        //     addVariableDeclaration(nodo);
-        // }else if(nodo.getNombre().equals("FUNCTION_BLOCK")||nodo.getNombre().equals("PROCEDURE_BLOCK")){
-        //     addFunctionBlock(nodo);
-        // }else{
-        //     for (Nodo hijos : nodo.getHijos()) {
-        //         Traverse(hijos);
-        //     }
-        // }
     }
 
     // Itera sobre el nodo VARIABLE_DECLARATION para agregar id con sus tipos
@@ -118,11 +109,12 @@ public class SemanticAnalysis {
                         System.out.println("Las Funciones y Procedimientos deben de tener el mismo nombre al final: " + scopeHijos);
                         has_error= true;
                     }
+                break;
                 case "CONTENT":
                     Traverse(hijo, scopeHijos);
                     validateReturn(hijo,scopeHijos, returnType);
                     if(!returnProc && !returnType.equals("void")){
-                        System.out.println("Las funciones deben de tener return" + scopeActual);
+                        System.out.println("Las funciones deben de tener return " + scopeActual);
                     }
                     returnProc = false;
                 break;
@@ -137,7 +129,6 @@ public class SemanticAnalysis {
         if (parametros!=null) {// validacion porque el (case: "ID") no tiene parametros
                                // al parecer function y procedure deben llevar parametros obligatoriamente, hay un error de sintaxis si no se mandan.
                                
-            System.out.println(parametros.getNombre());                  
              for (int i = 0; i < parametros.getHijos().size(); i++) {
                 Nodo actualNode = parametros.getHijos().get(i);//EVERY PARAMETER
                 AddParameters(tmpfnode,actualNode,scopeHijos);
@@ -151,16 +142,6 @@ public class SemanticAnalysis {
             System.out.println("la funcion \""+tmpfnode.Id+"\" en el scope "+tmpfnode.Scope+" ya esta declarada");
         }
     }
-    
-    
-    /*
-    public ArrayList<VariableTableNode> addParameters(Nodo nodo){
-        FuntionTableNode tmpfnode = FunctionTableNode()
-        
-        for (Nodo Hijo : nodo.getHijos()) {
-            
-        }
-    }*/
     
     public void AddParameters(FunctionTableNode tmpfnode, Nodo nodo, String scopeActual/*each parameter_specification*/){
             
@@ -193,7 +174,7 @@ public class SemanticAnalysis {
         for (int i = 0; i < ID_LIST.getHijos().size(); i++) {
             Nodo actualNode = ID_LIST.getHijos().get(i);
             VariableTableNode tmpvnode = new VariableTableNode(actualNode.getValor(), scopeActual, tipo,parameter_mode_int );
-            
+            tmpfnode.Add(tipo);
             //se agregan los parametros en tabla de simbolos general
             if (!this.symbolTable.addSymbol(tmpvnode)) {
                System.out.println("El identificador \""+tmpvnode.Id+"\" en el scope "+tmpvnode.Scope+" ya esta declarado");
@@ -204,6 +185,7 @@ public class SemanticAnalysis {
     public String typeValidation(Nodo nodo, String scopeActual){
         //variable type para guardar validacion
         String type = "";
+        SymbolTableNode tmpNode;
         for (Nodo hijos : nodo.getHijos()){
             switch(hijos.getNombre()){
                 case "NUM":
@@ -212,7 +194,7 @@ public class SemanticAnalysis {
                         if (type.equals(numType(hijos.getValor()))) {
                             return type;//si type y el valor de num son del mismo tipo, retorna el tupo 
                         } else {//si no, marca error Y dice que no son tipos compatibles
-                            System.out.println("No son tipos compatibles");
+                            System.out.println("No son tipos compatibles " + type);
                             has_error=true;
                             return "Integer";//retorna int por general
                         }
@@ -226,7 +208,7 @@ public class SemanticAnalysis {
                         if(type.equals("Boolean")){
                             return type;
                         }else{
-                            System.out.println("No son tipos compatibles");
+                            System.out.println("No son tipos compatibles "+ type);
                             has_error=true;
                             return "Integer";
                         }
@@ -239,7 +221,7 @@ public class SemanticAnalysis {
                     if(!scopeActual.equals("")){
                         symbolTable.activateWithScope(scopeActual);//llamar antes de entrar a a la tabla
                     }
-                    SymbolTableNode tmpNode = symbolTable.findSymbol(hijos.getValor(), scopeActual);
+                    tmpNode = symbolTable.findSymbol(hijos.getValor(), scopeActual);
                     if (tmpNode != null) {
                         if (tmpNode instanceof VariableTableNode){
                             String tmpType = ((VariableTableNode) tmpNode).getType();
@@ -255,9 +237,11 @@ public class SemanticAnalysis {
                                 type = tmpType;
                             }
                         }else{
+                            has_error=true;
                             System.out.println("El identificador utilizado es de Funcion");
                         }
                     } else {
+                        has_error=true;
                         System.out.println("La variable "+ hijos.getValor() + " no existe");
                     }
                 break;
@@ -266,8 +250,19 @@ public class SemanticAnalysis {
                     // }
                 
                 
-                case "Call_subroutine":
-                    
+                case "Call_Subroutine":
+                    String tmpType = validateSubroutine(hijos, scopeActual); 
+                    if (type!="") {
+                        if(type.equals(tmpType)){
+                            return type;
+                        }else{
+                            System.out.println("No son tipos compatibles " + tmpType);
+                            has_error=true;
+                            return "Integer";
+                        }
+                    }else{
+                        type = tmpType;
+                    }
                 break;
                 case "MATHEMATICAL_EXPRESSION":
                 case "OPREL":
@@ -275,15 +270,17 @@ public class SemanticAnalysis {
                 case "OPMULT":
                 case "PARENTHESIS": // case todos los tipos que no almacenan valor
                     if(type !=""){
+                        // System.out.println(typeValidation(hijos,scopeActual));
                         if (type.equals(typeValidation(hijos,scopeActual))) {// manda el nodo a la misma funcion para buscar que valor retorna recursivamente
                             return type;
                         }else{
                             has_error=true;
-                            System.out.println("No son tipos compatibles");//si no son equivalentes tira error
+                            System.out.println("No son tipos compatibles "+ hijos.getNombre());//si no son equivalentes tira error
                             return type;
                         }
+                    }else{
+                        type = typeValidation(hijos,scopeActual);
                     }
-                    type = typeValidation(hijos,scopeActual);
                 break;
             }
         }
@@ -332,5 +329,49 @@ public class SemanticAnalysis {
         tmpNodo.getHijos().remove(0);
         typeValidation(tmpNodo, scope);
         Traverse(nodo.getHijos().get(nodo.getHijos().size()-1), scope);
+    }
+
+    public String validateSubroutine(Nodo nodo, String scopeActual){
+        String typeReturn = "";
+        Nodo tmpnode = nodo.getHijos().get(0);
+        if(!scopeActual.equals("")){
+            symbolTable.activateWithScope(scopeActual);//llamar antes de entrar a a la tabla
+        }
+        SymbolTableNode tmpNode = symbolTable.findSymbol(tmpnode.getValor(), scopeActual);
+        if (tmpNode != null) {
+            if (tmpNode instanceof FunctionTableNode){
+                typeReturn = ((FunctionTableNode) tmpNode).getReturn_type();
+                if(!typeReturn.equals("void")){
+                    validateParams((FunctionTableNode) tmpNode, nodo.getHijos().get(1),scopeActual);
+                }else{
+                    System.out.println("El identificador usado es de Procedimiento");
+                    has_error=true;
+                    typeReturn="Integer";
+                }
+                
+            }else{
+                System.out.println("El identificador utilizado es de Variable");
+                has_error=true;
+            }
+        } else {
+            System.out.println("La Funcion "+ tmpnode.getValor() + " no existe");
+            has_error=true;
+        }
+        return typeReturn;
+    }
+
+    public void validateParams(FunctionTableNode funcNode, Nodo nodo, String scopeActual){
+        if (nodo.getHijos().size()==funcNode.getParams().size()){
+            for (int i = 0; i < nodo.getHijos().size(); i++) {
+                Nodo tmpNodo = new Nodo("");
+                tmpNodo.addHijo(nodo.getHijos().get(i));
+                String type = typeValidation(tmpNodo, scopeActual);
+                if(!type.equals(funcNode.getParams().get(i))){
+                    System.out.println("El parametro " + (i+1) + " en el llamado de la funcion " + funcNode.getId()+ " no es del tipo correcto: " + scopeActual);
+                }
+            }
+        }else{
+            System.out.println("Los parametros enviados no son los correctos");
+        }
     }
 }
