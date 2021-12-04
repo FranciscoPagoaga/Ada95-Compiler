@@ -1,0 +1,5 @@
+Procedure Hello is
+	a:integer;
+begin
+	a := a+2*(b+3)+c*2+45*2+34*(4+5);
+end Hello;

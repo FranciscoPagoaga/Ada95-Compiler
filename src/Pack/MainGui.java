@@ -326,17 +326,39 @@ public class MainGui extends javax.swing.JFrame {
                 SemanticAnalysis analysis = new SemanticAnalysis(new SymbolTable());
                 analysis.Traverse(par.padre, "");
                 
-                /*no mostrar el frame por ahora
-                //crear la imagen
+                //inicio cod intermedio
+                File file = new File("./archivo.adb");
+                File intermediateCodeFile = new File(file.getAbsolutePath().replace(".adb", "") + ".o");
+                CodigoIntermedio initIntermedio = null;
+                try {
+                    initIntermedio = new CodigoIntermedio(intermediateCodeFile,analysis);
+                } catch (IOException ex) {
+                    Logger.getLogger(MainGui.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                initIntermedio.TraverseMathE(par.padre);
+                initIntermedio.ordenarPadres();
+                initIntermedio.printpadresOrdenados();
+                initIntermedio.GenerandoCod();
                 
-                JframeImagen marco = new JframeImagen();
-                marco.setExtendedState(MAXIMIZED_BOTH); 
-                marco.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-                marco.setVisible(true);
-                */
+                try {
+                    initIntermedio.createFile(initIntermedio.ie.buildIntermediateCode());
+                   
+                } catch (IOException ex) {
+                    Logger.getLogger(MainGui.class.getName()).log(Level.SEVERE, null, ex);
+                }
                 
             }
         }
+        
+        /*no mostrar el frame por ahora
+        //crear la imagen
+
+        JframeImagen marco = new JframeImagen();
+        marco.setExtendedState(MAXIMIZED_BOTH);
+        marco.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+        marco.setVisible(true);
+        */
+        
         else
             System.out.println("No se puede graficar!!!");
         

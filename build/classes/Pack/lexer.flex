@@ -58,13 +58,15 @@ true = ["t"|"T"]["r"|"R"]["u"|"U"]["e"|"E"]
 false =  ["F"|"f"]["a"|"A"]["l"|"L"]["s"|"S"]["e"|"E"]
 punto = "."
 signo_negativo = "-"
-numero = ({signo_negativo}|""){digito}+(({punto}{digito}+)|"")
+//numero = ({signo_negativo}|""){digito}+(({punto}{digito}+)|"")
+numero = {digito}+(({punto}{digito}+)|"")
 
 //delimitadores
 op_declaracion = ":"
 op_asignacion = ":="
 op_rel = "=" | "/=" | "<" | "<=" | ">" | ">="
 op_suma = "+" | "-"
+
 op_mult = "*" | "/"
 parentesis_izquierdo = "("
 parentesis_derecho = ")"
