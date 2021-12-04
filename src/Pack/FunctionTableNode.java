@@ -4,19 +4,19 @@ import java.util.ArrayList;
 
 public class FunctionTableNode extends SymbolTableNode {
     private String return_type;
-    private ArrayList<VariableTableNode> params;
+    private ArrayList<String> params;
     private boolean hasReturn;
     private String child_scope;
 
     public FunctionTableNode(String Id, String Scope, String return_type, String child_scope ){
         super(Id,Scope);
         this.setReturn_type(return_type);
-        this.setParams(new ArrayList<VariableTableNode>());
+        this.setParams(new ArrayList<String>());
         this.setHasReturn(false);
         this.setChild_scope(child_scope);
     }
 
-    public void Add(VariableTableNode variable){
+    public void Add(String variable){
         this.params.add(variable);
     }
 
@@ -36,11 +36,11 @@ public class FunctionTableNode extends SymbolTableNode {
         this.hasReturn = hasReturn;
     }
 
-    public ArrayList<VariableTableNode> getParams() {
+    public ArrayList<String> getParams() {
         return params;
     }
 
-    public void setParams(ArrayList<VariableTableNode> params) {
+    public void setParams(ArrayList<String> params) {
         this.params = params;
     }
 
