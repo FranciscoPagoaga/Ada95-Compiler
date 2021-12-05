@@ -25,6 +25,7 @@ public class CodigoIntermedio {
     private BufferedWriter out;
     private StringBuilder file;
     private SemanticAnalysis instance;
+    Nodo AssignActual = null;
     
     //codigo para mas adelante quizas
     private IntermediateStatement program;
@@ -116,18 +117,42 @@ public class CodigoIntermedio {
     
     public void printpadresOrdenados(){//para pruebas
         for (int i = 0; i < padresOrdenados.size(); i++) {
-            System.out.println(padresOrdenados.get(i).getNumNodo());
+            System.out.println(padresOrdenados.get(i).getNombre());
+            
         }
+        System.out.println("-----fin toda una assig-------------------");
     }
     
-    
-    public  void TraverseMathE(Nodo nodo){//busca el nodo E
+    public  void TraverseAssign(Nodo nodo){//busca el ASSIGNMENT
         
         
         
         switch (nodo.getNombre()){
             
             case "ASSIGNMENT":
+                //ejecutar una MathE
+                AssignActual = nodo;
+                TraverseMathE(nodo);
+                exec_mathE();
+                
+            default:
+                for (Nodo hijos : nodo.getHijos()) {
+                    TraverseAssign(hijos);
+                }
+            
+        }
+       
+    }
+    
+    
+    // encuentra los nodos necesarios para formar una mathE
+    public  void TraverseMathE(Nodo nodo){ 
+        
+        
+        
+        switch (nodo.getNombre()){
+            
+            
             case "MATHEMATICAL_EXPRESSION":
             case "OPSUM":
             case "OPMULT":
@@ -143,28 +168,55 @@ public class CodigoIntermedio {
                 }
             
         }
+        
+        
+        
+        
+        
+        
+        
        
     }
     
+    //se forma el codigo intermedio para una MathE
+    public void exec_mathE (){
     
-    
-    
-    
-    
-    public void GenerandoCod(){
+        //ejecucion de mathE
         String e1_lugar = "error soy e1.lugar";
         String e2_lugar = "error soy e2.lugar";
         Temporal temp = null;
         Quadruple quad= null;
         Nodo MathE = null;
-     
+        
+        
+        
+        //se ordenan los padres que se encontraroon previemanete, sin esto no se sabe el orden de precedencia ni asociatividad
+        ordenarPadres();
+        
+        //print de prueba
+        printpadresOrdenados();
+        
+        
         for (int i = 0; i < padresOrdenados.size(); i++) {
             // generando codigo nodo a nodo en el orden ya dado por el ordenamiento
             switch (padresOrdenados.get(i).getNombre()){
                 case "MATHEMATICAL_EXPRESSION":
                     //sube el temporal
                     //asigna a su temporal el temporal que tiene el hijo
-                    padresOrdenados.get(i).setE_lugar(padresOrdenados.get(i).getHijos().get(0).getE_lugar());
+                    
+                    
+                    if (padresOrdenados.get(i).getHijos().get(0).getNombre().equals("NUM") || padresOrdenados.get(i).getHijos().get(0).getNombre().equals("ID")) {
+                        // caso a= 1 or a = id;
+                        padresOrdenados.get(i).setE_lugar(padresOrdenados.get(i).getHijos().get(0).getValor());
+                        
+                    }else{
+                        //caso a= temporal n
+                        padresOrdenados.get(i).setE_lugar(padresOrdenados.get(i).getHijos().get(0).getE_lugar());
+                        
+                    }
+                   
+                    
+                    
                     //save MathE
                     MathE = padresOrdenados.get(i);
                 break;
@@ -235,7 +287,7 @@ public class CodigoIntermedio {
                     padresOrdenados.get(i).setE_lugar(temp.getTemporal());//E.lugar = temporalnuevo();
                     
                     
-                    //si hay cuadruplos
+                    //si hay cuadruplos significa que el primer E.lugar ya subio por tanto hay que buscarlos
                     if(ie.operations.size()>0){
                     
                         //conseguir e1.lugar
@@ -292,8 +344,8 @@ public class CodigoIntermedio {
                     
                 break;   
                 
-                case "ASSIGNMENT":
-                break;
+                //case "ASSIGNMENT":
+                //break;
 
 
                 default:
@@ -301,16 +353,44 @@ public class CodigoIntermedio {
             
             }
             
+            
+           
+            
+            
         }
         
-        //por ultimo Asignar, el nodo assign se encuentra en la penultima posicion
+        //por ultimo Asignar, el nodo assign es una variable global
         String e_lugar = MathE.getE_lugar();
-        String id_valex = padresOrdenados.get(padresOrdenados.size()-2).getHijos().get(0).getValor();
+        String id_valex = AssignActual.getHijos().get(0).getValor();
                 
         //se genera un cuadruplo
         quad = new Quadruple(Quadruple.Operations.ASSIGN,e_lugar ,"",id_valex );
         
+        //el cuadruplo de guarda en la tabla 
         ie.operations.add(quad);
+        
+        
+        //se limpia el arraylist de padres para que este listo a la nueva asignacion
+        padres.clear();
+    
+    
+    }
+    
+     
+    
+    
+    public void GenerandoCod(Nodo padre){
+        
+        //se genera el codigo intermedio para varias asignaciones dentro de content
+        //traverse assing llama a traverseMathE para que se ejecute una asignacion completa
+        TraverseAssign(padre);
+       
+        
+        
+        
+        
+        
+     
         
         
     }   

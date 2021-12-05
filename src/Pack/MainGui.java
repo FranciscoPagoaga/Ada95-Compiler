@@ -326,7 +326,7 @@ public class MainGui extends javax.swing.JFrame {
                 SemanticAnalysis analysis = new SemanticAnalysis(new SymbolTable());
                 analysis.Traverse(par.padre, "");
                 
-                //inicio cod intermedio
+                
                 File file = new File("./archivo.adb");
                 File intermediateCodeFile = new File(file.getAbsolutePath().replace(".adb", "") + ".o");
                 CodigoIntermedio initIntermedio = null;
@@ -335,12 +335,13 @@ public class MainGui extends javax.swing.JFrame {
                 } catch (IOException ex) {
                     Logger.getLogger(MainGui.class.getName()).log(Level.SEVERE, null, ex);
                 }
-                initIntermedio.TraverseMathE(par.padre);
-                initIntermedio.ordenarPadres();
-                initIntermedio.printpadresOrdenados();
-                initIntermedio.GenerandoCod();
+                
+                //comenzar ejecucion codigo intermedio
+                //codigo intermedio en memoria
+                initIntermedio.GenerandoCod(par.padre);
                 
                 try {
+                    //codigo intermedio en un file
                     initIntermedio.createFile(initIntermedio.ie.buildIntermediateCode());
                    
                 } catch (IOException ex) {
