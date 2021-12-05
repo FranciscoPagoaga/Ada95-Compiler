@@ -162,4 +162,12 @@ public class SymbolTable {
         
         return result;
     }
+
+    public String toString(){
+        String retorno = "";
+        for (SymbolTableNode node : symbolList) {
+            retorno+=node.toString();
+        }
+        return retorno;
+    }
 }

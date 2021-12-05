@@ -3,12 +3,9 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/pc/Desktop/git%20repositories/Ada95-Compiler/src/Pack/SemanticAnalysis.java</file>
-            <file>file:/C:/Users/pc/Desktop/git%20repositories/Ada95-Compiler/src/Pack/MainGui.java</file>
-            <file>file:/C:/Users/pc/Desktop/git%20repositories/Ada95-Compiler/src/Pack/SymbolTableNode.java</file>
-            <file>file:/C:/Users/pc/Desktop/git%20repositories/Ada95-Compiler/src/Pack/SymbolTable.java</file>
-            <file>file:/C:/Users/pc/Desktop/git%20repositories/Ada95-Compiler/src/Pack/VariableTableNode.java</file>
-            <file>file:/C:/Users/pc/Desktop/git%20repositories/Ada95-Compiler/src/Pack/FunctionTableNode.java</file>
+            <file>file:/home/francisco/Documents/Ada95-Compiler/src/Pack/SemanticAnalysis.java</file>
+            <file>file:/home/francisco/Documents/Ada95-Compiler/src/Pack/MainGui.java</file>
+            <file>file:/home/francisco/Documents/Ada95-Compiler/nbproject/build-impl.xml</file>
         </group>
     </open-files>
 </project-private>
