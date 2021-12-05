@@ -43,4 +43,8 @@ public class SymbolTableNode {
     public void setActive(boolean active) {
         this.active = active;
     }
+
+    public String toString(){
+        return("Id: " + Id +" Scope: "+ Scope + " Active: "+ active+ "\n");
+    }
 }

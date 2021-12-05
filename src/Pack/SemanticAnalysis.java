@@ -80,7 +80,9 @@ public class SemanticAnalysis {
         String id=""; 
         String returnType="void";// si es un procedure el tipo de valor de retorno es void
         Nodo parametros=null;
+        Nodo declarations=null;
         //Nodo id_list = null;
+        FunctionTableNode tmpfnode=null;
         String scopeHijos = "Missing ID";
         for (Nodo hijo : nodo.getHijos()) {
             switch(hijo.getNombre()){
@@ -97,12 +99,12 @@ public class SemanticAnalysis {
                     break;
                 case "RETURN_TYPE": //solo en FUNCTION_BLOCK
                     returnType = hijo.getValor();
-                break;
-                case "DECLARATIONS":
-                    Traverse(hijo, scopeHijos);
-                break;
+                    break;
                 case "MAIN_PARAMETERS":
-                    parametros = hijo; // parametros.parameters 
+                    parametros = hijo;
+                break;
+                case "DECLARATIONS":    
+                    declarations=hijo;
                 break;
                 case "FINAL_ID":
                     if (!id.equals(hijo.getValor())) {
@@ -111,6 +113,19 @@ public class SemanticAnalysis {
                     }
                 break;
                 case "CONTENT":
+                    tmpfnode = new FunctionTableNode(nodo.getHijos().get(0).getValor(),scopeActual, returnType, scopeHijos);//fila tipo funcion
+                    if (!this.symbolTable.addSymbol(tmpfnode)) {
+                        System.out.println("la funcion \""+tmpfnode.Id+"\" en el scope "+tmpfnode.Scope+" ya esta declarada");
+                    }
+                    if(parametros!=null){
+                        for (int i = 0; i < parametros.getHijos().size(); i++) {
+                            Nodo actualNode = parametros.getHijos().get(i);//EVERY PARAMETER
+                            AddParameters(tmpfnode,actualNode,scopeHijos);
+                        }
+                    }
+                    if(declarations!=null){
+                        Traverse(declarations, scopeHijos);
+                    }
                     Traverse(hijo, scopeHijos);
                     validateReturn(hijo,scopeHijos, returnType);
                     if(!returnProc && !returnType.equals("void")){
@@ -120,31 +135,9 @@ public class SemanticAnalysis {
                 break;
             }
         }
-       
-        
-        FunctionTableNode tmpfnode = new FunctionTableNode(nodo.getHijos().get(0).getValor(),scopeActual, returnType, scopeHijos);//fila tipo funcion
-                     
-        
-        
-        if (parametros!=null) {// validacion porque el (case: "ID") no tiene parametros
-                               // al parecer function y procedure deben llevar parametros obligatoriamente, hay un error de sintaxis si no se mandan.
-                               
-             for (int i = 0; i < parametros.getHijos().size(); i++) {
-                Nodo actualNode = parametros.getHijos().get(i);//EVERY PARAMETER
-                AddParameters(tmpfnode,actualNode,scopeHijos);
-            }
-        }
-       
-             
-        
-        //añadir funcion a la tabla de simbolos mas general
-        if (!this.symbolTable.addSymbol(tmpfnode)) {
-            System.out.println("la funcion \""+tmpfnode.Id+"\" en el scope "+tmpfnode.Scope+" ya esta declarada");
-        }
     }
     
     public void AddParameters(FunctionTableNode tmpfnode, Nodo nodo, String scopeActual/*each parameter_specification*/){
-            
         //Se necesita el ultimo nodo para saber el tipo
         String tipo = nodo.getHijos().get(nodo.getHijos().size()-1).getValor();
         //parameter mode es el penultimo nodo
@@ -275,7 +268,7 @@ public class SemanticAnalysis {
                             return type;
                         }else{
                             has_error=true;
-                            System.out.println("No son tipos compatibles "+ hijos.getNombre());//si no son equivalentes tira error
+                            System.out.println("No son tipos compatibles "+ scopeActual);//si no son equivalentes tira error
                             return type;
                         }
                     }else{
