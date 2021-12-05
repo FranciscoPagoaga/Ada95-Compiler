@@ -106,7 +106,7 @@ digraph G {node[shape=box, style=filled, color=blanchedalmond]; edge[color=choco
 "116_CONTENT -> null"->"111_PUT -> null"
 "111_PUT -> null"->"96_NUM -> 2"
 "116_CONTENT -> null"->"98_ASSIGNMENT -> null"
-"98_ASSIGNMENT -> null"->"99_ID -> prueba"
+"98_ASSIGNMENT -> null"->"99_ID -> asd"
 "98_ASSIGNMENT -> null"->"100_MATHEMATICAL_EXPRESSION -> null"
 "100_MATHEMATICAL_EXPRESSION -> null"->"97_NUM -> 1.0"
 "116_CONTENT -> null"->"107_IF_BLOCK -> null"
