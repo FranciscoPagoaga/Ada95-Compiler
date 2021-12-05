@@ -237,7 +237,7 @@ public class MainGui extends javax.swing.JFrame {
         
         
         String texto= inputArea.getText();
-        System.out.println(texto);
+        
         
         System.out.println("iniciando analisis sintactico..\n");
         Lexer scan = new Lexer(new BufferedReader( new StringReader(texto)));
