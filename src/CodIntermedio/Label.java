@@ -10,11 +10,11 @@ package CodIntermedio;
  * @author pc
  */
 public class Label {
-    private static int labelCount = 0;
+    private static int labelCount = 100;
     private String labelName;
 
     public Label() {
-        this("L" + labelCount++);
+        this("L:" + labelCount++ +" ");
     }
 
     public Label(String labelName) {

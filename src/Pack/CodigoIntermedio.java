@@ -375,8 +375,10 @@ public class CodigoIntermedio {
     
     
     }
+  
+    //---
     
-     
+    
     
     
     public void GenerandoCod(Nodo padre){

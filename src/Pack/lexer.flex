@@ -57,7 +57,7 @@ id = {letra}+("_"({letra}|{digito})+)*({letra}|{digito})*
 true = ["t"|"T"]["r"|"R"]["u"|"U"]["e"|"E"]
 false =  ["F"|"f"]["a"|"A"]["l"|"L"]["s"|"S"]["e"|"E"]
 punto = "."
-signo_negativo = "-"
+//signo_negativo = "-"
 //numero = ({signo_negativo}|""){digito}+(({punto}{digito}+)|"")
 numero = {digito}+(({punto}{digito}+)|"")
 

@@ -131,7 +131,51 @@ public class IntermediateStatement extends IntermediateForm {
                     sb.append("fin_funcion "+currentQuadruple.getOp1());
                     break;
                 }
+                
+                
+                
+                
+                
             }
+            
+            //switch para oprel
+            
+            switch(currentQuadruple.getTypeString()) {
+                
+                case "IF>=": {
+                    sb.append("if " + currentQuadruple.getOp1() + " >= " + currentQuadruple.getOp2() + " goto " + currentQuadruple.getLabel());
+                    break;
+                }
+                case "IF<=": {
+                    sb.append("if " + currentQuadruple.getOp1() + " <= " + currentQuadruple.getOp2() + " goto " + currentQuadruple.getLabel());
+                    break;
+                }
+                case ">": {
+                    sb.append("if " + currentQuadruple.getOp1() + " > " + currentQuadruple.getOp2() + " goto " + currentQuadruple.getLabel());
+                    break;
+                }
+                case "<": {
+                    sb.append("if " + currentQuadruple.getOp1() + " < " + currentQuadruple.getOp2() + " goto " + currentQuadruple.getLabel());
+                    break;
+                }
+                case "<>": {
+                    sb.append("if " + currentQuadruple.getOp1() + " <> " + currentQuadruple.getOp2() + " goto " + currentQuadruple.getLabel());
+                    break;
+                }
+                case "=": {
+                    sb.append("if " + currentQuadruple.getOp1() + " = " + currentQuadruple.getOp2() + " goto " + currentQuadruple.getLabel());
+                    break;
+                }
+                default: 
+                    System.out.println("algo esta mal en switch oprel para la funcion BuildItermediateCode");
+                
+                
+             
+            }
+            
+            
+            
+            
             sb.append("\n");
         }
         return sb.toString();
