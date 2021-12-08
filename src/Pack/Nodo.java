@@ -11,7 +11,10 @@ public class Nodo {
     private ArrayList<Nodo> hijos;
     private String valor;
     private int numNodo;
-    private String e_lugar ; 
+    private String e_lugar;
+    private String verdadero;
+    private String falso; 
+    private String siguiente;
     
     //
     private IntermediateExpression Expression;
@@ -24,6 +27,30 @@ public class Nodo {
         setNumNodo(0);
         String e_lugar  = null;
         Expression = new IntermediateExpression();
+    }
+
+    public String getSiguiente() {
+        return siguiente;
+    }
+
+    public void setSiguiente(String siguiente) {
+        this.siguiente = siguiente;
+    }
+
+    public String getFalso() {
+        return falso;
+    }
+
+    public void setFalso(String falso) {
+        this.falso = falso;
+    }
+
+    public String getVerdadero() {
+        return verdadero;
+    }
+
+    public void setVerdadero(String verdadero) {
+        this.verdadero = verdadero;
     }
 
     public IntermediateExpression getExpression() {

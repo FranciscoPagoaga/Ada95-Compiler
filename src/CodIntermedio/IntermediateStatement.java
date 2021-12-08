@@ -121,7 +121,7 @@ public class IntermediateStatement extends IntermediateForm {
                         break;
                     }
                     case LABEL: {
-                        sb.append(currentQuadruple.getLabel().getLabelName() + ":");
+                        sb.append(currentQuadruple.geteLugar() + ":");
                         break;
                     }
                     case EXIT: {

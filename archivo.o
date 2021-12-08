@@ -1,8 +1,3 @@
-if a < L goto 3
-goto 5
-if b < c goto  
-goto 5
-if a < b goto  
-goto  
-t1 := a + 1
-a := t1
+if 1 < 2 goto etiq3
+goto etiq4
+etiq3:
