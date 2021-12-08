@@ -1,2 +1,8 @@
+if a < L goto 3
+goto 5
+if b < c goto  
+goto 5
+if a < b goto  
+goto  
 t1 := a + 1
 a := t1

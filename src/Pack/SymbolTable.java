@@ -12,6 +12,17 @@ public class SymbolTable {
     public SymbolTable(){
         symbolList = new ArrayList<>();
     }
+    
+    public SymbolTableNode findActiveSymbol(String id){
+        for (int i = 0; i < symbolList.size(); i++) {
+            //pendiente: a este if agregarle && symbolList.get(i).isActive()
+            if( symbolList.get(i).getId().equals(id) && symbolList.get(i).isActive()){
+                    return symbolList.get(i);
+            }
+        }
+        return null;
+    }
+    
 
     public static int sizeOf(String type){
         if(type.equals("integer")){

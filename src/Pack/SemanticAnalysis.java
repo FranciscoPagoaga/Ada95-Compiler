@@ -214,7 +214,7 @@ public class SemanticAnalysis {
                     if(!scopeActual.equals("")){
                         symbolTable.activateWithScope(scopeActual);//llamar antes de entrar a a la tabla
                     }
-                    tmpNode = symbolTable.findSymbol(hijos.getValor(), scopeActual);
+                    tmpNode = symbolTable.findActiveSymbol(hijos.getValor());
                     if (tmpNode != null) {
                         if (tmpNode instanceof VariableTableNode){
                             String tmpType = ((VariableTableNode) tmpNode).getType();
@@ -330,7 +330,7 @@ public class SemanticAnalysis {
         if(!scopeActual.equals("")){
             symbolTable.activateWithScope(scopeActual);//llamar antes de entrar a a la tabla
         }
-        SymbolTableNode tmpNode = symbolTable.findSymbol(tmpnode.getValor(), scopeActual);
+        SymbolTableNode tmpNode = symbolTable.findActiveSymbol(tmpnode.getValor());
         if (tmpNode != null) {
             if (tmpNode instanceof FunctionTableNode){
                 typeReturn = ((FunctionTableNode) tmpNode).getReturn_type();

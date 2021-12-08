@@ -1,6 +1,7 @@
 
 package Pack;
 
+import CodIntermedio.IntermediateExpression;
 import java.util.ArrayList;
 
 
@@ -12,6 +13,9 @@ public class Nodo {
     private int numNodo;
     private String e_lugar ; 
     
+    //
+    private IntermediateExpression Expression;
+    
     public Nodo(String nombre)
     {
         setNombre(nombre);
@@ -19,7 +23,18 @@ public class Nodo {
         //setValor("");
         setNumNodo(0);
         String e_lugar  = null;
+        Expression = new IntermediateExpression();
     }
+
+    public IntermediateExpression getExpression() {
+        return Expression;
+    }
+
+    public void setExpression(IntermediateExpression Expression) {
+        this.Expression = Expression;
+    }
+    
+    
 
     public void setE_lugar(String e_lugar) {
         this.e_lugar = e_lugar;
