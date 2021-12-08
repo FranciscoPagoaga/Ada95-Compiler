@@ -14,8 +14,7 @@ public class Label {
     private int labelName;
 
     public Label() {
-        //this(labelCount++);
-        this.labelName = labelCount;
+        this.labelName = labelCount++;
     }
 
     public Label(int labelName) {
@@ -28,10 +27,6 @@ public class Label {
 
     public int getLabelName() {
         return labelName;
-    }
-    
-    public void addUno(){
-        this.labelCount += 1;
     }
     
 
