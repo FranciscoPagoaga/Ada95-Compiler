@@ -47,16 +47,18 @@ non terminal List<Nodo> parameters_specification, parameter_values , variable_de
 non terminal Nodo condition, boolean_expr;
 non terminal Nodo assignment; 
 non terminal Nodo put, get;
-non terminal Nodo E, T, F;
+non terminal Nodo E, T, F, J, K ;
 non terminal String var_type,  parameter_mode;
 non terminal Nodo fin_parseo;
 
 
-precedence left OPREL;
+//precedence left OPREL;
 //precedence left OPSUM;
 //precedence left OPMULT;
-precedence left AND;
-precedence left OR;
+//precedence left OR;
+//precedence left AND ;
+
+
 
 
 
@@ -1212,7 +1214,7 @@ else_block ::= ELSE content:f {:
             | ELSE error
             ;
 
-condition ::= boolean_expr: boolExp OR condition:a {:
+condition ::= condition: boolExp OR J:a {:
                 Nodo tmp = new Nodo("BooleanExp");
                 tmp.setNumNodo(parser.contador++);
                 tmp.addHijo((Nodo)boolExp);
@@ -1229,7 +1231,14 @@ condition ::= boolean_expr: boolExp OR condition:a {:
                 RESULT=tmp;
             :}
 
-            | boolean_expr: boolExp AND condition:a {:
+            |J: e {:RESULT = e;:}
+            //errores
+            
+            
+            
+            ;
+
+            J::= J: boolExp AND K:a {:
                 Nodo tmp = new Nodo("BooleanExp");
                 tmp.setNumNodo(parser.contador++);
                 tmp.addHijo((Nodo)boolExp);
@@ -1243,17 +1252,20 @@ condition ::= boolean_expr: boolExp OR condition:a {:
 
                 RESULT=tmp;
             :}
+            
+            |K: e {:RESULT = e;:}
+            //errores
+            
+            
+            ;
 
-            | boolean_expr: boolExp {:
+            K::= boolean_expr: boolExp {:
                 Nodo tmp = new Nodo("BooleanExp");
                 tmp.setNumNodo(parser.contador++);
                 tmp.addHijo((Nodo)boolExp);
                 RESULT=tmp;
             :}
-            //errores
-            | error
-            | error AND condition
-            | error OR condition
+           
             ;
 
 boolean_expr ::= E:a OPREL:oprel_val E:b {:

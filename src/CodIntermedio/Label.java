@@ -10,19 +10,29 @@ package CodIntermedio;
  * @author pc
  */
 public class Label {
-    private static int labelCount = 0;
-    private String labelName;
+    private static int labelCount = 1;
+    private int labelName;
 
     public Label() {
-        this("L" + labelCount++);
+        //this(labelCount++);
+        this.labelName = labelCount;
     }
 
-    public Label(String labelName) {
+    public Label(int labelName) {
         this.labelName = labelName;
     }
 
-    public void setLabelName(String labelName) {
+    public void setLabelName(int labelName) {
         this.labelName = labelName;
     }
+
+    public int getLabelName() {
+        return labelName;
+    }
+    
+    public void addUno(){
+        this.labelCount += 1;
+    }
+    
 
 }

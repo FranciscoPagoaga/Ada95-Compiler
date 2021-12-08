@@ -26,6 +26,13 @@ public class CodigoIntermedio {
     private StringBuilder file;
     private SemanticAnalysis instance;
     Nodo AssignActual = null;
+    ArrayList<Nodo> padres = new ArrayList<>();
+    ArrayList<Nodo> padresOrdenados = new ArrayList<>();
+    ArrayList<Nodo> asignaciones = new ArrayList<>();
+    IntermediateExpression ie = new IntermediateExpression();
+   
+    //label global
+    //Label label = new Label();
     
     //codigo para mas adelante quizas
     private IntermediateStatement program;
@@ -49,11 +56,7 @@ public class CodigoIntermedio {
         out.close();
     }
 
-    public void complete(ArrayList<Label> list, Label label) {
-        for (int i = 0; i < list.size(); i++) {
-            list.get(i).setLabelName(label.toString());
-        }
-    }
+  
 
     public ArrayList<Label> merge(ArrayList<Label> list1, ArrayList<Label> list2) {
         ArrayList<Label> newList = new ArrayList();
@@ -63,13 +66,7 @@ public class CodigoIntermedio {
     }
     
     
-    //
-    ArrayList<Nodo> padres = new ArrayList<>();
-    ArrayList<Nodo> padresOrdenados = new ArrayList<>();
-    ArrayList<Nodo> asignaciones = new ArrayList<>();
-    
-    IntermediateExpression ie = new IntermediateExpression();
-   
+ 
     
     
     
@@ -120,7 +117,7 @@ public class CodigoIntermedio {
             System.out.println(padresOrdenados.get(i).getNombre());
             
         }
-        System.out.println("-----fin toda una assig-------------------");
+        System.out.println("-----fin toda una assig o while -------------------");
     }
     
     public  void TraverseAssign(Nodo nodo){//busca el ASSIGNMENT
@@ -375,17 +372,204 @@ public class CodigoIntermedio {
     
     
     }
+  
+    //---
+    public  void TraverseBooleanE_While(Nodo nodo){ 
+        
+        
+        
+        switch (nodo.getNombre()){
+            
+            
+            case "WHILE_BLOCK":
+            case "BooleanExp":
+            case "OPREL":
+            case "AND":
+            case "OR" :
+                padres.add(nodo);
+            
+            
+            //por default a los hijos
+            default:
+                for (Nodo hijos : nodo.getHijos()) {
+                   TraverseBooleanE_While(hijos);
+                }
+            
+        }
+        
+       
+    }
     
-     
+    
+    public void complete(ArrayList<Label> list, Label label) {
+        
+        for (int i = 0; i < list.size(); i++) {
+            Quadruple talvezEncontro;
+            talvezEncontro = findQuad(list.get(i));
+            if (talvezEncontro!=null) {
+                //reemplaza en la linea vacia
+               
+                talvezEncontro.seteLugar(""+label.getLabelName());
+            }else{
+              System.out.println("find quad no encontro la linea");  
+            }
+        }
+        
+        
+    }
+    
+    public Quadruple findQuad (Label label){//encontrar la linea que se va a rellenar
+        
+        for (int i = 0; i < ie.operations.size(); i++) {
+            if(ie.operations.elementAt(i).getLabel().getLabelName() == label.getLabelName()){
+                return ie.operations.elementAt(i);
+            }
+        }
+        
+        return null;
+        
+    }
+    
+    public void exec_BooleanE (){
+        Quadruple quad= null;
+        Nodo booleanExp_Padre= null;
+        Label Mcuad = null;
+        //se ordenan los padres que se encontraroon previemanete, sin esto no se sabe el orden de precedencia ni asociatividad
+        ordenarPadres();
+        
+        printpadresOrdenados();
+        
+        for (int i = 0; i < padresOrdenados.size(); i++) {
+            Nodo nodo_actual = padresOrdenados.get(i);
+            switch(nodo_actual.getNombre()){
+                case "OPREL"://case id OPREL id
+                    
+                    //guardar M.cuad
+                    if(ie.operations.size()>0){//solo para OPREL derecho
+                        Mcuad = new Label() ;
+                        
+                        
+                    }
+                    
+                    // se genera el if a< b goto ______ con la linea 100
+                    quad = new Quadruple("IF"+nodo_actual.getValor(), nodo_actual.getHijos().get(0).getValor(),nodo_actual.getHijos().get(1).getValor()," "/*got_______*/);
+                    
+                    //se crea E.listaVerdadera = CreaLista(sigCuad)
+                    nodo_actual.getExpression().getTrue().add(quad.getLabel());//con la linea 100
+                    quad.getLabel().addUno();
+                    ie.operations.add(quad);//añadir el if
+                    
+                    
+                    
+                    //se genera el goto _______ con la 101
+                    quad = new Quadruple(Quadruple.Operations.GOTO, "",""," ");
+                    //se crea E.lista falsa = CreaLista(sigCuad+1)
+                    nodo_actual.getExpression().getFalse().add(quad.getLabel());//con la linea 101
+                    quad.getLabel().addUno();
+                    ie.operations.add(quad);//añadir el goto___
+                    
+                    break;
+                    
+                case "BooleanExp":
+                    
+                    
+                    // comprobamos que sea BooleanExp con un solo nodo
+                    if(nodo_actual.getHijos().size()==1){
+                        //subo id oprel id 
+                        // o que es lo mismo Subir la Expression en el nodo
+                        nodo_actual.setExpression (nodo_actual.getHijos().get(0).getExpression());
+                        
+                        
+                    }
+                    
+                    
+                    
+                    
+                    break;
+                case "AND"://reduce el and con el hijo izq y el hijo der
+                    
+                    //el nodo anterior a este reduce el and
+                    booleanExp_Padre = padresOrdenados.get(i-1);
+                    
+                    
+                    
+                    //completa E1.lista verdadera con M.cuad
+                    
+                    complete(booleanExp_Padre.getHijos().get(0).getExpression().getTrue(),Mcuad);
+                    
+                    
+                    //E.listaVerdadera = E2.listaVerdadera
+                    //System.out.println("E2.listaV"+booleanExp_Padre.getHijos().get(2).getExpression().getTrue().get(0).getLabelName());
+                    
+                    booleanExp_Padre.getExpression().setTrue(booleanExp_Padre.getHijos().get(2).getExpression().getTrue());
+                    //System.out.println("E.listaV"+booleanExp_Padre.getExpression().getTrue().get(0).getLabelName());
+                    
+                    
+                    
+                    //E.listaFalsa = fusiona(E1.listaFalsa, E2.listaFalsa)
+                    
+                    booleanExp_Padre.getExpression().setFalse(merge(booleanExp_Padre.getHijos().get(0).getExpression().getFalse(),booleanExp_Padre.getHijos().get(2).getExpression().getFalse()));
+                    
+                    
+                    //here ok
+                    
+                    
+                    
+                    break;
+                    
+                case "OR":
+                    //el nodo anterior a este reduce el OR
+                    booleanExp_Padre = padresOrdenados.get(i-1);
+                    
+                    //completa E1.listafalsa con M.cuad
+                    
+                    complete(booleanExp_Padre.getHijos().get(0).getExpression().getFalse(), Mcuad);
+                    
+                    
+                    //E.listaVerdadera = fusiona(E1.listaVerdadera, E2.listaVerdadera)
+                    booleanExp_Padre.getExpression().setTrue(merge(booleanExp_Padre.getHijos().get(0).getExpression().getTrue(),booleanExp_Padre.getHijos().get(2).getExpression().getTrue()));
+                    
+                     //E.listaFalsa = E2.listaFalsa
+                    
+                    booleanExp_Padre.getExpression().setFalse(booleanExp_Padre.getHijos().get(2).getExpression().getFalse());
+                    
+                    
+                    
+                    //print de todos los cuadruplos
+                    for (int j = 0; j < ie.operations.size(); j++) {
+                        System.out.println(ie.operations.elementAt(j).getLabel().getLabelName());
+                    }
+                    
+                    
+                    
+                    break;
+                    
+                case "WHILE_BLOCK":
+                    break;
+                default:
+                    System.out.println("algo mal generado en codigo intermedio de BooleanExp");
+            }
+        }
+        
+        padres.clear();
+        
+        
+        
+    }
+    
+
+    
     
     
     public void GenerandoCod(Nodo padre){
+        
+        TraverseBooleanE_While(padre);
+        exec_BooleanE();
         
         //se genera el codigo intermedio para varias asignaciones dentro de content
         //traverse assing llama a traverseMathE para que se ejecute una asignacion completa
         TraverseAssign(padre);
        
-        
         
         
         
