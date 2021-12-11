@@ -387,7 +387,7 @@ public class MainGui extends javax.swing.JFrame {
         line++;
         
         colLabel.setText("Columna: " + column);
-
+        
 
        
     }//GEN-LAST:event_inputAreaCaretUpdate

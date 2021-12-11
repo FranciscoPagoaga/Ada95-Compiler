@@ -1,0 +1,17 @@
+Procedure Hello is
+	a,h:integer;
+	Procedure Hola (asd: In Out Float) is
+		asd,fdvfd,asdasd: Integer; 
+	Begin
+		Put(1); 
+	end hola;
+		
+
+	Procedure Hola (asd: In Out Float) is
+		asd,fdvfd,asdasd: Integer; 
+	Begin
+		Put(1); 
+	end hola;
+begin
+	h:=1+a;
+end hello;

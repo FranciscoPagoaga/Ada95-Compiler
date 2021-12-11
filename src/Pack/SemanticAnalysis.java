@@ -69,7 +69,8 @@ public class SemanticAnalysis {
             VariableTableNode tmpvnode = new VariableTableNode(actualNode.getValor(), scopeActual, tipo, 0);//0 indica que no es un parametro
             //agrega variable a lista de simbolos, retorna true si se pudo, false si ya existia
             if (!this.symbolTable.addSymbol(tmpvnode)) {
-                System.out.println("El identificador \""+tmpvnode.Id+"\" en el scope "+tmpvnode.Scope+" ya esta declarado");
+                //System.out.println("El identificador \""+tmpvnode.Id+"\" en el scope "+tmpvnode.Scope+" ya esta declarado");
+                System.out.println(scopeActual+":"+actualNode.getFila()+":"+actualNode.getColumna()+":"+ " El identificador \""+tmpvnode.Id+"\" ya esta declarado");
             }
         }
     }
@@ -108,14 +109,15 @@ public class SemanticAnalysis {
                 break;
                 case "FINAL_ID":
                     if (!id.equals(hijo.getValor())) {
-                        System.out.println("Las Funciones y Procedimientos deben de tener el mismo nombre al final: " + scopeHijos);
+                        System.out.println(scopeHijos+":"+hijo.getFila()+":"+hijo.getColumna()+":"+ " Las Funciones y Procedimientos deben de tener el mismo nombre al final");
                         has_error= true;
                     }
                 break;
                 case "CONTENT":
                     tmpfnode = new FunctionTableNode(nodo.getHijos().get(0).getValor(),scopeActual, returnType, scopeHijos);//fila tipo funcion
                     if (!this.symbolTable.addSymbol(tmpfnode)) {
-                        System.out.println("la funcion \""+tmpfnode.Id+"\" en el scope "+tmpfnode.Scope+" ya esta declarada");
+                        //System.out.println("la funcion \""+tmpfnode.Id+"\" en el scope "+tmpfnode.Scope+" ya esta declarada");
+                        System.out.println(scopeHijos+":"+nodo.getHijos().get(0).getFila()+":"+nodo.getHijos().get(0).getColumna()+":"+ "la funcion \""+tmpfnode.Id+"\" ya esta declarada");
                     }
                     if(parametros!=null){
                         for (int i = 0; i < parametros.getHijos().size(); i++) {
@@ -129,7 +131,8 @@ public class SemanticAnalysis {
                     Traverse(hijo, scopeHijos);
                     validateReturn(hijo,scopeHijos, returnType);
                     if(!returnProc && !returnType.equals("void")){
-                        System.out.println("Las funciones deben de tener return " + scopeActual);
+                        //System.out.println("Las funciones deben de tener return " + scopeActual);
+                        System.out.println(scopeHijos+":"+nodo.getHijos().get(0).getFila()+":"+nodo.getHijos().get(0).getColumna()+":"+ "Las funciones deben de tener return ");
                     }
                     returnProc = false;
                 break;
@@ -170,7 +173,8 @@ public class SemanticAnalysis {
             tmpfnode.Add(tipo);
             //se agregan los parametros en tabla de simbolos general
             if (!this.symbolTable.addSymbol(tmpvnode)) {
-               System.out.println("El identificador \""+tmpvnode.Id+"\" en el scope "+tmpvnode.Scope+" ya esta declarado");
+               //System.out.println("El identificador \""+tmpvnode.Id+"\" en el scope "+tmpvnode.Scope+" ya esta declarado");
+               System.out.println(scopeActual+":"+actualNode.getFila()+":"+actualNode.getColumna()+":"+" El identificador \""+tmpvnode.Id+"\" ya esta declarado");
             }
         }
     }
@@ -187,7 +191,8 @@ public class SemanticAnalysis {
                         if (type.equals(numType(hijos.getValor()))) {
                             return type;//si type y el valor de num son del mismo tipo, retorna el tupo 
                         } else {//si no, marca error Y dice que no son tipos compatibles
-                            System.out.println("No son tipos compatibles " + type);
+                            //System.out.println("No son tipos compatibles " + type);
+                            System.out.println(scopeActual+":"+hijos.getFila()+":"+hijos.getColumna()+":"+ "No son tipos compatibles "+type);
                             has_error=true;
                             return "Integer";//retorna int por general
                         }
@@ -201,7 +206,8 @@ public class SemanticAnalysis {
                         if(type.equals("Boolean")){
                             return type;
                         }else{
-                            System.out.println("No son tipos compatibles "+ type);
+                            //System.out.println("No son tipos compatibles "+ type);
+                            System.out.println(scopeActual+":"+hijos.getFila()+":"+hijos.getColumna()+":"+ "No son tipos compatibles "+type);
                             has_error=true;
                             return "Integer";
                         }
@@ -222,7 +228,8 @@ public class SemanticAnalysis {
                                 if(type.equals(tmpType)){
                                     return type;
                                 }else{
-                                    System.out.println("No son tipos compatibles " + tmpType);
+                                    //System.out.println("No son tipos compatibles " + tmpType);
+                                    System.out.println(scopeActual+":"+hijos.getFila()+":"+hijos.getColumna()+":"+ "No son tipos compatibles "+type);
                                     has_error=true;
                                     return "Integer";
                                 }
@@ -230,12 +237,18 @@ public class SemanticAnalysis {
                                 type = tmpType;
                             }
                         }else{
+                            
                             has_error=true;
-                            System.out.println("El identificador utilizado es de Funcion");
+                            //System.out.println("El identificador utilizado es de Funcion");
+                            
+                            //no pude probar el print
+                            System.out.println(scopeActual+":"+hijos.getFila()+":"+hijos.getColumna()+":"+ "El identificador utilizado es de Funcion"+type);
                         }
                     } else {
                         has_error=true;
-                        System.out.println("La variable "+ hijos.getValor() + " no existe");
+                        //System.out.println("La variable "+ hijos.getValor() + " no existe");
+                        System.out.println(scopeActual+":"+hijos.getFila()+":"+hijos.getColumna()+":"+ "La variable \""+ hijos.getValor() +"\"  no existe");
+                        
                     }
                 break;
                 // if((VariableTableNode)symbolTable.findSymbol(hijos.getValor(), scope).get){
@@ -249,7 +262,9 @@ public class SemanticAnalysis {
                         if(type.equals(tmpType)){
                             return type;
                         }else{
-                            System.out.println("No son tipos compatibles " + tmpType);
+                            //System.out.println("No son tipos compatibles " + tmpType);
+                            System.out.println(scopeActual+":"+hijos.getFila()+":"+hijos.getColumna()+":"+ "No son tipos compatibles "+tmpType);
+                            
                             has_error=true;
                             return "Integer";
                         }
@@ -268,7 +283,8 @@ public class SemanticAnalysis {
                             return type;
                         }else{
                             has_error=true;
-                            System.out.println("No son tipos compatibles "+ scopeActual);//si no son equivalentes tira error
+                            //System.out.println("No son tipos compatibles "+ scopeActual);//si no son equivalentes tira error
+                            System.out.println(scopeActual+":"+hijos.getFila()+":"+hijos.getColumna()+":"+ "No son tipos compatibles");//si no son equivalentes tira error
                             return type;
                         }
                     }else{
@@ -294,14 +310,18 @@ public class SemanticAnalysis {
                     //utiliza la bandera returnProc, para mandar error si encuentra return solo una vez
                     //en un procedimiento
                     has_error=true;
-                    System.out.println("Procedimientos no deben de tener return: " + scope);
+                    //System.out.println("Procedimientos no deben de tener return: " + scope);
+                    System.out.println(scope+":"+hijo.getFila()+":"+hijo.getColumna()+":"+ "Procedimientos no deben de tener return");
+                    
                 }else if(returnType!= "void"){
                     //si no es procedimiento, se asegura que los return contengan el tipo de dato correcto
                     String type = typeValidation(hijo, scope);
                     if(!type.equals(returnType)){
                         //si no son iguales, manda error de tipo
                         has_error=true;
-                        System.out.println("El valor retornado no es del tipo correcto: " + scope);
+                        //System.out.println("El valor retornado no es del tipo correcto: " + scope);
+                        System.out.println(scope+":"+hijo.getFila()+":"+hijo.getColumna()+":"+ "El valor retornado no es del tipo correcto");
+                        
                     }
                 }
                 returnProc = true;
@@ -337,7 +357,9 @@ public class SemanticAnalysis {
                 if(!typeReturn.equals("void")){
                     validateParams((FunctionTableNode) tmpNode, nodo.getHijos().get(1),scopeActual);
                 }else{
-                    System.out.println("El identificador usado es de Procedimiento");
+                    
+                    //System.out.println("El identificador usado es de Procedimiento");
+                    System.out.println(scopeActual+":"+nodo.getFila()+":"+nodo.getColumna()+":"+ "El identificador usado es de Procedimiento");
                     has_error=true;
                     typeReturn="Integer";
                 }
@@ -347,7 +369,9 @@ public class SemanticAnalysis {
                 has_error=true;
             }
         } else {
-            System.out.println("La Funcion "+ tmpnode.getValor() + " no existe");
+            
+            //System.out.println("La Funcion "+ tmpnode.getValor() + " no existe");
+            System.out.println(scopeActual+":"+nodo.getFila()+":"+nodo.getColumna()+":"+ "La Funcion "+ tmpnode.getValor() + " no existe");
             has_error=true;
         }
         return typeReturn;

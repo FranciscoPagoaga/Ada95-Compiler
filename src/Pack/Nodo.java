@@ -13,6 +13,9 @@ public class Nodo {
     private int numNodo;
     private String e_lugar ; 
     
+    private int fila;
+    private int columna;
+    
     //
     private IntermediateExpression Expression;
     
@@ -24,6 +27,24 @@ public class Nodo {
         setNumNodo(0);
         String e_lugar  = null;
         Expression = new IntermediateExpression();
+        this.fila = -1;
+        this.columna= -1;
+    }
+
+    public int getFila() {
+        return fila;
+    }
+
+    public void setFila(int fila) {
+        this.fila = fila;
+    }
+
+    public int getColumna() {
+        return columna;
+    }
+
+    public void setColumna(int columna) {
+        this.columna = columna;
     }
 
     public IntermediateExpression getExpression() {

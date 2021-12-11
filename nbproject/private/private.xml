@@ -1,20 +1,43 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
-    <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="1">
+    <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="6">
+        <file>
+            <url>src/Pack/CodigoIntermedio.java</url>
+            <bookmark id="4">
+                <name/>
+                <line>403</line>
+                <key/>
+            </bookmark>
+            <bookmark id="3">
+                <name/>
+                <line>510</line>
+                <key/>
+            </bookmark>
+        </file>
         <file>
             <url>src/Pack/parser.cup</url>
             <bookmark id="1">
                 <name/>
-                <line>863</line>
+                <line>952</line>
+                <key/>
+            </bookmark>
+            <bookmark id="5">
+                <name/>
+                <line>984</line>
+                <key/>
+            </bookmark>
+            <bookmark id="2">
+                <name/>
+                <line>1319</line>
                 <key/>
             </bookmark>
         </file>
     </editor-bookmarks>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
+            <file>file:/C:/Users/pc/Desktop/git%20repositories/Ada95-Compiler/src/Pack/SemanticAnalysis.java</file>
             <file>file:/C:/Users/pc/Desktop/git%20repositories/Ada95-Compiler/src/Pack/MainGui.java</file>
-            <file>file:/C:/Users/pc/Desktop/git%20repositories/Ada95-Compiler/nbproject/build-impl.xml</file>
-            <file>file:/C:/Users/pc/Desktop/git%20repositories/Ada95-Compiler/src/Pack/lexer.flex</file>
+            <file>file:/C:/Users/pc/Desktop/git%20repositories/Ada95-Compiler/src/Pack/Nodo.java</file>
             <file>file:/C:/Users/pc/Desktop/git%20repositories/Ada95-Compiler/src/Pack/parser.cup</file>
         </group>
     </open-files>
