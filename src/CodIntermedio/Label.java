@@ -10,22 +10,22 @@ package CodIntermedio;
  * @author pc
  */
 public class Label {
-    private static int labelCount = 1;
-    private int labelName;
+    private static int labelCount = 0;
+    private String labelName;
 
     public Label() {
-        this.labelName = labelCount++;
+        this.labelName="etiq"+labelCount++;
     }
 
-    public Label(int labelName) {
+    public Label(String labelName) {
         this.labelName = labelName;
     }
 
-    public void setLabelName(int labelName) {
+    public void setLabelName(String labelName) {
         this.labelName = labelName;
     }
 
-    public int getLabelName() {
+    public String toString() {
         return labelName;
     }
     

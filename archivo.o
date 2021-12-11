@@ -1,3 +1,42 @@
-if 1 < 2 goto etiq3
-goto etiq4
-etiq3:
+_Hello:
+print asd
+fin_programa
+_Hello.Hola:
+t1 := 1.0 + 2.0
+params t1
+call Prueba3, 1
+t2 := RET
+params t2
+call Prueba3, 1
+t3 := RET
+asdasd := t3
+fin_funcion _Hello.Hola
+_Hello.Hola.Prueba3:
+print 1
+t4 := 1.0 + zxc
+RET := t4
+fin_funcion _Hello.Hola.Prueba3
+_Hello.Prueba2:
+print 2
+RET := 1
+fin_funcion _Hello.Prueba2
+_Hello.Prueba:
+print 2.0
+t5 := 1.0 + 2.0
+t6 := 1.0 * t5
+asd := t6
+if 1 < 2 goto etiq26
+goto etiq25
+etiq26:
+if asd < 2.0 goto etiq23
+goto etiq25
+etiq25:
+if asd < asd1 goto etiq23
+goto etiq24
+etiq23:
+RET := 1
+etiq24:
+etiq22:
+t10 := 1 + 2
+RET := t10
+fin_funcion _Hello.Prueba

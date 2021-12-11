@@ -9,7 +9,10 @@ import CodIntermedio.IntermediateExpression;
 import CodIntermedio.IntermediateStatement;
 import CodIntermedio.Label;
 import CodIntermedio.Quadruple;
+import CodIntermedio.QuadrupleList;
 import CodIntermedio.Temporal;
+import CodIntermedio.Quadruple.Operations;
+
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -26,7 +29,7 @@ public class CodigoIntermedio {
     private StringBuilder file;
     private SemanticAnalysis instance;
     Nodo AssignActual = null;
-    Temporal temporal = new Temporal();
+    Temporal temporal = null;
     ArrayList<Nodo> padres = new ArrayList<>();
     ArrayList<Nodo> padresOrdenados = new ArrayList<>();
     ArrayList<Nodo> asignaciones = new ArrayList<>();
@@ -57,541 +60,155 @@ public class CodigoIntermedio {
         out.close();
     }
 
-  
+    public void GenerandoCod(Nodo padre){
+        scope = "_"+padre.getHijos().get(0).getValor();
+        TraverseFunctions(padre, scope);
+        Quadruple quad = new Quadruple(Quadruple.Operations.FUNCTION_END);
+        System.out.println(scope);
+        //TraverseBooleanE_While(padre);
+        //exec_BooleanE();
+        
+        //se genera el codigo intermedio para varias asignaciones dentro de content
+        //traverse assing llama a traverseMathE para que se ejecute una asignacion completa
+        //TraverseAssign(padre);
+    }
 
-    public ArrayList<Label> merge(ArrayList<Label> list1, ArrayList<Label> list2) {
-        ArrayList<Label> newList = new ArrayList();
-        newList.addAll(list1);
-        newList.addAll(list2);
-        return newList;
-    }
-    
-    
- 
-    
-    
-    
-    /*
-    public void revertirPadres (){
-        reverse(padres);
-    }
-    
-    public void reverse(ArrayList<Nodo> padres) {//no esta funcionando
-        //recorremos el arraylist al reves
-        for (int i = padres.size()-1; i >= 0; i--) {
-            padresRevertidos.add(padres.get(i));
-        }
-        
-        
-    }
-    */
-    
-    public ArrayList<Nodo> order(ArrayList<Nodo> padres) {
-        // ordena los padres despues de la ejecucion de traverse
-        //el orden correcto para generar el codigo intermedio esta dado por numNodo
-        for (int i = 0; i < padres.size()-1; i++) {
-           
-            for (int j = i+1; j < padres.size(); j++) {
-                if (padres.get(i).getNumNodo()>padres.get(j).getNumNodo()) {
-                    Nodo temp = padres.get(j);
-                    padres.set(j, padres.get(i));
-                    padres.set(i, temp);
-                }
-            }
-            
-        }
-        
-        return padres;
-        
-        
-    }
-   
-    
-    public void ordenarPadres (){//ejecuta el orden
-        padresOrdenados = order(padres);
-    }
-    
-    
-    
-    public void printpadresOrdenados(){//para pruebas
-        for (int i = 0; i < padresOrdenados.size(); i++) {
-            System.out.println(padresOrdenados.get(i).getNombre());
-            
-        }
-        System.out.println("-----fin toda una assig o while -------------------");
-    }
-    
-    // public  void TraverseAssign(Nodo nodo){//busca el ASSIGNMENT
-        
-        
-        
-    //     switch (nodo.getNombre()){
-            
-    //         case "ASSIGNMENT":
-    //             //ejecutar una MathE
-    //             AssignActual = nodo;
-    //             TraverseMathE(nodo);
-    //             exec_mathE();
-                
-    //         default:
-    //             for (Nodo hijos : nodo.getHijos()) {
-    //                 TraverseAssign(hijos);
-    //             }
-            
-    //     }
-       
-    // }
-    
-    
-    // encuentra los nodos necesarios para formar una mathE
-    // public  void TraverseMathE(Nodo nodo){ 
-        
-        
-        
-    //     switch (nodo.getNombre()){
-            
-            
-    //         case "MATHEMATICAL_EXPRESSION":
-    //         case "OPSUM":
-    //         case "OPMULT":
-    //         case "PARENTHESIS":
-    //             //guardar cada padre en el orden que se encuentra
-    //             padres.add(nodo);
-            
-            
-    //         //por default a los hijos
-    //         default:
-    //             for (Nodo hijos : nodo.getHijos()) {
-    //                 TraverseMathE(hijos);
-    //             }
-            
-    //     }
-        
-        
-        
-        
-        
-        
-        
-       
-    // }
-    
-    //se forma el codigo intermedio para una MathE
-    public void exec_mathE (){
-    
-        //ejecucion de mathE
-        String e1_lugar = "error soy e1.lugar";
-        String e2_lugar = "error soy e2.lugar";
-        Temporal temp = null;
-        Quadruple quad= null;
-        Nodo MathE = null;
-        
-        
-        
-        //se ordenan los padres que se encontraroon previemanete, sin esto no se sabe el orden de precedencia ni asociatividad
-        ordenarPadres();
-        
-        //print de prueba
-        printpadresOrdenados();
-        
-        
-        for (int i = 0; i < padresOrdenados.size(); i++) {
-            // generando codigo nodo a nodo en el orden ya dado por el ordenamiento
-            switch (padresOrdenados.get(i).getNombre()){
-                case "MATHEMATICAL_EXPRESSION":
-                    //sube el temporal
-                    //asigna a su temporal el temporal que tiene el hijo
-                    
-                    
-                    if (padresOrdenados.get(i).getHijos().get(0).getNombre().equals("NUM") || padresOrdenados.get(i).getHijos().get(0).getNombre().equals("ID")) {
-                        // caso a= 1 or a = id;
-                        padresOrdenados.get(i).setE_lugar(padresOrdenados.get(i).getHijos().get(0).getValor());
-                        
-                    }else{
-                        //caso a= temporal n
-                        padresOrdenados.get(i).setE_lugar(padresOrdenados.get(i).getHijos().get(0).getE_lugar());
-                        
-                    }
-                   
-                    
-                    
-                    //save MathE
-                    MathE = padresOrdenados.get(i);
-                break;
-                case "OPSUM":
-                  
-                    temp = new Temporal();
-                    padresOrdenados.get(i).setE_lugar(temp.getTemporal());//E.lugar = temporalnuevo();
-                    
-                    
-                    //si hay cuadruplos significa que el primer E.lugar ya subio por tanto hay que buscarlos
-                    if(ie.operations.size()>0){
-                        
-                        
-                     
-                    
-                        //conseguir e1.lugar
-                        switch(padresOrdenados.get(i).getHijos().get(0).getNombre()){
-                            case "OPSUM":
-                            case "OPMULT":
-                            case "PARENTHESIS":
-                                e1_lugar = padresOrdenados.get(i).getHijos().get(0).getE_lugar();
-                             
-                            break;
-                            default:
-                                e1_lugar = padresOrdenados.get(i).getHijos().get(0).getValor();
-
-                        }
-                        
-                        
-                         //conseguir e2.lugar
-                        switch(padresOrdenados.get(i).getHijos().get(1).getNombre()){
-                            case "OPSUM":
-                            case "OPMULT":
-                            case "PARENTHESIS":
-                                e2_lugar = padresOrdenados.get(i).getHijos().get(1).getE_lugar(); 
-                               
-                            break;
-                            default:
-                                e2_lugar = padresOrdenados.get(i).getHijos().get(1).getValor();
-
-                        }
-                        
-                      
-                        //se genera un cuadruplo 
-                        quad = new Quadruple(Quadruple.Operations.ADD,e1_lugar ,e2_lugar,padresOrdenados.get(i).getE_lugar() );
-                    
-                    }else{
-                        //agrega el primer cuadruplo con id's o num's
-                        
-                        quad = new Quadruple(Quadruple.Operations.ADD, padresOrdenados.get(i).getHijos().get(0).getValor(),padresOrdenados.get(i).getHijos().get(1).getValor(),padresOrdenados.get(i).getE_lugar() );
-                    }
-                    
-                    
-                    
-                    ie.seteLugar(temp);
-                    
-                    //se agrega una fila en la tabla de cuadruplos
-                    //operations se guarda en IntermediateForm.java 
+    public void TraverseFunctions(Nodo nodo,String scope){
+        for (int i = nodo.getHijos().size()-1; i >= 0; i--) {
+            Nodo hijo = nodo.getHijos().get(i); 
+            switch(hijo.getNombre()){
+                case "CONTENT":
+                    // current_function = nodo.getHijos().get(0).getValor();
+                    label = new Label(scope);
+                    Quadruple quad = new Quadruple(label);
                     ie.operations.add(quad);
-                    
-                 
-                    
-                    
-                      
-                break;    
-                case "OPMULT":
-                    temp = new Temporal();
-                    padresOrdenados.get(i).setE_lugar(temp.getTemporal());//E.lugar = temporalnuevo();
-                    
-                    
-                    //si hay cuadruplos significa que el primer E.lugar ya subio por tanto hay que buscarlos
-                    if(ie.operations.size()>0){
-                    
-                        //conseguir e1.lugar
-                        switch(padresOrdenados.get(i).getHijos().get(0).getNombre()){
-                            case "OPSUM":
-                            case "OPMULT":
-                            case "PARENTHESIS":
-                                e1_lugar = padresOrdenados.get(i).getHijos().get(0).getE_lugar();
-                               
-                            break;
-                            default:
-                                e1_lugar = padresOrdenados.get(i).getHijos().get(0).getValor();
-
-                        }
-                        
-                        //conseguir e2.lugar
-                        switch(padresOrdenados.get(i).getHijos().get(1).getNombre()){
-                            case "OPSUM":
-                            case "OPMULT":
-                            case "PARENTHESIS":
-                                e2_lugar = padresOrdenados.get(i).getHijos().get(1).getE_lugar();
-                               
-                            break;
-                            default:
-                                e2_lugar = padresOrdenados.get(i).getHijos().get(1).getValor();
-
-                        }
-                        
-                     
-                        //se genera un cuadruplo
-                        quad = new Quadruple(Quadruple.Operations.MUL,e1_lugar ,e2_lugar,padresOrdenados.get(i).getE_lugar() );
-                    
+                    Traverse(hijo, scope);
+                    if (nodo.getNombre().equals("Inicio")) {
+                        quad = new Quadruple(Quadruple.Operations.CLOSE);                    
+                        ie.operations.add(quad);
                     }else{
-                        //agrega el primer cuadruplo
-                        
-                        quad = new Quadruple(Quadruple.Operations.MUL, padresOrdenados.get(i).getHijos().get(0).getValor(),padresOrdenados.get(i).getHijos().get(1).getValor(),padresOrdenados.get(i).getE_lugar() );
+                        quad = new Quadruple(Quadruple.Operations.FUNCTION_END,scope,"","");                    
+                        ie.operations.add(quad);
                     }
-                    
-                    
-                    
-                    ie.seteLugar(temp);
-                    
-                    //se agrega una fila en la tabla de cuadruplos
-                    //operations se guarda en IntermediateForm.java 
-                    ie.operations.add(quad);
-                    
-                   
-                break;
-                case "PARENTHESIS":
-                    //sube el temporal
-                    //asigna a su temporal el temporal que tiene el hijo
-                    padresOrdenados.get(i).setE_lugar(padresOrdenados.get(i).getHijos().get(0).getE_lugar());
-                      
-                    
-                break;   
+                    break;
+                case "DECLARATIONS":
+                    Traverse(hijo, scope);
+                    break;
                 
-                //case "ASSIGNMENT":
-                //break;
-
-
                 default:
-                    System.out.println("algo mal generado en codigo intermedio de MathExpression");
-            
-            }
-            
-            
-           
-            
-            
-        }
-        
-        //por ultimo Asignar, el nodo assign es una variable global
-        String e_lugar = MathE.getE_lugar();
-        String id_valex = AssignActual.getHijos().get(0).getValor();
-                
-        //se genera un cuadruplo
-        quad = new Quadruple(Quadruple.Operations.ASSIGN,e_lugar ,"",id_valex );
-        
-        //el cuadruplo de guarda en la tabla 
-        ie.operations.add(quad);
-        
-        
-        //se limpia el arraylist de padres para que este listo a la nueva asignacion
-        padres.clear();
-    
-    
-    }
-  
-    //---
-    public  void TraverseBooleanE_While(Nodo nodo){ 
-        
-        
-        
-        switch (nodo.getNombre()){
-            
-            
-            case "WHILE_BLOCK":
-            case "BooleanExp":
-            case "OPREL":
-            case "AND":
-            case "OR" :
-                padres.add(nodo);
-            
-            
-            //por default a los hijos
-            default:
-                for (Nodo hijos : nodo.getHijos()) {
-                   TraverseBooleanE_While(hijos);
-                }
-            
-        }
-        
-       
-    }
-    
-    
-    public void complete(ArrayList<Label> list, Label label) {
-        
-        for (int i = 0; i < list.size(); i++) {
-            Quadruple talvezEncontro;
-            talvezEncontro = findQuad(list.get(i));
-            if (talvezEncontro!=null) {
-                //reemplaza en la linea vacia
-               
-                talvezEncontro.seteLugar(""+label.getLabelName());
-            }else{
-              System.out.println("find quad no encontro la linea");  
+                    TraverseFunctions(hijo, scope);
+                    break;
             }
         }
-        
-        
     }
-    
-    public Quadruple findQuad (Label label){//encontrar la linea que se va a rellenar
-        
-        for (int i = 0; i < ie.operations.size(); i++) {
-            if(ie.operations.elementAt(i).getLabel().getLabelName() == label.getLabelName()){
-                return ie.operations.elementAt(i);
-            }
-        }
-        
-        return null;
-        
-    }
-    
-    // public void exec_BooleanE (){
-    //     Quadruple quad= null;
-    //     Nodo booleanExp_Padre= null;
-    //     Label Mcuad = null;
-    //     //se ordenan los padres que se encontraroon previemanete, sin esto no se sabe el orden de precedencia ni asociatividad
-    //     ordenarPadres();
-        
-    //     printpadresOrdenados();
-        
-    //     for (int i = 0; i < padresOrdenados.size(); i++) {
-    //         Nodo nodo_actual = padresOrdenados.get(i);
-    //         switch(nodo_actual.getNombre()){
-    //             case "OPREL"://case id OPREL id
-                    
-    //                 //guardar M.cuad
-    //                 if(ie.operations.size()>0){//solo para OPREL derecho
-    //                     Mcuad = new Label() ;
-                        
-                        
-    //                 }
-                    
-    //                 // se genera el if a< b goto ______ con la linea 100
-    //                 quad = new Quadruple("IF"+nodo_actual.getValor(), nodo_actual.getHijos().get(0).getValor(),nodo_actual.getHijos().get(1).getValor()," "/*got_______*/);
-                    
-    //                 //se crea E.listaVerdadera = CreaLista(sigCuad)
-    //                 nodo_actual.getExpression().getTrue().add(quad.getLabel());//con la linea 100
-    //                 quad.getLabel().addUno();
-    //                 ie.operations.add(quad);//añadir el if
-                    
-                    
-                    
-    //                 //se genera el goto _______ con la 101
-    //                 quad = new Quadruple(Quadruple.Operations.GOTO, "",""," ");
-    //                 //se crea E.lista falsa = CreaLista(sigCuad+1)
-    //                 nodo_actual.getExpression().getFalse().add(quad.getLabel());//con la linea 101
-    //                 quad.getLabel().addUno();
-    //                 ie.operations.add(quad);//añadir el goto___
-                    
-    //                 break;
-                    
-    //             case "BooleanExp":
-                    
-                    
-    //                 // comprobamos que sea BooleanExp con un solo nodo
-    //                 if(nodo_actual.getHijos().size()==1){
-    //                     //subo id oprel id 
-    //                     // o que es lo mismo Subir la Expression en el nodo
-    //                     nodo_actual.setExpression (nodo_actual.getHijos().get(0).getExpression());
-                        
-                        
-    //                 }
-                    
-                    
-                    
-                    
-    //                 break;
-    //             case "AND"://reduce el and con el hijo izq y el hijo der
-                    
-    //                 //el nodo anterior a este reduce el and
-    //                 booleanExp_Padre = padresOrdenados.get(i-1);
-                    
-                    
-                    
-    //                 //completa E1.lista verdadera con M.cuad
-                    
-    //                 complete(booleanExp_Padre.getHijos().get(0).getExpression().getTrue(),Mcuad);
-                    
-                    
-    //                 //E.listaVerdadera = E2.listaVerdadera
-    //                 //System.out.println("E2.listaV"+booleanExp_Padre.getHijos().get(2).getExpression().getTrue().get(0).getLabelName());
-                    
-    //                 booleanExp_Padre.getExpression().setTrue(booleanExp_Padre.getHijos().get(2).getExpression().getTrue());
-    //                 //System.out.println("E.listaV"+booleanExp_Padre.getExpression().getTrue().get(0).getLabelName());
-                    
-                    
-                    
-    //                 //E.listaFalsa = fusiona(E1.listaFalsa, E2.listaFalsa)
-                    
-    //                 booleanExp_Padre.getExpression().setFalse(merge(booleanExp_Padre.getHijos().get(0).getExpression().getFalse(),booleanExp_Padre.getHijos().get(2).getExpression().getFalse()));
-                    
-                    
-    //                 //here ok
-                    
-                    
-                    
-    //                 break;
-                    
-    //             case "OR":
-    //                 //el nodo anterior a este reduce el OR
-    //                 booleanExp_Padre = padresOrdenados.get(i-1);
-                    
-    //                 //completa E1.listafalsa con M.cuad
-                    
-    //                 complete(booleanExp_Padre.getHijos().get(0).getExpression().getFalse(), Mcuad);
-                    
-                    
-    //                 //E.listaVerdadera = fusiona(E1.listaVerdadera, E2.listaVerdadera)
-    //                 booleanExp_Padre.getExpression().setTrue(merge(booleanExp_Padre.getHijos().get(0).getExpression().getTrue(),booleanExp_Padre.getHijos().get(2).getExpression().getTrue()));
-                    
-    //                  //E.listaFalsa = E2.listaFalsa
-                    
-    //                 booleanExp_Padre.getExpression().setFalse(booleanExp_Padre.getHijos().get(2).getExpression().getFalse());
-                    
-                    
-                    
-    //                 //print de todos los cuadruplos
-    //                 for (int j = 0; j < ie.operations.size(); j++) {
-    //                     System.out.println(ie.operations.elementAt(j).getLabel().getLabelName());
-    //                 }
-                    
-                    
-                    
-    //                 break;
-                    
-    //             case "WHILE_BLOCK":
-    //                 break;
-    //             default:
-    //                 System.out.println("algo mal generado en codigo intermedio de BooleanExp");
-    //         }
-    //     }
-        
-    //     padres.clear();
-        
-        
-        
-    // }
 
-    public void Traverse(Nodo nodo){
-        String siguiente;
+    public void Traverse(Nodo nodo, String scope){
+        Quadruple quad;
+        Label siguiente;
         for (Nodo hijo : nodo.getHijos()) {
             switch(hijo.getNombre()){
+                case "PROCEDURE_BLOCK":
+                case "FUNCTION_BLOCK":
+                    TraverseFunctions(hijo, scope +"."+hijo.getHijos().get(0).getValor());
+                    break;    
                 case "IF_BLOCK":
                 //crea que necesitare condicion para saber si el siguiente no esta asignado ya 
-                    label = new Label();
-                    siguiente = "etiq"+label.getLabelName();
-                    hijo.setSiguiente(siguiente);
-                    ifBlock(hijo);
+                    if (nodo.getSiguiente()==null) {
+                        siguiente = new Label();
+                        // siguiente = "etiq"+label.getLabelName();
+                        hijo.setSiguiente(siguiente);
+                    }else{
+                        hijo.setSiguiente(nodo.getSiguiente());
+                    }
+                    ifBlock(hijo, scope);
+                    if (nodo.getSiguiente()==null) {
+                        quad = new Quadruple(hijo.getSiguiente());//crea etiqueta de verdader
+                        ie.operations.add(quad);                    
+                    }
                     break;
                 case "WHILE_BLOCK":
                 //crea que necesitare condicion para saber si el siguiente no esta asignado ya 
-                    label = new Label();
-                    siguiente = "etiq"+label.getLabelName();
-                    hijo.setSiguiente(siguiente);
-                    whileBlock(hijo);
+                    if (nodo.getSiguiente()==null) {
+                        siguiente = new Label();
+                        // siguiente = "etiq"+label.getLabelName();
+                        hijo.setSiguiente(siguiente);
+                    }else{
+                        hijo.setSiguiente(nodo.getSiguiente());
+                    }
+                    whileBlock(hijo, scope);
+                    if (nodo.getSiguiente()==null) {
+                        quad = new Quadruple(hijo.getSiguiente());//crea etiqueta de verdader
+                        ie.operations.add(quad);                    
+                    }
                     break;
                 case "FOR_BLOCK":
-                    //for block pendiente
+                    if (nodo.getSiguiente()==null) {
+                        siguiente = new Label();
+                        // siguiente = "etiq"+label.getLabelName();
+                        hijo.setSiguiente(siguiente);
+                    }else{
+                        hijo.setSiguiente(nodo.getSiguiente());
+                    }
+                    forBlock(hijo, scope);
+                    break;
+                case "LOOP_BLOCK":
+                    if (nodo.getSiguiente()==null) {
+                        siguiente = new Label();
+                        // siguiente = "etiq"+label.getLabelName();
+                        hijo.setSiguiente(siguiente);
+                    }else{
+                        hijo.setSiguiente(nodo.getSiguiente());
+                    }
+                    loopBlock(hijo, scope);
+                    if (nodo.getSiguiente()==null) {
+                        quad = new Quadruple(hijo.getSiguiente());//crea etiqueta de verdader
+                        ie.operations.add(quad);                    
+                    }
+                    break;
+                case "EXIT_CYCLE":
+                    hijo.getHijos().get(0).setVerdadero(nodo.getSiguiente());
+                    boolExp(hijo.getHijos().get(0));
+                    break;
+                case "RETURN_STATEMENT":
+                    MathExp(hijo);
+                    quad = new Quadruple(Quadruple.Operations.ASSIGN,hijo.getHijos().get(0).getE_lugar(),"","RET");
+                    ie.operations.add(quad);
+                    break;
+                case "Call_Subroutine":
+                    parameterCallValidation(hijo.getHijos().get(1));
+                    String id = hijo.getHijos().get(0).getValor();
+                    int paramSize = hijo.getHijos().get(1).getHijos().size();
+                    quad = new Quadruple(Quadruple.Operations.CALL,id,Integer.toString(paramSize),"");
+                    ie.operations.add(quad);
+                    break;
+                case "PUT":
+                    quad = new Quadruple(Quadruple.Operations.PRINT,hijo.getHijos().get(0).getValor(),"","");
+                    ie.operations.add(quad);
+                    break;
+                case "ASSIGNMENT":
+                    MathExp(hijo);
+                    hijo.setE_lugar(hijo.getValor());
+                    quad = new Quadruple(Quadruple.Operations.ASSIGN,hijo.getHijos().get(1).getE_lugar(),"",hijo.getHijos().get(0).getE_lugar());
+                    ie.operations.add(quad);
+                    break;
+                case "GET":
+                    hijo.setE_lugar(hijo.getHijos().get(0).getValor());
+                    quad = new Quadruple(Quadruple.Operations.READ,hijo.getE_lugar(),"","");
+                    ie.operations.add(quad);                    
                     break;
                 default:
-                    Traverse(hijo);
+                    Traverse(hijo, scope);
                 break;
             }
         }
     }
 
-    public void whileBlock(Nodo nodo){
-        label = new Label();
-        String comienzo = "etiq"+label.getLabelName();
-        label = new Label();
-        String verdadero = "etiq"+label.getLabelName();
-        Quadruple quad = new Quadruple(Quadruple.Operations.LABEL, "","",comienzo);//Crea etiqueta de comienzo en caso que se cumpla la condicion regresar
+    public void whileBlock(Nodo nodo, String scope){
+        // label = new Label();
+        Label comienzo = new Label();
+        // label = new Label();
+        Label verdadero = new Label();
+        Quadruple quad = new Quadruple(comienzo);//Crea etiqueta de comienzo en caso que se cumpla la condicion regresar
         ie.operations.add(quad);
         for (Nodo hijo : nodo.getHijos()) {
             switch (hijo.getNombre()) {
@@ -599,24 +216,29 @@ public class CodigoIntermedio {
                     hijo.setVerdadero(verdadero);//setea verdadero
                     hijo.setFalso(nodo.getSiguiente());//setea falso, debido a que es while es el siguiente
                     boolExp(hijo);//se ejecuta la expresion booleana
-                    quad = new Quadruple(Quadruple.Operations.LABEL, "","",verdadero);//crea etiqueta de verdader
+                    quad = new Quadruple(verdadero);//crea etiqueta de verdader
                     ie.operations.add(quad);
                     break;
                 case "CONTENT":
                     hijo.setSiguiente(nodo.getSiguiente());
-                    Traverse(hijo);//crea codigo despues de etiqueta de verdadero
-                    quad = new Quadruple(Quadruple.Operations.GOTO, "","",comienzo);
+                    Traverse(hijo, scope);//crea codigo despues de etiqueta de verdadero
+                    quad = new Quadruple(comienzo);
                     ie.operations.add(quad);
                     break;
             }
         }
     }
 
-    public void ifBlock(Nodo nodo){
-        label = new Label();
-        String verdadero = "etiq"+label.getLabelName();
-        label = new Label();
-        String falso = "etiq"+label.getLabelName();  //If siempre crea nuevas etiquetas en caso verdadero  y falso
+    public void ifBlock(Nodo nodo, String scope){
+        Label verdadero = new Label();
+        int pos = nodo.getHijos().size()-1;
+        String nom = nodo.getHijos().get(pos).getNombre();
+        Label falso =new Label();
+        // if (nom.equals("ELSIF_BLOCK") || nom.equals("ELSE_BLOCK") ) {
+            // falso = "etiq"+label.getLabelName();  //If siempre crea nuevas etiquetas en caso verdadero  y falso
+        // }else{
+        //     falso = nodo.getSiguiente();
+        // }
         int i=-1;
         for (Nodo hijo : nodo.getHijos()) {
             i++;
@@ -628,13 +250,16 @@ public class CodigoIntermedio {
                     break;
                 case "CONTENT":
                     hijo.setSiguiente(nodo.getSiguiente());
-                    Quadruple quad = new Quadruple(Quadruple.Operations.LABEL, "","",verdadero);//asigna label de verdadero
+                    Quadruple quad = new Quadruple(verdadero);//asigna label de verdadero
                     ie.operations.add(quad);
-                    Traverse(hijo);//crea codigo en caso de verdadero
+                    Traverse(hijo, scope);//crea codigo en caso de verdadero
                     if (nodo.getHijos().size()-1>i){//revisa la posibilidad de existir un elsif o else para crear etiquetas y gotos para salir de demas casos
-                        quad = new Quadruple(Quadruple.Operations.GOTO, "","",nodo.getSiguiente());
+                        quad = new Quadruple(Quadruple.Operations.GOTO, "","","",nodo.getSiguiente());
                         ie.operations.add(quad);
-                        quad = new Quadruple(Quadruple.Operations.LABEL, "","",falso);
+                        quad = new Quadruple(falso);
+                        ie.operations.add(quad);
+                    }else{
+                        quad = new Quadruple(falso);
                         ie.operations.add(quad);
                     }
                     break;
@@ -642,9 +267,9 @@ public class CodigoIntermedio {
                     hijo.setSiguiente(nodo.getSiguiente());//asigna siguiente al bloque elsif para saber donde sigue
                     elsifBLock(hijo);
                 break;
-                case "ELSE":
+                case "ELSE_BLOCK":
                     hijo.setSiguiente(nodo.getSiguiente());//asigna siguiente al bloque else para saber donde sigue
-                    Traverse(hijo);
+                    Traverse(hijo, scope);
                     break;
                 default:
                     break;
@@ -653,13 +278,11 @@ public class CodigoIntermedio {
     }
 
     public void elsifBLock(Nodo nodo){
-        label = new Label();
-        String verdadero = "etiq"+label.getLabelName();//Crear caso verdader
-        label = new Label();
-        String falso = "etiq"+label.getLabelName();//Crear caso falso
-        int i=-1;
+        // label = new Label();
+        Label verdadero = new Label();//Crear caso verdader
+        // label = new Label();
+        Label falso = new Label();//Crear caso falso
         for (Nodo hijo : nodo.getHijos()) {
-            i++;
             switch(hijo.getNombre()){
                 case "BooleanExp":
                     hijo.setVerdadero(verdadero);
@@ -669,12 +292,12 @@ public class CodigoIntermedio {
                 break;
                 case "CONTENT":
                     hijo.setSiguiente(nodo.getSiguiente());//asigna siguiente
-                    Quadruple quad = new Quadruple(Quadruple.Operations.LABEL, "","",verdadero);//crea la etiqueta de verdadero
+                    Quadruple quad = new Quadruple(verdadero);//crea la etiqueta de verdadero
                     ie.operations.add(quad);//agrega etiqueta a lista
-                    Traverse(hijo);//Deberia seguir agregando en Traverse
-                    quad = new Quadruple(Quadruple.Operations.GOTO, "","",hijo.getSiguiente());//Etiqueta de goto
+                    Traverse(hijo, scope);//Deberia seguir agregando en Traverse
+                    quad = new Quadruple(Quadruple.Operations.GOTO, "","","",hijo.getSiguiente());//Etiqueta de goto
                     ie.operations.add(quad);
-                    quad = new Quadruple(Quadruple.Operations.LABEL, "","",falso);//caso falso
+                    quad = new Quadruple(falso);//caso falso
                     ie.operations.add(quad);
                 break;
                 case "ELSIF_BLOCK":
@@ -695,14 +318,12 @@ public class CodigoIntermedio {
                         if (nodo.getHijos().size()>1) {   
                             if (nodo.getHijos().get(i+1).getNombre().equals("OR")) {//Hace las etiquetas dependiendo del caso OR
                                 hijo.setVerdadero(nodo.getVerdadero());
-                                label = new Label();
-                                hijo.setFalso("etiq"+label.getLabelName());
-                                System.out.println("Entra");
+                                Label falso = label = new Label();
+                                hijo.setFalso(falso);
                             }else if(nodo.getHijos().get(i+1).getNombre().equals("AND")){//Hace las etiquetas dependiendo del caso AND
-                                label = new Label();
-                                hijo.setVerdadero("etiq"+label.getLabelName());
+                                Label verdadero = new Label();
+                                hijo.setVerdadero(verdadero);
                                 hijo.setFalso(nodo.getFalso());
-                                System.out.println("Entra");
                             }
                         }else{//Caso que sea hijo unico, solo pasa etiquetas del padre
                             hijo.setVerdadero(nodo.getVerdadero());
@@ -712,22 +333,45 @@ public class CodigoIntermedio {
                     boolExp(hijo);
                 break;
                 case "OPREL":
+                    MathExp(hijo);
+                    String temp1 = hijo.getHijos().get(0).getE_lugar();
+                    String temp2 = hijo.getHijos().get(1).getE_lugar();
                     temporal= new Temporal();
-                    String temp1 = hijo.getHijos().get(0).getValor();
-                    String temp2 = hijo.getHijos().get(1).getValor();
-                    Quadruple quad = new Quadruple("IF"+hijo.getValor(),temp1,temp2,nodo.getVerdadero());//crea instruccion  de if
+                    Quadruple quad = null;//crea instruccion  de if
+                    switch(hijo.getValor()){
+                        case ">=":
+                        quad = new Quadruple(Quadruple.Operations.IF_GEQ,temp1,temp2,"",nodo.getVerdadero());
+                        break;
+                    case "<=":
+                        quad = new Quadruple(Quadruple.Operations.IF_LEQ,temp1,temp2,"",nodo.getVerdadero());
+                        break;
+                    case ">":
+                        quad = new Quadruple(Quadruple.Operations.IF_GT,temp1,temp2,"",nodo.getVerdadero());
+                        break;
+                    case "=":
+                        quad = new Quadruple(Quadruple.Operations.IF_EQ,temp1,temp2,"",nodo.getVerdadero());
+                        break;
+                    case "<":
+                        quad = new Quadruple(Quadruple.Operations.IF_LT,temp1,temp2,"",nodo.getVerdadero());
+                        break;
+                        case "/=":
+                        quad = new Quadruple(Quadruple.Operations.IF_LEQ,temp1,temp2,"",nodo.getVerdadero());
+                        break;
+                    }
                     ie.operations.add(quad);
-                    quad = new Quadruple(Quadruple.Operations.GOTO, "","",nodo.getFalso());//Etiqueta en caso falso
-                    ie.operations.add(quad);
+                    if(nodo.getFalso()!=null){
+                        quad = new Quadruple(Quadruple.Operations.GOTO, "","","",nodo.getFalso());//Etiqueta en caso falso
+                        ie.operations.add(quad);
+                    }
                     break;
                 case "AND":
-                    quad = new Quadruple(Quadruple.Operations.LABEL,"","",nodo.getHijos().get(i-1).getVerdadero());
+                    quad = new Quadruple(nodo.getHijos().get(i-1).getVerdadero());
                     ie.operations.add(quad);
                     nodo.getHijos().get(i+1).setVerdadero(nodo.getVerdadero());//asigna valores de falso y verdadero al hermano derecho antes de ejecutar
                     nodo.getHijos().get(i+1).setFalso(nodo.getFalso());
                 break;
                 case "OR":
-                    quad = new Quadruple(Quadruple.Operations.LABEL,"","",nodo.getHijos().get(i-1).getFalso());
+                    quad = new Quadruple(nodo.getHijos().get(i-1).getFalso());
                     ie.operations.add(quad);
                     nodo.getHijos().get(i+1).setVerdadero(nodo.getVerdadero());//asigna valores de falso y verdadero al hermano derecho antes de ejecutar
                     nodo.getHijos().get(i+1).setFalso(nodo.getFalso());
@@ -736,25 +380,125 @@ public class CodigoIntermedio {
         }
     }
 
-    public void GenerandoCod(Nodo padre){
-        Traverse(padre);
-        //TraverseBooleanE_While(padre);
-        //exec_BooleanE();
-        
-        //se genera el codigo intermedio para varias asignaciones dentro de content
-        //traverse assing llama a traverseMathE para que se ejecute una asignacion completa
-        //TraverseAssign(padre);
-       
-        
-        
-        
-        
-     
-        
-        
-    }   
-    
-    
+    public void forBlock(Nodo nodo, String scope){
+        //para reducir codigo, solo va a saltar si es falso
+        // orden de los hijos: id contador, inicio, fin, contenido
+        // nunca deberia entrar a los else de error
+            // setear lugar al contador
+            
+            nodo.getHijos().get(0).setE_lugar(nodo.getHijos().get(0).getValor());
 
-    
+            // Si es id, su lugar ya existe. Si no, se asigna aqui
+            if(nodo.getHijos().get(1).getNombre().equals("NUM")){
+                nodo.getHijos().get(1).setE_lugar(nodo.getHijos().get(1).getValor());
+            }
+            // Si es id, su lugar ya existe. Si no, se asigna aqui
+            if(nodo.getHijos().get(2).getNombre().equals("NUM")){
+                nodo.getHijos().get(2).setE_lugar(nodo.getHijos().get(2).getValor());
+            }
+            // asignar valor inicial al contador
+            Quadruple quad = new Quadruple(Quadruple.Operations.ASSIGN, nodo.getHijos().get(1).getE_lugar(),"",nodo.getHijos().get(0).getE_lugar());
+            ie.operations.add(quad);
+            //comienzo del loop
+            // label = new Label();
+            Label comienzo = new Label();
+            quad = new Quadruple(comienzo);//Crea etiqueta de comienzo en caso que se cumpla la condicion regresar
+            ie.operations.add(quad);
+            
+            // label = new Label();
+            Label falso = new Label();
+            // si no se cumple salir del loop
+            quad = new Quadruple(Quadruple.Operations.IF_GEQ,nodo.getHijos().get(0).getE_lugar(),nodo.getHijos().get(2).getE_lugar(),"",falso);
+            // quad = new Quadruple("IF>=", nodo.getHijos().get(0).getE_lugar(),nodo.getHijos().get(2).getE_lugar(),falso);
+            ie.operations.add(quad);
+            Temporal temp = new Temporal();
+            for (Nodo hijo : nodo.getHijos()) {
+                switch (hijo.getNombre()) {
+                    case "CONTENT":
+                        hijo.setSiguiente(nodo.getSiguiente());
+                        Traverse(hijo,scope);
+                        //incrementar
+                        quad = new Quadruple(Quadruple.Operations.ADD, nodo.getHijos().get(0).getE_lugar(), "1", temp.getTemporal());
+                        ie.operations.add(quad);
+                        //asignar
+                        quad = new Quadruple(Quadruple.Operations.ASSIGN, temp.getTemporal(), "", nodo.getHijos().get(0).getE_lugar());
+                        ie.operations.add(quad);
+                        //regresar
+                        quad = new Quadruple(Quadruple.Operations.GOTO, "","","",comienzo);
+                        ie.operations.add(quad);
+
+                        quad=new Quadruple(falso);
+                        ie.operations.add(quad);
+                        break;
+                }
+            }
+    }
+
+    public void loopBlock(Nodo nodo, String scope){
+        // label = new Label();
+        Label comienzo = new Label();
+        Quadruple quad = new Quadruple(comienzo);//Crea etiqueta de comienzo en caso que se cumpla la condicion regresar
+        ie.operations.add(quad);
+        nodo.getHijos().get(0).setSiguiente(nodo.getSiguiente());
+        Traverse(nodo, scope);
+        quad = new Quadruple(Quadruple.Operations.GOTO, "","","",comienzo);
+        ie.operations.add(quad);
+    }
+
+    public void MathExp(Nodo nodo){
+        for (Nodo hijo : nodo.getHijos()) {
+            switch(hijo.getNombre()){
+                case "ID":
+                case "NUM":
+                    hijo.setE_lugar(hijo.getValor());                
+                    break;
+                case "OPSUM":
+                case "OPMULT":
+                    MathExp(hijo);
+                    temporal = new Temporal();
+                    hijo.setE_lugar(temporal.getTemporal());
+                    Operations operation=null;
+                    switch (hijo.getValor()) {
+                        case "+":
+                            operation = Quadruple.Operations.ADD;
+                            break;
+                        case "-":
+                            operation = Quadruple.Operations.MIN;
+                            break;
+                        case "/":
+                            operation = Quadruple.Operations.DIV;
+                            break;
+                        case "*":
+                            operation = Quadruple.Operations.MUL;
+                        break;                            
+                    }
+                    Quadruple quad = new Quadruple(operation,hijo.getHijos().get(0).getE_lugar(),hijo.getHijos().get(1).getE_lugar(),hijo.getE_lugar() );
+                    ie.operations.add(quad);
+                    break;
+                case "MATHEMATICAL_EXPRESSION":
+                case "PARENTHESIS":
+                    MathExp(hijo);
+                    hijo.setE_lugar(hijo.getHijos().get(0).getE_lugar());
+                    break;
+                case "Call_Subroutine":
+                    parameterCallValidation(hijo.getHijos().get(1));
+                    String id = hijo.getHijos().get(0).getValor();
+                    int paramSize = hijo.getHijos().get(1).getHijos().size();
+                    quad = new Quadruple(Quadruple.Operations.CALL,id,Integer.toString(paramSize),"");
+                    ie.operations.add(quad);
+                    temporal=new Temporal();
+                    hijo.setE_lugar(temporal.getTemporal());
+                    quad = new Quadruple(Quadruple.Operations.ASSIGN,"RET","",temporal.getTemporal());
+                    ie.operations.add(quad);
+            }
+        }
+    }
+
+    public void parameterCallValidation(Nodo nodo){
+        MathExp(nodo);
+        for (Nodo hijo : nodo.getHijos()) {
+            Quadruple quad = new Quadruple(Quadruple.Operations.PARAM,hijo.getE_lugar(),"","");
+            ie.operations.add(quad);
+        }
+    }
 }

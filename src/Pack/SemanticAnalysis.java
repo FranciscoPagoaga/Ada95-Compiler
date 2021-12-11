@@ -8,6 +8,7 @@ public class SemanticAnalysis {
     private boolean has_error;
     private String scope;
     private String current_id;
+    private String current_block;
     private boolean returnProc;
     private int for_counter;
 
@@ -58,6 +59,42 @@ public class SemanticAnalysis {
         }
     }
 
+    public void validateExit(Nodo nodo, String scopeActual){
+        for ( Nodo hijo : nodo.getHijos()) {
+            switch (hijo.getNombre()){
+                case "EXIT_CYCLE":
+                    System.out.println("Exit when solo puede ser utilizado dentro de un ciclo loop");
+                    has_error=true;
+                break;
+                case "LOOP_BLOCK":
+                    validateLoop(hijo, scopeActual);
+                break;
+                default:
+                    validateExit(hijo, scopeActual);
+                break;
+            }
+        }
+    }
+
+    public void validateLoop(Nodo nodo, String scopeActual){
+        Boolean exitFlag=false;
+        for (Nodo hijo : nodo.getHijos().get(0).getHijos()) {
+            switch (hijo.getNombre()) {
+                case "EXIT_CYCLE":
+                    exitFlag=true;
+                    break;
+                default:
+                    Nodo n = new Nodo("");
+                    n.addHijo(hijo);
+                    validateExit(n, scopeActual);
+                    break;
+            }
+        }
+        if (!exitFlag) {
+            System.out.println("Bloque loop debe contener instruccion Exit when "+ scopeActual);
+        }
+    }
+
     // Itera sobre el nodo VARIABLE_DECLARATION para agregar id con sus tipos
     public void addVariableDeclaration(Nodo nodo, String scopeActual){
         //Se necesita el ultimo nodo para saber el tipo
@@ -77,6 +114,7 @@ public class SemanticAnalysis {
     
 
     public void addFunctionBlock(Nodo nodo, String scopeActual){
+        System.out.println(symbolTable.toString());
         String id=""; 
         String returnType="void";// si es un procedure el tipo de valor de retorno es void
         Nodo parametros=null;
@@ -128,6 +166,7 @@ public class SemanticAnalysis {
                     }
                     Traverse(hijo, scopeHijos);
                     validateReturn(hijo,scopeHijos, returnType);
+                    validateExit(nodo, scopeHijos);
                     if(!returnProc && !returnType.equals("void")){
                         System.out.println("Las funciones deben de tener return " + scopeActual);
                     }
@@ -318,9 +357,10 @@ public class SemanticAnalysis {
             System.out.println("El identificador \""+tmpvnode.Id+"\" en el scope "+tmpvnode.Scope+" ya esta declarado");
         }
         typeValidation(nodo, scope);
-        Nodo tmpNodo = nodo;
-        tmpNodo.getHijos().remove(0);
-        typeValidation(tmpNodo, scope);
+        Nodo tmpNode = new Nodo("");
+        tmpNode.addHijo(nodo.getHijos().get(1));
+        tmpNode.addHijo(nodo.getHijos().get(2));
+        typeValidation(tmpNode, scope);
         Traverse(nodo.getHijos().get(nodo.getHijos().size()-1), scope);
     }
 

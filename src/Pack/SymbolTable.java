@@ -42,7 +42,7 @@ public class SymbolTable {
     // y desactivar variables en scopes padres con mismo nombre
     // o variables en scope diferente 
     public void activateWithScope(String scope){
-        String []tmp = scope.split("");
+        String []tmp = scope.split("\\.");
         for (int i = 0; i < symbolList.size(); i++) {
             symbolList.get(i).setActive(false);
         }

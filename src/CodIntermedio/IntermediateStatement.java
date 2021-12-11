@@ -68,32 +68,33 @@ public class IntermediateStatement extends IntermediateForm {
                     }
                     //por si acaso se deja la implementacion original
                     case IF_GEQ: {
-                        sb.append("if " + currentQuadruple.getOp1() + " >= " + currentQuadruple.getOp2() + " goto " + currentQuadruple.getLabel().getLabelName());
+                        sb.append("if " + currentQuadruple.getOp1() + " >= " + currentQuadruple.getOp2() + " goto " + currentQuadruple.getLabel());
                         break;
                     }
                     //por si acaso se deja la implementacion original
                     case IF_LEQ: {
-                        sb.append("if " + currentQuadruple.getOp1() + " <= " + currentQuadruple.getOp2() + " goto " + currentQuadruple.getLabel().getLabelName());
+                        sb.append("if " + currentQuadruple.getOp1() + " <= " + currentQuadruple.getOp2() + " goto " + currentQuadruple.getLabel());
                         break;
                     }
                     //por si acaso se deja la implementacion original
                     case IF_GT: {
-                        sb.append("if " + currentQuadruple.getOp1() + " > " + currentQuadruple.getOp2() + " goto " + currentQuadruple.getLabel().getLabelName());
+                        
+                        sb.append("if " + currentQuadruple.getOp1() + " > " + currentQuadruple.getOp2() + " goto " + currentQuadruple.getLabel());
                         break;
                     }
                     //por si acaso se deja la implementacion original
                     case IF_LT: {
-                        sb.append("if " + currentQuadruple.getOp1() + " < " + currentQuadruple.getOp2() + " goto " + currentQuadruple.getLabel().getLabelName());
+                        sb.append("if " + currentQuadruple.getOp1() + " < " + currentQuadruple.getOp2() + " goto " + currentQuadruple.getLabel());
                         break;
                     }
                     //por si acaso se deja la implementacion original
                     case IF_NEQ: {
-                        sb.append("if " + currentQuadruple.getOp1() + " <> " + currentQuadruple.getOp2() + " goto " + currentQuadruple.getLabel().getLabelName());
+                        sb.append("if " + currentQuadruple.getOp1() + " <> " + currentQuadruple.getOp2() + " goto " + currentQuadruple.getLabel());
                         break;
                     }
                     //por si acaso se deja la implementacion original
                     case IF_EQ: {
-                        sb.append("if " + currentQuadruple.getOp1() + " = " + currentQuadruple.getOp2() + " goto " + currentQuadruple.getLabel().getLabelName());
+                        sb.append("if " + currentQuadruple.getOp1() + " = " + currentQuadruple.getOp2() + " goto " + currentQuadruple.getLabel());
                         break;
                     }
                     case ASSIGN: {
@@ -109,7 +110,7 @@ public class IntermediateStatement extends IntermediateForm {
                         break;
                     }
                     case GOTO: {
-                        sb.append("goto " + currentQuadruple.geteLugar());
+                        sb.append("goto " + currentQuadruple.getLabel());
                         break;
                     }
                     case PRINT: {
@@ -121,7 +122,7 @@ public class IntermediateStatement extends IntermediateForm {
                         break;
                     }
                     case LABEL: {
-                        sb.append(currentQuadruple.geteLugar() + ":");
+                        sb.append(currentQuadruple.getLabel() + ":");
                         break;
                     }
                     case EXIT: {
@@ -142,56 +143,8 @@ public class IntermediateStatement extends IntermediateForm {
                     }
                     default: 
                         System.out.println("recibí una operacion invalida en la funcion buildIntermediateCode ");
-
-
-
-
-
-
-
                 }
             }
-            
-            //switch para oprel
-            if (currentQuadruple.getTypeString()!=null) {
-                switch(currentQuadruple.getTypeString()) {
-                
-                case "IF>=": {
-                    sb.append("if " + currentQuadruple.getOp1() + " >= " + currentQuadruple.getOp2() + " goto " + currentQuadruple.getLabel().getLabelName());
-                    break;
-                }
-                case "IF<=": {
-                    sb.append("if " + currentQuadruple.getOp1() + " <= " + currentQuadruple.getOp2() + " goto " + currentQuadruple.getLabel().getLabelName());
-                    break;
-                }
-                case "IF>": {
-                    sb.append("if " + currentQuadruple.getOp1() + " > " + currentQuadruple.getOp2() + " goto " + currentQuadruple.getLabel().getLabelName());
-                    break;
-                }
-                case "IF<": {
-                    sb.append("if " + currentQuadruple.getOp1() + " < " + currentQuadruple.getOp2() + " goto " + currentQuadruple.geteLugar());
-                    break;
-                }
-                case "IF/=": {
-                    sb.append("if " + currentQuadruple.getOp1() + " /= " + currentQuadruple.getOp2() + " goto " + currentQuadruple.getLabel().getLabelName());
-                    break;
-                }
-                case "IF=": {
-                    sb.append("if " + currentQuadruple.getOp1() + " = " + currentQuadruple.getOp2() + " goto " + currentQuadruple.getLabel().getLabelName());
-                    break;
-                }
-                default: 
-                    System.out.println("recibí un OPREL invalido en la funcion BuildIntermediateCode");
-                
-                
-             
-                }
-            }
-            
-            
-            
-            
-            
             sb.append("\n");
         }
         return sb.toString();

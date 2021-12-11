@@ -2,6 +2,8 @@
 package Pack;
 
 import CodIntermedio.IntermediateExpression;
+import CodIntermedio.Label;
+
 import java.util.ArrayList;
 
 
@@ -12,9 +14,9 @@ public class Nodo {
     private String valor;
     private int numNodo;
     private String e_lugar;
-    private String verdadero;
-    private String falso; 
-    private String siguiente;
+    private Label verdadero;
+    private Label falso; 
+    private Label siguiente;
     
     //
     private IntermediateExpression Expression;
@@ -29,27 +31,27 @@ public class Nodo {
         Expression = new IntermediateExpression();
     }
 
-    public String getSiguiente() {
+    public Label getSiguiente() {
         return siguiente;
     }
 
-    public void setSiguiente(String siguiente) {
+    public void setSiguiente(Label siguiente) {
         this.siguiente = siguiente;
     }
 
-    public String getFalso() {
+    public Label getFalso() {
         return falso;
     }
 
-    public void setFalso(String falso) {
+    public void setFalso(Label falso) {
         this.falso = falso;
     }
 
-    public String getVerdadero() {
+    public Label getVerdadero() {
         return verdadero;
     }
 
-    public void setVerdadero(String verdadero) {
+    public void setVerdadero(Label verdadero) {
         this.verdadero = verdadero;
     }
 
