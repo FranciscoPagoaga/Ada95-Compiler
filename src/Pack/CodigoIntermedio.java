@@ -9,7 +9,6 @@ import CodIntermedio.IntermediateExpression;
 import CodIntermedio.IntermediateStatement;
 import CodIntermedio.Label;
 import CodIntermedio.Quadruple;
-import CodIntermedio.QuadrupleList;
 import CodIntermedio.Temporal;
 import CodIntermedio.Quadruple.Operations;
 
@@ -42,8 +41,8 @@ public class CodigoIntermedio {
     private IntermediateStatement program;
     private ArrayList<String> stringsTable;
     private ArrayList<Double> doublesTable;
-    private String current_function;
     private String scope;
+    private Boolean hasElse=false;
 
     public CodigoIntermedio(File outputFile, SemanticAnalysis instance) throws IOException {
         this.out = new BufferedWriter(new FileWriter(outputFile));
@@ -63,14 +62,6 @@ public class CodigoIntermedio {
     public void GenerandoCod(Nodo padre){
         scope = "_"+padre.getHijos().get(0).getValor();
         TraverseFunctions(padre, scope);
-        Quadruple quad = new Quadruple(Quadruple.Operations.FUNCTION_END);
-        System.out.println(scope);
-        //TraverseBooleanE_While(padre);
-        //exec_BooleanE();
-        
-        //se genera el codigo intermedio para varias asignaciones dentro de content
-        //traverse assing llama a traverseMathE para que se ejecute una asignacion completa
-        //TraverseAssign(padre);
     }
 
     public void TraverseFunctions(Nodo nodo,String scope){
@@ -112,39 +103,24 @@ public class CodigoIntermedio {
                     TraverseFunctions(hijo, scope +"."+hijo.getHijos().get(0).getValor());
                     break;    
                 case "IF_BLOCK":
-                //crea que necesitare condicion para saber si el siguiente no esta asignado ya 
-                    if (nodo.getSiguiente()==null) {
-                        siguiente = new Label();
-                        // siguiente = "etiq"+label.getLabelName();
-                        hijo.setSiguiente(siguiente);
-                    }else{
-                        hijo.setSiguiente(nodo.getSiguiente());
-                    }
+                    //crea que necesitare condicion para saber si el siguiente no esta asignado ya 
+                    siguiente = new Label();
+                    hijo.setSiguiente(siguiente);
                     ifBlock(hijo, scope);
-                    if (nodo.getSiguiente()==null) {
-                        quad = new Quadruple(hijo.getSiguiente());//crea etiqueta de verdader
-                        ie.operations.add(quad);                    
-                    }
+                    quad = new Quadruple(hijo.getSiguiente());//crea etiqueta de verdader
+                    ie.operations.add(quad);
                     break;
                 case "WHILE_BLOCK":
-                //crea que necesitare condicion para saber si el siguiente no esta asignado ya 
-                    if (nodo.getSiguiente()==null) {
-                        siguiente = new Label();
-                        // siguiente = "etiq"+label.getLabelName();
-                        hijo.setSiguiente(siguiente);
-                    }else{
-                        hijo.setSiguiente(nodo.getSiguiente());
-                    }
+                    //crea que necesitare condicion para saber si el siguiente no esta asignado ya 
+                    siguiente = new Label();
+                    hijo.setSiguiente(siguiente);
                     whileBlock(hijo, scope);
-                    if (nodo.getSiguiente()==null) {
-                        quad = new Quadruple(hijo.getSiguiente());//crea etiqueta de verdader
-                        ie.operations.add(quad);                    
-                    }
+                    quad = new Quadruple(hijo.getSiguiente());//crea etiqueta de verdader
+                    ie.operations.add(quad);                    
                     break;
                 case "FOR_BLOCK":
                     if (nodo.getSiguiente()==null) {
                         siguiente = new Label();
-                        // siguiente = "etiq"+label.getLabelName();
                         hijo.setSiguiente(siguiente);
                     }else{
                         hijo.setSiguiente(nodo.getSiguiente());
@@ -152,18 +128,11 @@ public class CodigoIntermedio {
                     forBlock(hijo, scope);
                     break;
                 case "LOOP_BLOCK":
-                    if (nodo.getSiguiente()==null) {
-                        siguiente = new Label();
-                        // siguiente = "etiq"+label.getLabelName();
-                        hijo.setSiguiente(siguiente);
-                    }else{
-                        hijo.setSiguiente(nodo.getSiguiente());
-                    }
+                    siguiente = new Label();
+                    hijo.setSiguiente(siguiente);
                     loopBlock(hijo, scope);
-                    if (nodo.getSiguiente()==null) {
-                        quad = new Quadruple(hijo.getSiguiente());//crea etiqueta de verdader
-                        ie.operations.add(quad);                    
-                    }
+                    quad = new Quadruple(hijo.getSiguiente());//crea etiqueta de verdader
+                    ie.operations.add(quad);                    
                     break;
                 case "EXIT_CYCLE":
                     hijo.getHijos().get(0).setVerdadero(nodo.getSiguiente());
@@ -182,7 +151,13 @@ public class CodigoIntermedio {
                     ie.operations.add(quad);
                     break;
                 case "PUT":
-                    quad = new Quadruple(Quadruple.Operations.PRINT,hijo.getHijos().get(0).getValor(),"","");
+                    String value="";
+                    if (hijo.getHijos().get(0).getNombre().equals("STR")) {
+                        value = "\""+hijo.getHijos().get(0).getValor()+"\"";
+                    }else{
+                        value = hijo.getHijos().get(0).getValor();
+                    }
+                    quad = new Quadruple(Quadruple.Operations.PRINT,value,"","");
                     ie.operations.add(quad);
                     break;
                 case "ASSIGNMENT":
@@ -204,9 +179,7 @@ public class CodigoIntermedio {
     }
 
     public void whileBlock(Nodo nodo, String scope){
-        // label = new Label();
         Label comienzo = new Label();
-        // label = new Label();
         Label verdadero = new Label();
         Quadruple quad = new Quadruple(comienzo);//Crea etiqueta de comienzo en caso que se cumpla la condicion regresar
         ie.operations.add(quad);
@@ -220,9 +193,9 @@ public class CodigoIntermedio {
                     ie.operations.add(quad);
                     break;
                 case "CONTENT":
-                    hijo.setSiguiente(nodo.getSiguiente());
+                    hijo.setSiguiente(comienzo);
                     Traverse(hijo, scope);//crea codigo despues de etiqueta de verdadero
-                    quad = new Quadruple(comienzo);
+                    quad = new Quadruple(Quadruple.Operations.GOTO, "","","",comienzo);
                     ie.operations.add(quad);
                     break;
             }
@@ -233,12 +206,15 @@ public class CodigoIntermedio {
         Label verdadero = new Label();
         int pos = nodo.getHijos().size()-1;
         String nom = nodo.getHijos().get(pos).getNombre();
-        Label falso =new Label();
-        // if (nom.equals("ELSIF_BLOCK") || nom.equals("ELSE_BLOCK") ) {
-            // falso = "etiq"+label.getLabelName();  //If siempre crea nuevas etiquetas en caso verdadero  y falso
-        // }else{
-        //     falso = nodo.getSiguiente();
-        // }
+        Label falso;
+        if (nom.equals("ELSIF_BLOCK") || nom.equals("ELSE_BLOCK") ) {
+            falso = new Label();  //If siempre crea nuevas etiquetas en caso verdadero  y falso
+            if (nom.equals("ELSE_BLOCK")) {
+                hasElse=true;
+            }
+        }else{
+            falso = nodo.getSiguiente();
+        }
         int i=-1;
         for (Nodo hijo : nodo.getHijos()) {
             i++;
@@ -258,9 +234,6 @@ public class CodigoIntermedio {
                         ie.operations.add(quad);
                         quad = new Quadruple(falso);
                         ie.operations.add(quad);
-                    }else{
-                        quad = new Quadruple(falso);
-                        ie.operations.add(quad);
                     }
                     break;
                 case "ELSIF_BLOCK":
@@ -269,7 +242,7 @@ public class CodigoIntermedio {
                 break;
                 case "ELSE_BLOCK":
                     hijo.setSiguiente(nodo.getSiguiente());//asigna siguiente al bloque else para saber donde sigue
-                    Traverse(hijo, scope);
+                    Traverse(hijo, scope);                    
                     break;
                 default:
                     break;
@@ -278,18 +251,22 @@ public class CodigoIntermedio {
     }
 
     public void elsifBLock(Nodo nodo){
-        // label = new Label();
         Label verdadero = new Label();//Crear caso verdader
-        // label = new Label();
-        Label falso = new Label();//Crear caso falso
+        Label falso=null;
+        if (!hasElse && !nodo.getHijos().get(nodo.getHijos().size()-1).getNombre().equals("ELSIF_BLOCK")) {
+            falso = nodo.getSiguiente();//Crear caso falso
+        }else{
+            falso = new Label();
+        }
+        int i=0;
         for (Nodo hijo : nodo.getHijos()) {
+            i++;
             switch(hijo.getNombre()){
                 case "BooleanExp":
                     hijo.setVerdadero(verdadero);
                     hijo.setFalso(falso);//Setea los valores falsos y verdaderos en 'E' antes de ejecutar
                     boolExp(hijo);
-
-                break;
+                    break;
                 case "CONTENT":
                     hijo.setSiguiente(nodo.getSiguiente());//asigna siguiente
                     Quadruple quad = new Quadruple(verdadero);//crea la etiqueta de verdadero
@@ -297,13 +274,21 @@ public class CodigoIntermedio {
                     Traverse(hijo, scope);//Deberia seguir agregando en Traverse
                     quad = new Quadruple(Quadruple.Operations.GOTO, "","","",hijo.getSiguiente());//Etiqueta de goto
                     ie.operations.add(quad);
-                    quad = new Quadruple(falso);//caso falso
-                    ie.operations.add(quad);
-                break;
+                    if (hasElse && !nodo.getHijos().get(nodo.getHijos().size()-1).getNombre().equals("ELSIF_BLOCK")) {
+                        quad = new Quadruple(falso);//caso falso
+                        ie.operations.add(quad);
+                    }else if((hasElse && nodo.getHijos().get(nodo.getHijos().size()-1).getNombre().equals("ELSIF_BLOCK"))){
+                        quad = new Quadruple(falso);//caso falso
+                        ie.operations.add(quad);
+                    }else if(!hasElse && nodo.getHijos().get(nodo.getHijos().size()-1).getNombre().equals("ELSIF_BLOCK")){
+                        quad = new Quadruple(falso);//caso falso
+                        ie.operations.add(quad);                        
+                    }
+                    break;
                 case "ELSIF_BLOCK":
                     hijo.setSiguiente(nodo.getSiguiente());//asigna siguiente antes de correr bloque elsif
                     elsifBLock(hijo);
-                break;
+                    break;
             }
         }
     }
@@ -400,16 +385,13 @@ public class CodigoIntermedio {
             Quadruple quad = new Quadruple(Quadruple.Operations.ASSIGN, nodo.getHijos().get(1).getE_lugar(),"",nodo.getHijos().get(0).getE_lugar());
             ie.operations.add(quad);
             //comienzo del loop
-            // label = new Label();
             Label comienzo = new Label();
             quad = new Quadruple(comienzo);//Crea etiqueta de comienzo en caso que se cumpla la condicion regresar
             ie.operations.add(quad);
             
-            // label = new Label();
             Label falso = new Label();
             // si no se cumple salir del loop
             quad = new Quadruple(Quadruple.Operations.IF_GEQ,nodo.getHijos().get(0).getE_lugar(),nodo.getHijos().get(2).getE_lugar(),"",falso);
-            // quad = new Quadruple("IF>=", nodo.getHijos().get(0).getE_lugar(),nodo.getHijos().get(2).getE_lugar(),falso);
             ie.operations.add(quad);
             Temporal temp = new Temporal();
             for (Nodo hijo : nodo.getHijos()) {
@@ -435,7 +417,6 @@ public class CodigoIntermedio {
     }
 
     public void loopBlock(Nodo nodo, String scope){
-        // label = new Label();
         Label comienzo = new Label();
         Quadruple quad = new Quadruple(comienzo);//Crea etiqueta de comienzo en caso que se cumpla la condicion regresar
         ie.operations.add(quad);

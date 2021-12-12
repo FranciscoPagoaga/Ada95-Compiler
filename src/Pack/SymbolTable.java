@@ -74,8 +74,8 @@ public class SymbolTable {
                 
                 //mismo nombre
                 if(symbolList.get(i).getId().equals(symbolList.get(index).getId())){
-                    String []indexScope = symbolList.get(index).getScope().split(".");
-                    String []iScope = symbolList.get(i).getScope().split(".");
+                    String []indexScope = symbolList.get(index).getScope().split("\\.");
+                    String []iScope = symbolList.get(i).getScope().split("\\.");
                     
                     // si tienen el mismo tamaño son scopes hermanos
                     if(!(indexScope.length == iScope.length)){
