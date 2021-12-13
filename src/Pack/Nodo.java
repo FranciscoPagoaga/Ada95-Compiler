@@ -17,7 +17,8 @@ public class Nodo {
     private Label verdadero;
     private Label falso; 
     private Label siguiente;
-    
+    private int fila;
+    private int columna;
     //
     private IntermediateExpression Expression;
     
@@ -29,7 +30,27 @@ public class Nodo {
         setNumNodo(0);
         String e_lugar  = null;
         Expression = new IntermediateExpression();
+        this.fila = -1;
+        this.columna= -1;
     }
+    
+    public int getFila() {
+        return fila;
+    }
+
+    public void setFila(int fila) {
+        this.fila = fila;
+    }
+
+    public int getColumna() {
+        return columna;
+    }
+
+    public void setColumna(int columna) {
+        this.columna = columna;
+    }
+    
+    
 
     public Label getSiguiente() {
         return siguiente;

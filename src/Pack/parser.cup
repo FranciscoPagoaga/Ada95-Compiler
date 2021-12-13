@@ -67,7 +67,7 @@ start with main_body;
 //Gramaticas
 
 main_body ::= PROCEDURE ID:id main_parameters:b IS begin_main_body: beg fin_parseo  {:
-	    Nodo tmp = new Nodo("Inicio");
+	Nodo tmp = new Nodo("Inicio");
         tmp.setNumNodo(parser.contador++);
 
         Nodo tmp3 = new Nodo("ID"); 
@@ -201,6 +201,10 @@ declaration_list ::= procedure_declaration:a declaration_list:b {:
                     | variable_declaration:e {:
                         Nodo tmp = new Nodo("VARIABLE_DECLARATION");
                         tmp.setNumNodo(parser.contador++);
+                        
+                        
+
+                        
                         for(int i = e.size()-1; i>=0;i--){
                             tmp.addHijo(e.get(i));
                         }
@@ -263,6 +267,11 @@ variable_declaration ::= ID:id COMA variable_declaration:b {:
                         Nodo tmp = new Nodo("ID");
                         tmp.setNumNodo(parser.contador++);
                         tmp.setValor(id);
+                        
+                        //line column
+                        tmp.setFila(idright+1);
+                        tmp.setColumna(idleft);
+                        
                         b.add(tmp);
 
                         RESULT = b;
@@ -275,6 +284,11 @@ variable_declaration ::= ID:id COMA variable_declaration:b {:
                         Nodo tmp = new Nodo("ID"); 
                         tmp.setNumNodo(parser.contador++);
                         tmp.setValor(id);
+                        
+                        //line column
+                        tmp.setFila(idright+1);
+                        tmp.setColumna(idleft);
+                        
                         LinkedList list = new LinkedList<Nodo>();
                         Nodo tmp2 = new Nodo("VAR_TYPE");
                         tmp2.setNumNodo(parser.contador++);
@@ -449,6 +463,9 @@ procedure_block ::= PROCEDURE ID:id main_parameters:b IS declaration_list:d BEGI
                     Nodo tmp2 = new Nodo("ID");
                     tmp2.setNumNodo(parser.contador++);
                     tmp2.setValor(id);
+                    //line column
+                    tmp2.setFila(idright+1);
+                    tmp2.setColumna(idleft);
 
                     tmp.addHijo(tmp2);
                     if(b != null){
@@ -472,9 +489,14 @@ procedure_block ::= PROCEDURE ID:id main_parameters:b IS declaration_list:d BEGI
                     Nodo tmp5 = new Nodo("FINAL_ID");
                     tmp5.setNumNodo(parser.contador++);
                     tmp5.setValor(id2);
+                    
+                    //line column
+                    tmp5.setFila(id2right+1);
+                    tmp5.setColumna(id2left);
+                    
 
                     tmp.addHijo(tmp5);
-
+                    
                     RESULT=tmp;
                 :}
                 // errores
@@ -531,6 +553,13 @@ function_block ::= FUNCTION ID:id main_parameters:b RETURN var_type:a IS declara
                     Nodo tmp2 = new Nodo("ID");
                     tmp2.setNumNodo(parser.contador++);
                     tmp2.setValor(id);
+                    
+         
+                    //line column
+                    tmp2.setFila(idright+1);
+                    tmp2.setColumna(idleft);
+
+                    
                     tmp.addHijo(tmp2);
 
                     if(b != null){
@@ -559,6 +588,10 @@ function_block ::= FUNCTION ID:id main_parameters:b RETURN var_type:a IS declara
                     Nodo tmp6 = new Nodo("FINAL_ID");
                     tmp6.setNumNodo(parser.contador++);
                     tmp6.setValor(id2);
+                    
+                    //line column
+                    tmp6.setFila(id2right+1);
+                    tmp6.setColumna(id2left);
 
                     tmp.addHijo(tmp6);
 
@@ -619,37 +652,56 @@ function_block ::= FUNCTION ID:id main_parameters:b RETURN var_type:a IS declara
                 | FUNCTION ID main_parameters RETURN var_type IS BEGIN error END ID PYC
                 ;
 
-return_statement ::= RETURN TRUE PYC {: 
+return_statement ::= RETURN:r TRUE:e PYC {: 
                         Nodo tmp = new Nodo("RETURN_STATEMENT");
                         tmp.setNumNodo(parser.contador++);
+                        
+                        //line column para return
+                        tmp.setFila(rright+1);
+                        tmp.setColumna(rleft);
                         
                         Nodo tmp2 = new Nodo("BOOLEAN_VALUE");
                         tmp2.setNumNodo(parser.contador++);
                         tmp2.setValor("True");
-
+                        
+                        //line column
+                        tmp2.setFila(eright+1);
+                        tmp2.setColumna(eleft);
                         tmp.addHijo(tmp2);
+                        
                         RESULT = tmp;
                     :}
                     //Error
                     | RETURN TRUE error
                     //Return False
-                    | RETURN FALSE PYC{: 
+                    | RETURN:r FALSE:e PYC{: 
                         Nodo tmp = new Nodo("RETURN_STATEMENT");
                         tmp.setNumNodo(parser.contador++);
+                        //line column para return
+                        tmp.setFila(rright+1);
+                        tmp.setColumna(rleft);
 
                         Nodo tmp2 = new Nodo("BOOLEAN_VALUE");
                         tmp2.setNumNodo(parser.contador++);
                         tmp2.setValor("False");
 
+                        //line column
+                        tmp2.setFila(eright+1);
+                        tmp2.setColumna(eleft);
                         tmp.addHijo(tmp2);
+
                         RESULT = tmp;
                     :}
                     // Error
                     | RETURN FALSE error
                     // Return operaciones
-                    | RETURN E:e PYC{: 
+                    | RETURN:r E:e PYC{: 
                         Nodo tmp = new Nodo("RETURN_STATEMENT");
                         tmp.setNumNodo(parser.contador++);
+                        
+                        //line column para return
+                        tmp.setFila(rright+1);
+                        tmp.setColumna(rleft);
 
                         tmp.addHijo(e);
 
@@ -679,7 +731,7 @@ main_parameters ::= PARIZQ parameters_specification:a PARDER {:
 parameters_specification ::= ident_list:b OPDEC parameter_mode:c var_type:a PYC parameters_specification:d{: 
                                 Nodo tmp = new Nodo("PARAMETERS_SPECIFICATION");
                                 tmp.setNumNodo(parser.contador++);
-
+                                
                                 Nodo tmp2 = new Nodo("ID_LIST");
                                 tmp2.setNumNodo(parser.contador++);
                                 for(int i = b.size()-1; i>=0;i--){
@@ -708,7 +760,7 @@ parameters_specification ::= ident_list:b OPDEC parameter_mode:c var_type:a PYC 
                             | ident_list:b OPDEC parameter_mode:c var_type:a {: 
                                 Nodo tmp = new Nodo("PARAMETERS_SPECIFICATION");
                                 tmp.setNumNodo(parser.contador++);
-
+                                
                                 Nodo tmp2 = new Nodo("ID_LIST");
                                 tmp2.setNumNodo(parser.contador++);
                                 for(int i = b.size()-1; i>=0;i--){
@@ -740,6 +792,10 @@ ident_list ::= ID:id COMA ident_list:b{:
                 Nodo tmp = new Nodo("ID");
                 tmp.setNumNodo(parser.contador++);
                 tmp.setValor(id);   
+                
+                //line column
+                tmp.setFila(idright+1);
+                tmp.setColumna(idleft);
 
                 b.add(tmp); 
                 RESULT=b;
@@ -748,6 +804,10 @@ ident_list ::= ID:id COMA ident_list:b{:
                 Nodo tmp = new Nodo("ID");
                 tmp.setNumNodo(parser.contador++);
                 tmp.setValor(id);   
+                
+                //line column
+                tmp.setFila(idright+1);
+                tmp.setColumna(idleft);
 
                 LinkedList list = new LinkedList<Nodo>();
                 list.add(tmp);
@@ -777,6 +837,10 @@ assignment ::= ID:id OPASG E:e PYC{:
                 Nodo tmp2 = new Nodo("ID");
                 tmp2.setNumNodo(parser.contador++);
                 tmp2.setValor(id);
+                //line column
+                tmp2.setFila(idright+1);
+                tmp2.setColumna(idleft);
+
                 tmp.addHijo(tmp2);
 
                 Nodo tmp3 = new Nodo("MATHEMATICAL_EXPRESSION");
@@ -802,6 +866,9 @@ assignment ::= ID:id OPASG E:e PYC{:
                 Nodo tmp2 = new Nodo("ID");
                 tmp2.setNumNodo(parser.contador++);
                 tmp2.setValor(id);
+                //line column
+                tmp2.setFila(idright+1);
+                tmp2.setColumna(idleft);
                 tmp.addHijo(tmp2);
 
                 Nodo tmp3 = new Nodo("STR");
@@ -815,7 +882,7 @@ assignment ::= ID:id OPASG E:e PYC{:
             | ID error STR PYC
             | ID OPASG STR error
             // Boolean True  
-            | ID:id OPASG TRUE PYC {:
+            | ID:id OPASG TRUE:e PYC {:
                 Nodo tmp = new Nodo("ASSIGNMENT");
                 tmp.setNumNodo(parser.contador++);
                 tmp.setValor("null");
@@ -823,11 +890,19 @@ assignment ::= ID:id OPASG E:e PYC{:
                 Nodo tmp2 = new Nodo("ID");
                 tmp2.setNumNodo(parser.contador++);
                 tmp2.setValor(id);
+                //line column
+                tmp2.setFila(idright+1);
+                tmp2.setColumna(idleft);
+                
                 tmp.addHijo(tmp2);
 
                 Nodo tmp3 = new Nodo("BOOLEAN_VALUE");
                 tmp3.setNumNodo(parser.contador++);
                 tmp3.setValor("True");
+                //line column
+                tmp3.setFila(eright+1);
+                tmp3.setColumna(eleft);
+                
                 tmp.addHijo(tmp3);
                 
                 RESULT=tmp;
@@ -836,7 +911,7 @@ assignment ::= ID:id OPASG E:e PYC{:
             | ID error TRUE PYC
             | ID OPASG TRUE error
             // Boolean False 
-            | ID:id OPASG FALSE PYC {:
+            | ID:id OPASG FALSE:e PYC {:
                 Nodo tmp = new Nodo("ASSIGNMENT");
                 tmp.setNumNodo(parser.contador++);
                 tmp.setValor("null");
@@ -844,12 +919,24 @@ assignment ::= ID:id OPASG E:e PYC{:
                 Nodo tmp2 = new Nodo("ID");
                 tmp2.setNumNodo(parser.contador++);
                 tmp2.setValor(id);
+                //line column
+                tmp2.setFila(idright+1);
+                tmp2.setColumna(idleft);
+                
                 tmp.addHijo(tmp2);
 
                 Nodo tmp3 = new Nodo("BOOLEAN_VALUE");
                 tmp3.setNumNodo(parser.contador++);
                 tmp3.setValor("False");
+                
+                //line column
+                tmp3.setFila(eright+1);
+                tmp3.setColumna(eleft);
+                
                 tmp.addHijo(tmp3);
+                
+               
+
                 
                 RESULT=tmp;
 
@@ -894,6 +981,11 @@ T::= T:a OPMULT:c F : b{:
 
 F::= NUM:e {:
         Nodo tmp = new Nodo("NUM");
+        
+        //fila y columna
+        tmp.setFila(eright+1);
+        tmp.setColumna(eleft);
+        
         tmp.setNumNodo(parser.contador++);
         tmp.setValor(e);
         RESULT=tmp;
@@ -902,15 +994,26 @@ F::= NUM:e {:
         Nodo tmp = new Nodo("ID");
         tmp.setNumNodo(parser.contador++);
         tmp.setValor(e);
+
+        //fila y columna
+        tmp.setFila(eright+1);
+        tmp.setColumna(eleft);
+        
         RESULT=tmp;
     :}
     | call_subroutine: e {: 
+        
+        
         RESULT = e;
     :}
     | PARIZQ E:e PARDER {: 
         Nodo tmp = new Nodo("PARENTHESIS");
         tmp.setNumNodo(parser.contador++);
         tmp.addHijo((Nodo)e);
+        //fila y columna
+        tmp.setFila(eright+1);
+        tmp.setColumna(eleft);
+        
         RESULT=tmp;
     :}; 
 
@@ -1338,6 +1441,11 @@ call_subroutine ::= ID:id PARIZQ parameter_values:f PARDER {:
                         Nodo tmp = new Nodo("Call_Subroutine");
                         tmp.setNumNodo(parser.contador++);
                         tmp.setValor("NULL");
+                        
+                        //line column
+                        tmp.setFila(idright+1);
+                        tmp.setColumna(idleft);
+                        
 
                         Nodo tmp2 = new Nodo("ID");
                         tmp2.setNumNodo(parser.contador++);
@@ -1358,6 +1466,11 @@ call_subroutine ::= ID:id PARIZQ parameter_values:f PARDER {:
                         Nodo tmp = new Nodo("Call_Subroutine");
                         tmp.setNumNodo(parser.contador++);
                         tmp.setValor("NULL");
+                        
+                        //line column
+                        tmp.setFila(idright+1);
+                        tmp.setColumna(idleft);
+                        
 
                         Nodo tmp2 = new Nodo("ID");
                         tmp2.setNumNodo(parser.contador++);
