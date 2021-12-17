@@ -12,6 +12,7 @@ public class SemanticAnalysis {
     private String current_block;
     private boolean returnProc;
     private int for_counter;
+    private int currentDirection = 0;
 
     public SemanticAnalysis(SymbolTable symbolTable){
         this.symbolTable = symbolTable;
@@ -31,6 +32,7 @@ public class SemanticAnalysis {
 
     public void Traverse(Nodo nodo, String scopeActual){
         scope = scopeActual;
+        int prevOffset;
         if(!scopeActual.equals("")){
             symbolTable.activateWithScope(scopeActual);//llamar antes de entrar a a la tabla
         }
@@ -42,7 +44,9 @@ public class SemanticAnalysis {
                 addVariableDeclaration(nodo, scopeActual);
             break;
             case "Inicio":
+                prevOffset = currentDirection;
                 addFunctionBlock(nodo, "");
+                currentDirection = prevOffset;
             break;
             case "PUT":
                 typeValidation(nodo, scopeActual);
@@ -65,7 +69,9 @@ public class SemanticAnalysis {
             break;
             case "FUNCTION_BLOCK":
             case "PROCEDURE_BLOCK":
+                prevOffset = currentDirection;
                 addFunctionBlock(nodo, scopeActual);
+                currentDirection = prevOffset;
             break;
             case "FOR_BLOCK":
                 typeValidation(nodo, scope);
@@ -134,8 +140,15 @@ public class SemanticAnalysis {
         //Se debe iterar todos menos el ultimo tipo, debido a que no es un id 
 
         for (int i = 0; i <= nodo.getHijos().size()-2; i++) {
+            if(tipo.equals("Integer") || tipo.equals("Float")){
+                currentDirection += 4;
+            }
+            else if (tipo.equals("Boolean")){
+                currentDirection += 1;
+            }
             Nodo actualNode = nodo.getHijos().get(i);
-            VariableTableNode tmpvnode = new VariableTableNode(actualNode.getValor(), scopeActual, tipo, 0);//0 indica que no es un parametro
+            VariableTableNode tmpvnode = new VariableTableNode(actualNode.getValor(), scopeActual, tipo, currentDirection, 0);//0 indica que no es un parametro
+            System.out.println("Agregada variable " + actualNode.getValor() + " con offset de: " + currentDirection);
             //agrega variable a lista de simbolos, retorna true si se pudo, false si ya existia
             if (!this.symbolTable.addSymbol(tmpvnode)) {
                 //System.out.println("El identificador \""+tmpvnode.Id+"\" en el scope "+tmpvnode.Scope+" ya esta declarado");
@@ -185,6 +198,7 @@ public class SemanticAnalysis {
                     }
                 break;
                 case "CONTENT":
+                    currentDirection = 0;
                     tmpfnode = new FunctionTableNode(nodo.getHijos().get(0).getValor(),scopeActual, returnType, scopeHijos);//fila tipo funcion
                     if (!this.symbolTable.addSymbol(tmpfnode)) {
                         has_error=true;
@@ -242,8 +256,15 @@ public class SemanticAnalysis {
         
         //iterar sobre ID_LIST
         for (int i = 0; i < ID_LIST.getHijos().size(); i++) {
+            if(tipo.equals("Integer") || tipo.equals("Float")){
+                currentDirection += 4;
+            }
+            else if (tipo.equals("Boolean")){
+                currentDirection += 1;
+            }
             Nodo actualNode = ID_LIST.getHijos().get(i);
-            VariableTableNode tmpvnode = new VariableTableNode(actualNode.getValor(), scopeActual, tipo,parameter_mode_int );
+            VariableTableNode tmpvnode = new VariableTableNode(actualNode.getValor(), scopeActual, tipo, currentDirection, parameter_mode_int );
+            System.out.println("Agregado parametro " + actualNode.getValor() + " con offset de: " + currentDirection);
             tmpfnode.Add(tipo);
             //se agregan los parametros en tabla de simbolos general
             if (!this.symbolTable.addSymbol(tmpvnode)) {
