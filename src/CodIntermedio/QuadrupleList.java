@@ -29,13 +29,4 @@ public class QuadrupleList {
     public int size() {
         return list.size();
     }
-    
-    public QuadrupleList merge(QuadrupleList other) {
-        ArrayList<Quadruple> neoList = new ArrayList();
-        neoList.addAll(this.list);
-        neoList.addAll(other.list);
-        QuadrupleList neo = new QuadrupleList();
-        neo.list = neoList;
-        return neo;
-    }
 }
