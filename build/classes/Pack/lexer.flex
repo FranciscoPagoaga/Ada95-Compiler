@@ -28,7 +28,7 @@ finalComentarioLine = "\n"
 letra = [a-zA-Z]
 digito = [0-9]
 espacio = \t | \f | " " | \r | \n
-signos="?"|"!"
+signos="?"|"!"|":"|"\\"
 
 //palabras reservadas, no importa si esta en mayuscula o minsucula, o una mezcla de ambos
 if = ["i"|"I"]["f"|"F"]

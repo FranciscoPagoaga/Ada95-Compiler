@@ -174,6 +174,16 @@ public class SymbolTable {
         return result;
     }
 
+    public ArrayList<String> getAllScopes(){
+        ArrayList<String> list = new ArrayList<>();
+        for (SymbolTableNode node : symbolList) {
+            if(!list.contains(node.getScope())){
+                list.add(node.getScope());
+            }
+        }
+        return list;
+    }
+
     public String toString(){
         String retorno = "";
         for (SymbolTableNode node : symbolList) {

@@ -2,6 +2,7 @@ package Pack;
 
 import com.sun.org.apache.xalan.internal.xsltc.compiler.Template;
 import java.util.ArrayList;
+import java.util.function.Function;
 
 public class SemanticAnalysis {
     private SymbolTable symbolTable;
@@ -34,23 +35,53 @@ public class SemanticAnalysis {
             symbolTable.activateWithScope(scopeActual);//llamar antes de entrar a a la tabla
         }
         switch (nodo.getNombre()){
+            case "RETURN_STATEMENT":
+                validateOut(nodo, scopeActual);
+            break;
             case "VARIABLE_DECLARATION":
                 addVariableDeclaration(nodo, scopeActual);
             break;
             case "Inicio":
                 addFunctionBlock(nodo, "");
             break;
+            case "PUT":
+                typeValidation(nodo, scopeActual);
+                validateOut(nodo, scopeActual);
+            break;
+            case "GET":
+                typeValidation(nodo, scopeActual);
+                validateOut(nodo, scopeActual);
+            break;
+            case "Call_Subroutine":
+                SymbolTableNode tmpNode = symbolTable.findActiveSymbol(nodo.getHijos().get(0).getValor());
+                if (tmpNode != null) {
+                    if (!(tmpNode instanceof FunctionTableNode)) {
+                        System.out.println(scopeActual+":"+nodo.getHijos().get(0).getFila()+":"+nodo.getHijos().get(0).getColumna()+":"+ " El identificador usado no es de funcion");
+                    }
+                }else{
+                    System.out.println(scopeActual+":"+nodo.getHijos().get(0).getFila()+":"+nodo.getHijos().get(0).getColumna()+":"+ " El identificador usado no existe");
+                }
+                validateOut(nodo, scopeActual);
+            break;
             case "FUNCTION_BLOCK":
             case "PROCEDURE_BLOCK":
                 addFunctionBlock(nodo, scopeActual);
             break;
             case "FOR_BLOCK":
-                for_counter++;
-                validateFor(nodo, scopeActual + "." + for_counter + "forLoop");
+                typeValidation(nodo, scope);
+                Nodo tmp = new Nodo("");
+                tmp.addHijo(nodo.getHijos().get(1));
+                tmp.addHijo(nodo.getHijos().get(2));
+                typeValidation(tmp, scope);
             break;
             case "ASSIGNMENT":
-            case "BooleanExp":
+                validateIn(nodo, scopeActual);
+                Nodo valNode = new Nodo("");
+                valNode.addHijo(nodo.getHijos().get(1));
+                validateOut(valNode, scopeActual);
+                case "BooleanExp":
                 typeValidation(nodo, scopeActual);
+            break;
             default:
                 for (Nodo hijos : nodo.getHijos()) {
                     Traverse(hijos, scopeActual);
@@ -91,6 +122,7 @@ public class SemanticAnalysis {
             }
         }
         if (!exitFlag) {
+            has_error=true;
             System.out.println("Bloque loop debe contener instruccion Exit when "+ scopeActual);
         }
     }
@@ -107,6 +139,7 @@ public class SemanticAnalysis {
             //agrega variable a lista de simbolos, retorna true si se pudo, false si ya existia
             if (!this.symbolTable.addSymbol(tmpvnode)) {
                 //System.out.println("El identificador \""+tmpvnode.Id+"\" en el scope "+tmpvnode.Scope+" ya esta declarado");
+                has_error=true;
                 System.out.println(scopeActual+":"+actualNode.getFila()+":"+actualNode.getColumna()+":"+ " El identificador \""+tmpvnode.Id+"\" ya esta declarado");
             }
         }
@@ -115,7 +148,6 @@ public class SemanticAnalysis {
     
 
     public void addFunctionBlock(Nodo nodo, String scopeActual){
-        System.out.println(symbolTable.toString());
         String id=""; 
         String returnType="void";// si es un procedure el tipo de valor de retorno es void
         Nodo parametros=null;
@@ -155,6 +187,7 @@ public class SemanticAnalysis {
                 case "CONTENT":
                     tmpfnode = new FunctionTableNode(nodo.getHijos().get(0).getValor(),scopeActual, returnType, scopeHijos);//fila tipo funcion
                     if (!this.symbolTable.addSymbol(tmpfnode)) {
+                        has_error=true;
                         //System.out.println("la funcion \""+tmpfnode.Id+"\" en el scope "+tmpfnode.Scope+" ya esta declarada");
                         System.out.println(scopeHijos+":"+nodo.getHijos().get(0).getFila()+":"+nodo.getHijos().get(0).getColumna()+":"+ "la funcion \""+tmpfnode.Id+"\" ya esta declarada");
                     }
@@ -172,6 +205,7 @@ public class SemanticAnalysis {
                     validateExit(nodo, scopeHijos);
                     if(!returnProc && !returnType.equals("void")){
                         //System.out.println("Las funciones deben de tener return " + scopeActual);
+                        has_error=true;
                         System.out.println(scopeHijos+":"+nodo.getHijos().get(0).getFila()+":"+nodo.getHijos().get(0).getColumna()+":"+ "Las funciones deben de tener return ");
                     }
                     returnProc = false;
@@ -213,6 +247,7 @@ public class SemanticAnalysis {
             tmpfnode.Add(tipo);
             //se agregan los parametros en tabla de simbolos general
             if (!this.symbolTable.addSymbol(tmpvnode)) {
+                has_error=true;
                //System.out.println("El identificador \""+tmpvnode.Id+"\" en el scope "+tmpvnode.Scope+" ya esta declarado");
                System.out.println(scopeActual+":"+actualNode.getFila()+":"+actualNode.getColumna()+":"+" El identificador \""+tmpvnode.Id+"\" ya esta declarado");
             }
@@ -366,20 +401,6 @@ public class SemanticAnalysis {
         }
     }
 
-    public void validateFor(Nodo nodo, String scope){
-        String id = nodo.getHijos().get(0).getValor();
-        VariableTableNode tmpvnode = new VariableTableNode(id, scope, "Integer", 0);
-        if (!this.symbolTable.addSymbol(tmpvnode)) {
-            System.out.println("El identificador \""+tmpvnode.Id+"\" en el scope "+tmpvnode.Scope+" ya esta declarado");
-        }
-        typeValidation(nodo, scope);
-        Nodo tmpNode = new Nodo("");
-        tmpNode.addHijo(nodo.getHijos().get(1));
-        tmpNode.addHijo(nodo.getHijos().get(2));
-        typeValidation(tmpNode, scope);
-        Traverse(nodo.getHijos().get(nodo.getHijos().size()-1), scope);
-    }
-
     public String validateSubroutine(Nodo nodo, String scopeActual){
         String typeReturn = "";
         Nodo tmpnode = nodo.getHijos().get(0);
@@ -418,11 +439,53 @@ public class SemanticAnalysis {
                 tmpNodo.addHijo(nodo.getHijos().get(i));
                 String type = typeValidation(tmpNodo, scopeActual);
                 if(!type.equals(funcNode.getParams().get(i))){
+                    has_error=true;
                     System.out.println("El parametro " + (i+1) + " en el llamado de la funcion " + funcNode.getId()+ " no es del tipo correcto: " + scopeActual);
                 }
             }
         }else{
+            has_error=true;
             System.out.println("Los parametros enviados no son los correctos");
+        }
+    }
+
+    public void validateIn(Nodo nodo, String scopeActual){
+        Nodo nodo2=nodo.getHijos().get(0);
+        if(!scopeActual.equals("")){
+            symbolTable.activateWithScope(scopeActual);//llamar antes de entrar a a la tabla
+        }
+        SymbolTableNode tmpNode = symbolTable.findActiveSymbol(nodo2.getValor());
+        if (tmpNode != null) {
+            if (tmpNode instanceof VariableTableNode){
+                if (((VariableTableNode)tmpNode).getForm()==1) {
+                    has_error=true;
+                    System.out.println(scopeActual+":"+nodo2.getFila()+":"+nodo2.getColumna()+":"+ "No se puede asignar a parametro modo in ");
+                }
+            }
+        }
+   }
+
+    public void validateOut(Nodo nodo, String scopeActual){
+        for (Nodo hijos : nodo.getHijos()){
+            switch(hijos.getNombre()){
+                case "ID":
+                    if(!scopeActual.equals("")){
+                        symbolTable.activateWithScope(scopeActual);//llamar antes de entrar a a la tabla
+                    }
+                    SymbolTableNode tmpNode = symbolTable.findActiveSymbol(hijos.getValor());
+                    if (tmpNode != null) {
+                        if (tmpNode instanceof VariableTableNode){
+                            if (((VariableTableNode)tmpNode).getForm()==2) {
+                                has_error=true;
+                                System.out.println(scopeActual+":"+hijos.getFila()+":"+hijos.getColumna()+":"+ "parametros modo out no pueden ser utilizados en operaciones ");
+                            }
+                        }
+                    }
+                    break;
+                default:
+                    validateOut(hijos, scopeActual);
+                    break;
+            }
         }
     }
 }
