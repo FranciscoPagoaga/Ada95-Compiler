@@ -1,31 +1,10 @@
 _Hola:
-if a < 2 goto etiq2
-goto etiq3
-etiq2:
-print "Imprima"
-if b < 2 goto etiq6
-goto etiq7
-etiq6:
+_asd := 1
+etiq107:
+if _asd >= 2 goto etiq108
 print 1
-goto etiq5
-etiq7:
-if c < 4 goto etiq9
-goto etiq10
-etiq9:
-print 2
-goto etiq5
-etiq10:
-print 99
-etiq5:
-print 3
-goto etiq1
-etiq3:
-if d < 5 goto etiq14
-goto etiq15
-etiq14:
-print 4
-goto etiq1
-etiq15:
-print 55
-etiq1:
+t21 := _asd + 1
+_asd := t21
+goto etiq107
+etiq108:
 fin_programa

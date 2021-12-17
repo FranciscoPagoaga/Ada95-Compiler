@@ -29,9 +29,6 @@ public class CodigoIntermedio {
     private SemanticAnalysis instance;
     Nodo AssignActual = null;
     Temporal temporal = null;
-    ArrayList<Nodo> padres = new ArrayList<>();
-    ArrayList<Nodo> padresOrdenados = new ArrayList<>();
-    ArrayList<Nodo> asignaciones = new ArrayList<>();
     IntermediateExpression ie = new IntermediateExpression();
    
     //label global
@@ -42,15 +39,41 @@ public class CodigoIntermedio {
     private ArrayList<String> stringsTable;
     private ArrayList<Double> doublesTable;
     private String scope;
+    private ArrayList<String> scopesTable;
     private Boolean hasElse=false;
 
     public CodigoIntermedio(File outputFile, SemanticAnalysis instance) throws IOException {
         this.out = new BufferedWriter(new FileWriter(outputFile));
-        this.instance = instance;
+        this.setInstance(instance);
         stringsTable = new ArrayList();
         doublesTable = new ArrayList();
+        scopesTable = new ArrayList();
         this.scope = "";
         Scope.resetCount();
+    }
+
+    public IntermediateStatement getProgram() {
+        return program;
+    }
+
+    public void setProgram(IntermediateStatement program) {
+        this.program = program;
+    }
+
+    public SemanticAnalysis getInstance() {
+        return instance;
+    }
+
+    public void setInstance(SemanticAnalysis instance) {
+        this.instance = instance;
+    }
+
+    public ArrayList<String> getScopesTable() {
+        return scopesTable;
+    }
+
+    public void setScopesTable(ArrayList<String> scopesTable) {
+        this.scopesTable = scopesTable;
     }
 
     public void createFile(String content) throws IOException {
@@ -59,9 +82,15 @@ public class CodigoIntermedio {
         out.close();
     }
 
+    public ArrayList<String> getStringsTable() {
+        return stringsTable;
+    }
+
     public void GenerandoCod(Nodo padre){
         scope = "_"+padre.getHijos().get(0).getValor();
+        scopesTable.add(scope);
         TraverseFunctions(padre, scope);
+        System.out.println(scopesTable.size());
     }
 
     public void TraverseFunctions(Nodo nodo,String scope){
@@ -100,6 +129,7 @@ public class CodigoIntermedio {
             switch(hijo.getNombre()){
                 case "PROCEDURE_BLOCK":
                 case "FUNCTION_BLOCK":
+                    scopesTable.add(scope +"."+hijo.getHijos().get(0).getValor());
                     TraverseFunctions(hijo, scope +"."+hijo.getHijos().get(0).getValor());
                     break;    
                 case "IF_BLOCK":
@@ -140,7 +170,7 @@ public class CodigoIntermedio {
                     break;
                 case "RETURN_STATEMENT":
                     MathExp(hijo);
-                    quad = new Quadruple(Quadruple.Operations.ASSIGN,hijo.getHijos().get(0).getE_lugar(),"","RET");
+                    quad = new Quadruple(Quadruple.Operations.ASSIGN,hijo.getHijos().get(0).getE_lugar(),"","RET",new Label(scope));
                     ie.operations.add(quad);
                     break;
                 case "Call_Subroutine":
@@ -154,8 +184,16 @@ public class CodigoIntermedio {
                     String value="";
                     if (hijo.getHijos().get(0).getNombre().equals("STR")) {
                         value = "\""+hijo.getHijos().get(0).getValor()+"\"";
+                        if (!stringsTable.contains(hijo.getHijos().get(0).getValor())) {
+                            stringsTable.add(hijo.getHijos().get(0).getValor());
+                        }
                     }else{
-                        value = hijo.getHijos().get(0).getValor();
+                        if (hijo.getHijos().get(0).getNombre().equals("ID")) {
+                            hijo.setE_lugar("_"+hijo.getHijos().get(0).getValor());                        
+                        }else{
+                            hijo.setE_lugar(hijo.getHijos().get(0).getValor());
+                        }
+                        value = hijo.getE_lugar();
                     }
                     quad = new Quadruple(Quadruple.Operations.PRINT,value,"","");
                     ie.operations.add(quad);
@@ -167,8 +205,12 @@ public class CodigoIntermedio {
                     ie.operations.add(quad);
                     break;
                 case "GET":
-                    hijo.setE_lugar(hijo.getHijos().get(0).getValor());
-                    quad = new Quadruple(Quadruple.Operations.READ,hijo.getE_lugar(),"","");
+                    if (hijo.getNombre().equals("ID")) {
+                        hijo.setE_lugar("_"+hijo.getHijos().get(0).getValor());                        
+                    }else{
+                        hijo.setE_lugar(hijo.getHijos().get(0).getValor());
+                    }
+                    quad = new Quadruple(Quadruple.Operations.READ,"_"+hijo.getE_lugar(),"","");
                     ie.operations.add(quad);                    
                     break;
                 default:
@@ -325,23 +367,23 @@ public class CodigoIntermedio {
                     Quadruple quad = null;//crea instruccion  de if
                     switch(hijo.getValor()){
                         case ">=":
-                        quad = new Quadruple(Quadruple.Operations.IF_GEQ,temp1,temp2,"",nodo.getVerdadero());
-                        break;
-                    case "<=":
-                        quad = new Quadruple(Quadruple.Operations.IF_LEQ,temp1,temp2,"",nodo.getVerdadero());
-                        break;
-                    case ">":
-                        quad = new Quadruple(Quadruple.Operations.IF_GT,temp1,temp2,"",nodo.getVerdadero());
-                        break;
-                    case "=":
-                        quad = new Quadruple(Quadruple.Operations.IF_EQ,temp1,temp2,"",nodo.getVerdadero());
-                        break;
-                    case "<":
-                        quad = new Quadruple(Quadruple.Operations.IF_LT,temp1,temp2,"",nodo.getVerdadero());
-                        break;
+                            quad = new Quadruple(Quadruple.Operations.IF_GEQ,temp1,temp2,"",nodo.getVerdadero());
+                            break;
+                        case "<=":
+                            quad = new Quadruple(Quadruple.Operations.IF_LEQ,temp1,temp2,"",nodo.getVerdadero());
+                            break;
+                        case ">":
+                            quad = new Quadruple(Quadruple.Operations.IF_GT,temp1,temp2,"",nodo.getVerdadero());
+                            break;
+                        case "=":
+                            quad = new Quadruple(Quadruple.Operations.IF_EQ,temp1,temp2,"",nodo.getVerdadero());
+                            break;
+                        case "<":
+                            quad = new Quadruple(Quadruple.Operations.IF_LT,temp1,temp2,"",nodo.getVerdadero());
+                            break;
                         case "/=":
-                        quad = new Quadruple(Quadruple.Operations.IF_LEQ,temp1,temp2,"",nodo.getVerdadero());
-                        break;
+                            quad = new Quadruple(Quadruple.Operations.IF_NEQ,temp1,temp2,"",nodo.getVerdadero());
+                            break;
                     }
                     ie.operations.add(quad);
                     if(nodo.getFalso()!=null){
@@ -371,15 +413,19 @@ public class CodigoIntermedio {
         // nunca deberia entrar a los else de error
             // setear lugar al contador
             
-            nodo.getHijos().get(0).setE_lugar(nodo.getHijos().get(0).getValor());
+            nodo.getHijos().get(0).setE_lugar("_"+nodo.getHijos().get(0).getValor());
 
             // Si es id, su lugar ya existe. Si no, se asigna aqui
             if(nodo.getHijos().get(1).getNombre().equals("NUM")){
                 nodo.getHijos().get(1).setE_lugar(nodo.getHijos().get(1).getValor());
+            }else{
+                nodo.getHijos().get(1).setE_lugar("_"+nodo.getHijos().get(1).getValor());
             }
             // Si es id, su lugar ya existe. Si no, se asigna aqui
             if(nodo.getHijos().get(2).getNombre().equals("NUM")){
                 nodo.getHijos().get(2).setE_lugar(nodo.getHijos().get(2).getValor());
+            }else{
+                nodo.getHijos().get(2).setE_lugar("_"+nodo.getHijos().get(2).getValor());
             }
             // asignar valor inicial al contador
             Quadruple quad = new Quadruple(Quadruple.Operations.ASSIGN, nodo.getHijos().get(1).getE_lugar(),"",nodo.getHijos().get(0).getE_lugar());
@@ -430,6 +476,8 @@ public class CodigoIntermedio {
         for (Nodo hijo : nodo.getHijos()) {
             switch(hijo.getNombre()){
                 case "ID":
+                    hijo.setE_lugar("_"+hijo.getValor());                
+                    break;                
                 case "NUM":
                     hijo.setE_lugar(hijo.getValor());                
                     break;

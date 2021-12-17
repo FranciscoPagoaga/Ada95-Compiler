@@ -330,6 +330,9 @@ public class MainGui extends javax.swing.JFrame {
                 File file = new File("./archivo.adb");
                 File intermediateCodeFile = new File(file.getAbsolutePath().replace(".adb", "") + ".o");
                 CodigoIntermedio initIntermedio = null;
+                
+                File finalCodeFile = new File(file.getAbsolutePath().replace(".adb","")+"s");
+                FinalCode initFinal = null;
                 try {
                     initIntermedio = new CodigoIntermedio(intermediateCodeFile,analysis);
                 } catch (IOException ex) {
@@ -339,6 +342,12 @@ public class MainGui extends javax.swing.JFrame {
                 //comenzar ejecucion codigo intermedio
                 //codigo intermedio en memoria
                 initIntermedio.GenerandoCod(par.padre);
+                System.out.println(initIntermedio.getInstance().getSymbolTable().getAllScopes().toString());
+                try {
+                    initFinal = new FinalCode(initIntermedio.getInstance(),finalCodeFile,initIntermedio.ie,initIntermedio.getStringsTable(),initIntermedio.getScopesTable());
+                } catch (IOException ex) {
+                    Logger.getLogger(MainGui.class.getName()).log(Level.SEVERE, null, ex);
+                }
                 
                 try {
                     //codigo intermedio en un file
@@ -347,7 +356,7 @@ public class MainGui extends javax.swing.JFrame {
                 } catch (IOException ex) {
                     Logger.getLogger(MainGui.class.getName()).log(Level.SEVERE, null, ex);
                 }
-                
+                System.out.println(initFinal.build());
             }
         }
         
