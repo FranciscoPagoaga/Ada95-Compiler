@@ -1,10 +1,14 @@
-_Hola:
-_asd := 1
-etiq107:
-if _asd >= 2 goto etiq108
+_Hello:
 print 1
-t21 := _asd + 1
-_asd := t21
-goto etiq107
-etiq108:
 fin_programa
+_Hello.Prueba:
+_asd := null
+etiq4:
+if _asd < 2 goto etiq5
+goto etiq3
+etiq5:
+print 1
+goto etiq4
+etiq3:
+RET := 1
+fin_funcion _Hello.Prueba
