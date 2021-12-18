@@ -4,6 +4,8 @@ public class VariableTableNode extends SymbolTableNode {
     private String type; 
     private int form;
     private int direction;
+    private String current_reg;
+    private String final_direction;
 
     public static final int PARAM = 0;
     public static final int IN = 1;
@@ -15,8 +17,30 @@ public class VariableTableNode extends SymbolTableNode {
         this.setType(type);
         this.setDirection(direction);
         this.setForm(form);
+        this.current_reg="";
+        this.final_direction="";
     }
     
+
+    public String getFinal_direction() {
+        return final_direction;
+    }
+
+
+    public void setFinal_direction(String final_direction) {
+        this.final_direction = final_direction;
+    }
+
+
+    public String getCurrent_reg() {
+        return current_reg;
+    }
+
+
+    public void setCurrent_reg(String current_reg) {
+        this.current_reg = current_reg;
+    }
+
 
     public String getType() {
         return type;

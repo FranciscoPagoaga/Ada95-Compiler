@@ -169,6 +169,9 @@ public class FinalCode {
         for (int i = 0; i < intermediateForm.operations.size(); i++) {
             Quadruple quad = intermediateForm.operations.elementAt(i);
             switch (quad.getType()) {
+                case MIN:
+                case MUL:
+                case DIV:
                 case ADD:
                     String t1 = null;
                     String t3 = null;
@@ -183,15 +186,24 @@ public class FinalCode {
                             type = OperationType.INTEGER_OPERATION;
                         } else{
                             String identifier = quad.getOp1();
-                            System.out.println(scopeFixer);
                             idFixer = new StringBuilder();
                             idFixer.append(identifier).deleteCharAt(0);
                             VariableTableNode var = (VariableTableNode) semanticTable.getSymbolTable().findSymbol(idFixer.toString(),scopeFixer.toString() );
 
                             if (var.getType().equals("Integer")){
-                                t1 = getAvailableTemp();
-                                body.append("lw " + t1 + ", " + quad.getOp1() + "\n");
-                                type = OperationType.INTEGER_OPERATION;
+                                if (!var.getCurrent_reg().equals("")) {
+                                    t1 = getAvailableTemp();
+                                    body.append("move " + t1 + ", " + var.getCurrent_reg() + "\n");
+                                    type = OperationType.INTEGER_OPERATION;
+                                } else if (!var.getFinal_direction().equals("")) {
+                                    t1 = getAvailableTemp();
+                                    body.append("lw " + t1 + ", " + var.getFinal_direction() + "\n");
+                                    type = OperationType.INTEGER_OPERATION;                            
+                                }else{
+                                    t1 = getAvailableTemp();
+                                    body.append("lw " + t1 + ", " + quad.getOp1() + "\n");
+                                    type = OperationType.INTEGER_OPERATION;
+                                }
                             }
                         }
                     }
@@ -210,21 +222,57 @@ public class FinalCode {
                             idFixer = new StringBuilder();
                             idFixer.append(identifier).deleteCharAt(0);
                             VariableTableNode var = (VariableTableNode) semanticTable.getSymbolTable().findSymbol(idFixer.toString(),scopeFixer.toString() );
-                            System.out.println(var);
                             if (var.getType().equals("Integer")){
-                                t2 = getAvailableTemp();
-                                body.append("lw " + t2 + ", " + quad.getOp2() + "\n");
-                                type = OperationType.INTEGER_OPERATION;
+                                if (!var.getCurrent_reg().equals("")) {
+                                    t2 = getAvailableTemp();
+                                    body.append("move " + t2 + ", " + var.getCurrent_reg() + "\n");
+                                    type = OperationType.INTEGER_OPERATION;
+                                } else if (!var.getFinal_direction().equals("")) {
+                                    t2 = getAvailableTemp();
+                                    body.append("lw " + t2 + ", " + var.getFinal_direction() + "\n");
+                                    type = OperationType.INTEGER_OPERATION;                            
+                                }else{
+                                    t2 = getAvailableTemp();
+                                    body.append("lw " + t2 + ", " + quad.getOp2() + "\n");
+                                    type = OperationType.INTEGER_OPERATION;
+                                }
                             }
                         }
+                    }
+                    String ope = "";
+                    switch (quad.getType()) {
+                        case ADD:
+                            ope = "add ";
+                            break;
+                        case MIN:
+                            ope = "sub ";
+                            break;
+                        case DIV:
+                            ope = "div ";
+                            break;
+                        case MUL:
+                            ope = "mul ";
+                            break;
+                        default:
+                            break;
                     }
 
                     if (type == OperationType.INTEGER_OPERATION) {
                         t3 = getAvailableTemp();
-                        body.append("add "+t3 + ", " +t1 + ", " + t2 + "\n");
+                        body.append(ope + t3 + ", " +t1 + ", " + t2 + "\n");
                         String var_result = quad.geteLugar();
                         if (var_result.contains("_")) {
-                            body.append("sw " + t3 + "," + quad.geteLugar() + "\n");
+                            String identifier = quad.geteLugar();
+                            idFixer = new StringBuilder();
+                            idFixer.append(identifier).deleteCharAt(0);
+                            VariableTableNode var = (VariableTableNode) semanticTable.getSymbolTable().findSymbol(idFixer.toString(),scopeFixer.toString() );
+                            if (!var.getCurrent_reg().equals("")) {
+                                body.append("move " + t3 + "," + var.getCurrent_reg() + "\n");
+                            } else if (!var.getFinal_direction().equals("")) {
+                                body.append("sw " + t3 + "," + var.getFinal_direction() + "\n");
+                            }else{
+                                body.append("sw " + t3 + "," + quad.geteLugar() + "\n");
+                            }
                             setAvailable(t3);
                         }else{
                             this.finalTemps.put(quad.geteLugar(), new Info(t3,type));
@@ -239,222 +287,8 @@ public class FinalCode {
                     }
 
                     setAvailable(t1);
-
                     setAvailable(t2);
-                    break;
-                
-                case MIN:
-                    t1 = null;
-                    t3 = null;
-                    type = null;
-                    if (this.finalTemps.get(quad.getOp1()) !=null) {
-                        t1 = finalTemps.get(quad.getOp1()).reg;
-                        type = finalTemps.get(quad.getOp1()).type;
-                    }else{
-                        if (quad.getOp1().matches("[0-9]*")) {
-                            t1 = getAvailableTemp();
-                            body.append("li "+ t1 + "," + quad.getOp1() + "\n");
-                            type = OperationType.INTEGER_OPERATION;
-                        } else{
-                            String identifier = quad.getOp1();
-                            idFixer = new StringBuilder();
-                            idFixer.append(identifier).deleteCharAt(0);
-                            VariableTableNode var = (VariableTableNode) semanticTable.getSymbolTable().findSymbol(idFixer.toString(),scopeFixer.toString() );
-                            if (var.getType().equals("Integer")){
-                                t1 = getAvailableTemp();
-                                body.append("lw " + t1 + ", " + quad.getOp1() + "\n");
-                                type = OperationType.INTEGER_OPERATION;
-                            }
-                        }
-                    }
-
-                    t2= null;
-                    if (finalTemps.get(quad.getOp2()) !=null) {
-                        t2 = finalTemps.get(quad.getOp2()).reg;
-                        type = finalTemps.get(quad.getOp2()).type;
-                    } else{
-                        if (quad.getOp2().matches("[0-9]*")) {
-                            t2 = getAvailableTemp();
-                            body.append("li " + t2 + ", " + quad.getOp2() + "\n");
-                            type = OperationType.INTEGER_OPERATION;
-                        } else {
-                            String identifier = quad.getOp2();
-                            idFixer = new StringBuilder();
-                            idFixer.append(identifier).deleteCharAt(0);
-                            VariableTableNode var = (VariableTableNode) semanticTable.getSymbolTable().findSymbol(idFixer.toString(),scopeFixer.toString() );
-                            if (var.getType().equals("Integer")){
-                                t2 = getAvailableTemp();
-                                body.append("lw " + t2 + ", " + quad.getOp2() + "\n");
-                                type = OperationType.INTEGER_OPERATION;
-                            }
-                        }
-                    }
-
-                    if (type == OperationType.INTEGER_OPERATION) {
-                        t3 = getAvailableTemp();
-                        body.append("sub "+t3 + ", " +t1 + ", " + t2 + "\n");
-                        String var_result = quad.geteLugar();
-                        if (var_result.contains("_")) {
-                            body.append("sw " + t3 + "," + quad.geteLugar() + "\n");
-                            setAvailable(t3);
-                        }else{
-                            this.finalTemps.put(quad.geteLugar(), new Info(t3,type));
-                            if (this.finalTemps.get(quad.getOp1()) != null) {
-                                this.finalTemps.remove(quad.getOp1());
-                            }
-
-                            if (this.finalTemps.get(quad.getOp2()) != null) {
-                                this.finalTemps.remove(quad.getOp2());
-                            }
-                        }
-                    }
-
-                    setAvailable(t1);
-
-                    setAvailable(t2);
-                    break;
-                
-                case MUL:
-                    t1 = null;
-                    t3 = null;
-                    type = null;
-                    if (this.finalTemps.get(quad.getOp1()) !=null) {
-                        t1 = finalTemps.get(quad.getOp1()).reg;
-                        type = finalTemps.get(quad.getOp1()).type;
-                    }else{
-                        if (quad.getOp1().matches("[0-9]*")) {
-                            t1 = getAvailableTemp();
-                            body.append("li "+ t1 + "," + quad.getOp1() + "\n");
-                            type = OperationType.INTEGER_OPERATION;
-                        } else{
-                            String identifier = quad.getOp1();
-                            idFixer = new StringBuilder();
-                            idFixer.append(identifier).deleteCharAt(0);
-                            VariableTableNode var = (VariableTableNode) semanticTable.getSymbolTable().findSymbol(idFixer.toString(),scopeFixer.toString() );
-                            if (var.getType().equals("Integer")){
-                                t1 = getAvailableTemp();
-                                body.append("lw " + t1 + ", " + quad.getOp1() + "\n");
-                                type = OperationType.INTEGER_OPERATION;
-                            }
-                        }
-                    }
-
-                    t2= null;
-                    if (finalTemps.get(quad.getOp2()) !=null) {
-                        t2 = finalTemps.get(quad.getOp2()).reg;
-                        type = finalTemps.get(quad.getOp2()).type;
-                    } else{
-                        if (quad.getOp2().matches("[0-9]*")) {
-                            t2 = getAvailableTemp();
-                            body.append("li " + t2 + ", " + quad.getOp2() + "\n");
-                            type = OperationType.INTEGER_OPERATION;
-                        } else {
-                            String identifier = quad.getOp2();
-                            idFixer = new StringBuilder();
-                            idFixer.append(identifier).deleteCharAt(0);
-                            VariableTableNode var = (VariableTableNode) semanticTable.getSymbolTable().findSymbol(idFixer.toString(),scopeFixer.toString() );
-                            if (var.getType().equals("Integer")){
-                                t2 = getAvailableTemp();
-                                body.append("lw " + t2 + ", " + quad.getOp2() + "\n");
-                                type = OperationType.INTEGER_OPERATION;
-                            }
-                        }
-                    }
-
-                    if (type == OperationType.INTEGER_OPERATION) {
-                        t3 = getAvailableTemp();
-                        body.append("mul "+t3 + ", " +t1 + ", " + t2 + "\n");
-                        String var_result = quad.geteLugar();
-                        if (var_result.contains("_")) {
-                            body.append("sw " + t3 + "," + quad.geteLugar() + "\n");
-                            setAvailable(t3);
-                        }else{
-                            this.finalTemps.put(quad.geteLugar(), new Info(t3,type));
-                            if (this.finalTemps.get(quad.getOp1()) != null) {
-                                this.finalTemps.remove(quad.getOp1());
-                            }
-
-                            if (this.finalTemps.get(quad.getOp2()) != null) {
-                                this.finalTemps.remove(quad.getOp2());
-                            }
-                        }
-                    }
-
-                    setAvailable(t1);
-
-                    setAvailable(t2);
-                    break;
-                case DIV:
-                    t1 = null;
-                    t3 = null;
-                    type = null;
-                    if (this.finalTemps.get(quad.getOp1()) !=null) {
-                        t1 = finalTemps.get(quad.getOp1()).reg;
-                        type = finalTemps.get(quad.getOp1()).type;
-                    }else{
-                        if (quad.getOp1().matches("[0-9]*")) {
-                            t1 = getAvailableTemp();
-                            body.append("li "+ t1 + "," + quad.getOp1() + "\n");
-                            type = OperationType.INTEGER_OPERATION;
-                        } else{
-                            String identifier = quad.getOp1();
-                            idFixer = new StringBuilder();
-                            idFixer.append(identifier).deleteCharAt(0);
-                            VariableTableNode var = (VariableTableNode) semanticTable.getSymbolTable().findSymbol(idFixer.toString(),scopeFixer.toString() );
-                            if (var.getType().equals("Integer")){
-                                t1 = getAvailableTemp();
-                                body.append("lw " + t1 + ", " + quad.getOp1() + "\n");
-                                type = OperationType.INTEGER_OPERATION;
-                            }
-                        }
-                    }
-
-                    t2= null;
-                    if (finalTemps.get(quad.getOp2()) !=null) {
-                        t2 = finalTemps.get(quad.getOp2()).reg;
-                        type = finalTemps.get(quad.getOp2()).type;
-                    } else{
-                        if (quad.getOp2().matches("[0-9]*")) {
-                            t2 = getAvailableTemp();
-                            body.append("li " + t2 + ", " + quad.getOp2() + "\n");
-                            type = OperationType.INTEGER_OPERATION;
-                        } else {
-                            String identifier = quad.getOp2();
-                            idFixer = new StringBuilder();
-                            idFixer.append(identifier).deleteCharAt(0);
-                            VariableTableNode var = (VariableTableNode) semanticTable.getSymbolTable().findSymbol(idFixer.toString(),scopeFixer.toString() );
-                            if (var.getType().equals("Integer")){
-                                t2 = getAvailableTemp();
-                                body.append("lw " + t2 + ", " + quad.getOp2() + "\n");
-                                type = OperationType.INTEGER_OPERATION;
-                            }
-                        }
-                    }
-
-                    if (type == OperationType.INTEGER_OPERATION) {
-                        t3 = getAvailableTemp();
-                        body.append("div "+t3 + ", " +t1 + ", " + t2 + "\n");
-                        String var_result = quad.geteLugar();
-                        if (var_result.contains("_")) {
-                            body.append("sw " + t3 + "," + quad.geteLugar() + "\n");
-                            setAvailable(t3);
-                        }else{
-                            this.finalTemps.put(quad.geteLugar(), new Info(t3,type));
-                            if (this.finalTemps.get(quad.getOp1()) != null) {
-                                this.finalTemps.remove(quad.getOp1());
-                            }
-
-                            if (this.finalTemps.get(quad.getOp2()) != null) {
-                                this.finalTemps.remove(quad.getOp2());
-                            }
-                        }
-                    }
-
-                    setAvailable(t1);
-
-                    setAvailable(t2);
-                    break;
-                
+                    break;                
                 case IF_GEQ:
                 case IF_LEQ:
                 case IF_GT:
@@ -500,9 +334,19 @@ public class FinalCode {
                             idFixer.append(identifier).deleteCharAt(0);
                             VariableTableNode var = (VariableTableNode) semanticTable.getSymbolTable().findSymbol(idFixer.toString(),scopeFixer.toString() );
                             if (var.getType().equals("Integer")){
-                                t1 = getAvailableTemp();
-                                body.append("lw " + t1 + ", " + quad.getOp1() + "\n");
-                                type = OperationType.INTEGER_OPERATION;
+                                if (!var.getCurrent_reg().equals("")) {
+                                    t1 = getAvailableTemp();
+                                    body.append("move " + t1 + ", " + var.getCurrent_reg() + "\n");
+                                    type = OperationType.INTEGER_OPERATION;
+                                } else if (!var.getFinal_direction().equals("")) {
+                                    t1 = getAvailableTemp();
+                                    body.append("lw " + t1 + ", " + var.getFinal_direction() + "\n");
+                                    type = OperationType.INTEGER_OPERATION;                            
+                                }else{
+                                    t1 = getAvailableTemp();
+                                    body.append("lw " + t1 + ", " + quad.getOp1() + "\n");
+                                    type = OperationType.INTEGER_OPERATION;
+                                }
                             }
                         }
                     }
@@ -521,9 +365,19 @@ public class FinalCode {
                             idFixer.append(identifier).deleteCharAt(0);
                             VariableTableNode var = (VariableTableNode) semanticTable.getSymbolTable().findSymbol(idFixer.toString(),scopeFixer.toString() );
                             if (var.getType().equals("Integer")){
-                                t2 = getAvailableTemp();
-                                body.append("lw " + t2 + ", " + quad.getOp2() + "\n");
-                                type = OperationType.INTEGER_OPERATION;
+                                if (!var.getCurrent_reg().equals("")) {
+                                    t2 = getAvailableTemp();
+                                    body.append("move " + t2 + ", " + var.getCurrent_reg() + "\n");
+                                    type = OperationType.INTEGER_OPERATION;
+                                } else if (!var.getFinal_direction().equals("")) {
+                                    t2 = getAvailableTemp();
+                                    body.append("lw " + t2 + ", " + var.getFinal_direction() + "\n");
+                                    type = OperationType.INTEGER_OPERATION;                            
+                                }else{
+                                    t2 = getAvailableTemp();
+                                    body.append("lw " + t2 + ", " + quad.getOp2() + "\n");
+                                    type = OperationType.INTEGER_OPERATION;
+                                }
                             }
                         }
                     }
@@ -547,10 +401,25 @@ public class FinalCode {
                         t1 = this.finalTemps.get(quad.getOp1()).reg;
                         type = this.finalTemps.get(quad.getOp1()).type;
                     } else if(quad.getOp1().contains("_")){
-                        t1 = getAvailableTemp();
-                        body.append("lw "+t1 + ", " + quad.getOp1()+"\n");
+                        String identifier = quad.getOp1();
+                        idFixer = new StringBuilder();
+                        idFixer.append(identifier).deleteCharAt(0);
+                        VariableTableNode var = (VariableTableNode) semanticTable.getSymbolTable().findSymbol(idFixer.toString(),scopeFixer.toString());
+                        if (!var.getCurrent_reg().equals("")) {
+                            t1 = getAvailableTemp();
+                            body.append("move " + t1 + ", " + var.getCurrent_reg() + "\n");
+                        } else if (!var.getFinal_direction().equals("")) {
+                            t1 = getAvailableTemp();
+                            body.append("lw " + t1 + ", " + var.getFinal_direction() + "\n");
+                        }else{
+                            t1 = getAvailableTemp();
+                            body.append("lw " + t1 + ", " + quad.getOp1() + "\n");
+                        }
                     } else if(quad.getOp1().equals("RET")){
                         t1 = $v0;
+                    }else {
+                        t1 = $t0;
+                        setAvailable($t0);
                     }
 
                     String identifier = quad.geteLugar();
@@ -558,8 +427,20 @@ public class FinalCode {
                     if(identifier.equals("RET")){
                         body.append("move " + $v0 + ", " + t1 + "\n");
                         body.append("b _fin" + quad.getLabel().toString() + "\n");
+                    }else if(identifier.contains("_")){
+                        idFixer = new StringBuilder();
+                        idFixer.append(identifier).deleteCharAt(0);
+                        VariableTableNode var = (VariableTableNode) semanticTable.getSymbolTable().findSymbol(idFixer.toString(),scopeFixer.toString() );
+                        if (!var.getCurrent_reg().equals("")) {
+                            body.append("move " + t1 + "," + var.getCurrent_reg() + "\n");
+                        } else if (!var.getFinal_direction().equals("")) {
+                            body.append("sw " + t1 + "," + var.getFinal_direction() + "\n");
+                        }else{
+                            body.append("sw " + t1 + "," + quad.geteLugar() + "\n");
+                        }
                     }else{
-                        body.append("sw " + t1 + ", " + quad.geteLugar() + "\n" );
+                        t2 =getAvailableTemp();
+                        body.append("move " + t1 + "," + t2 + "\n");
                     }
 
                     setAvailable(t1);
@@ -568,6 +449,47 @@ public class FinalCode {
                         this.finalTemps.remove(quad.getOp1());
                     }
 
+                    break;
+                case PARAM:
+                    if (quad.getOp1().matches("[0-9]+")){
+                        t1 = getAvailableTemp();
+                        body.append("li " + t1 + ", " + quad.getOp1() + "\n");
+                    }else if (quad.getOp1().contains("_")){
+                        identifier = quad.getOp1();
+                        idFixer = new StringBuilder();
+                        idFixer.append(identifier).deleteCharAt(0);
+                        VariableTableNode var = (VariableTableNode) semanticTable.getSymbolTable().findSymbol(idFixer.toString(),scopeFixer.toString());
+                        t1= getAvailableTemp();
+                        if (var.getType().equals("Integer")) {
+                            if (!var.getCurrent_reg().equals("")) {
+                                body.append("move " + t1 + ", " + var.getCurrent_reg() + "\n");
+                            } else if (!var.getFinal_direction().equals("")) {
+                                body.append("lw " + t1 + ", " + var.getFinal_direction() + "\n");
+                            }else{
+                                body.append("lw " + t1 + ", " + quad.getOp1() + "\n");
+                            }
+                        } else if (var.getType().equals("Boolean")) {
+                            body.append("li " + $v0 + ", 1\n");
+                            body.append("lw " + $a0 + ", " + quad.getOp1() + "\n");
+                            body.append("syscall\n");
+                        }
+                    } else {
+                        t1 = this.finalTemps.get(quad.getOp1()).reg;
+                        type = this.finalTemps.get(quad.getOp1()).type;
+                    }
+
+                    String argument = getAvailableArguments();
+                    if (argument != null) {
+                        body.append("move " + argument + ", " + t1 + "\n");
+                    }
+
+                    setAvailable(t1);
+                    break;
+                case CALL:
+                    body.append("jal " + quad.getOp1() + "\n");
+                    for (int j = 0; j <= 3; j++) {
+                        setAvailable("$a" + j);
+                    }
                     break;
                 
                 case GOTO:
@@ -592,9 +514,19 @@ public class FinalCode {
                         idFixer.append(identifier).deleteCharAt(0);
                         VariableTableNode var = (VariableTableNode) semanticTable.getSymbolTable().findSymbol(idFixer.toString(),scopeFixer.toString());
                         if (var.getType().equals("Integer")) {
-                            body.append("li " + $v0 + ", 1\n");
-                            body.append("lw " + $a0 + ", " + quad.getOp1() + "\n");
-                            body.append("syscall\n");
+                            if (!var.getCurrent_reg().equals("")) {
+                                body.append("li " + $v0 + ", 1\n");
+                                body.append("move " + $a0 + ", " + var.getCurrent_reg() + "\n");
+                                body.append("syscall\n");
+                            } else if (!var.getFinal_direction().equals("")) {
+                                body.append("li " + $v0 + ", 1\n");
+                                body.append("lw " + $a0 + ", " + var.getFinal_direction() + "\n");
+                                body.append("syscall\n");
+                            }else{
+                                body.append("li " + $v0 + ", 1\n");
+                                body.append("lw " + $a0 + ", " + quad.getOp1() + "\n");
+                                body.append("syscall\n");
+                            }
                         } else if (var.getType().equals("Boolean")) {
                             body.append("li " + $v0 + ", 1\n");
                             body.append("lw " + $a0 + ", " + quad.getOp1() + "\n");
@@ -602,20 +534,82 @@ public class FinalCode {
                         }
                     }
                     break;
-                
                 case READ:
                     identifier = quad.getOp1();
                     idFixer = new StringBuilder();
                     idFixer.append(identifier).deleteCharAt(0);
                     VariableTableNode var = (VariableTableNode) semanticTable.getSymbolTable().findSymbol(idFixer.toString(),scopeFixer.toString());
                     if (var.getType().equals("Integer")){
-                        body.append("li " + $v0 + ", 5\n");
-                        body.append("syscall\n");
-                        body.append("sw " + $v0 + ", " + quad.getOp1() + "\n");
+                        if (!var.getCurrent_reg().equals("")) {
+                            body.append("li " + $v0 + ", 5\n");
+                            body.append("syscall\n");
+                            body.append("move " + $v0 + ", " + var.getCurrent_reg() + "\n");
+                        } else if (!var.getFinal_direction().equals("")) {
+                            body.append("li " + $v0 + ", 5\n");
+                            body.append("syscall\n");
+                            body.append("sw " + $v0 + ", " + var.getFinal_direction() + "\n");                            
+                        }else{
+                            body.append("li " + $v0 + ", 5\n");
+                            body.append("syscall\n");
+                            body.append("sw " + $v0 + ", " + quad.getOp1() + "\n");
+                        }
                     }
                     break;
                 case LABEL:
                     body.append(quad.getLabel() + ": \n");
+                    if (quad.getLabel().toString().contains("_")) {
+                        if (quad.getLabel().toString().contains(".")) {
+                            scopeFixer = new StringBuilder();
+                            scopeFixer.append(quad.getLabel().toString()).deleteCharAt(0);
+                            ArrayList<VariableTableNode> vars = this.semanticTable.getSymbolTable().getAllVars(scopeFixer.toString());
+                            int stackcount = 8;
+                            int varinside = 0;
+
+                            body.append("sw $fp, -4($sp) \n");
+                            body.append("sw $ra, -8($sp) \n");
+                            body.append("move $fp, $sp \n");
+                            for (int j = 0; j < vars.size(); j++) {
+                                if (vars.get(j).isParam()) {
+                                    String reg = getAvailableSaved();
+                                    vars.get(j).setCurrent_reg(reg);
+                                    stackcount+=4;
+                                    body.append("sw " + reg + " , -" + stackcount + "($sp)\n");
+                                    String number = "" + reg.charAt(reg.length() - 1);
+                                    body.append("move " + reg + ", " + "$a"+number+"\n");
+                                } else {
+                                    varinside +=4;
+                                    int direction = stackcount + varinside;
+                                    vars.get(j).setFinal_direction("-" + direction + "($fp)");
+                                }
+                            }
+                            body.append("sub $sp, $sp, " + (stackcount + varinside) + "\n");
+                        }
+                    }
+                    for (int j = 0; j < 4; j++) {
+                        setAvailable("$s"+j);
+                    }
+                    break;
+                case FUNCTION_END: 
+                    body.append("_fin" + quad.getOp1() + ":\n");
+                    body.append("move $sp,$fp \n");
+                    ArrayList<VariableTableNode> vars = semanticTable.getSymbolTable().getAllVars(scopeFixer.toString());
+                    int stackcount=8;
+                    int varinside =0;
+                    int contador_s = 0;
+
+                    for (int j = 0; j < vars.size(); j++) {
+                        if (vars.get(j).isParam()) {
+                            stackcount +=4;
+                            body.append("lw $s" + contador_s + " , -"+stackcount + "($fp)\n");
+                            contador_s++;
+                        } else {
+                            varinside+=4;
+                        }
+                    }
+
+                    body.append("lw $ra, -8($fp) \n");
+                    body.append("lw $fp, -4($fp) \n");
+                    body.append("jr $ra\n");
                     break;
 
                 case CLOSE: {
