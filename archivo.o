@@ -1,14 +1,17 @@
 _Hello:
-print 1
+params 5
+call _Hello.prueba, 1
+t4 := RET
+_asd := t4
+print _asd
 fin_programa
-_Hello.Prueba:
-_asd := null
-etiq4:
-if _asd < 2 goto etiq5
-goto etiq3
-etiq5:
-print 1
-goto etiq4
-etiq3:
-RET := 1
-fin_funcion _Hello.Prueba
+_Hello.Hola:
+t5 := _fdvfd + _asd
+_asdasd := t5
+fin_funcion _Hello.Hola
+_Hello.prueba:
+t6 := 1 + 2
+_zxc := t6
+t7 := 1 + 2
+RET := t7
+fin_funcion _Hello.prueba

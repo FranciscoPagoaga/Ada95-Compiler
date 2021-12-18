@@ -148,7 +148,6 @@ public class SemanticAnalysis {
             }
             Nodo actualNode = nodo.getHijos().get(i);
             VariableTableNode tmpvnode = new VariableTableNode(actualNode.getValor(), scopeActual, tipo, currentDirection, 0);//0 indica que no es un parametro
-            System.out.println("Agregada variable " + actualNode.getValor() + " con offset de: " + currentDirection);
             //agrega variable a lista de simbolos, retorna true si se pudo, false si ya existia
             if (!this.symbolTable.addSymbol(tmpvnode)) {
                 //System.out.println("El identificador \""+tmpvnode.Id+"\" en el scope "+tmpvnode.Scope+" ya esta declarado");
@@ -264,7 +263,6 @@ public class SemanticAnalysis {
             }
             Nodo actualNode = ID_LIST.getHijos().get(i);
             VariableTableNode tmpvnode = new VariableTableNode(actualNode.getValor(), scopeActual, tipo, currentDirection, parameter_mode_int );
-            System.out.println("Agregado parametro " + actualNode.getValor() + " con offset de: " + currentDirection);
             tmpfnode.Add(tipo);
             //se agregan los parametros en tabla de simbolos general
             if (!this.symbolTable.addSymbol(tmpvnode)) {

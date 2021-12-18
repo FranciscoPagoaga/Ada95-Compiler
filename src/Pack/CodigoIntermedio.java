@@ -90,7 +90,6 @@ public class CodigoIntermedio {
         scope = "_"+padre.getHijos().get(0).getValor();
         scopesTable.add(scope);
         TraverseFunctions(padre, scope);
-        System.out.println(scopesTable.size());
     }
 
     public void TraverseFunctions(Nodo nodo,String scope){
@@ -166,18 +165,18 @@ public class CodigoIntermedio {
                     break;
                 case "EXIT_CYCLE":
                     hijo.getHijos().get(0).setVerdadero(nodo.getSiguiente());
-                    boolExp(hijo.getHijos().get(0));
+                    boolExp(hijo.getHijos().get(0),scope);
                     break;
                 case "RETURN_STATEMENT":
-                    MathExp(hijo);
+                    MathExp(hijo,scope);
                     quad = new Quadruple(Quadruple.Operations.ASSIGN,hijo.getHijos().get(0).getE_lugar(),"","RET",new Label(scope));
                     ie.operations.add(quad);
                     break;
                 case "Call_Subroutine":
-                    parameterCallValidation(hijo.getHijos().get(1));
+                    parameterCallValidation(hijo.getHijos().get(1), scope);
                     String id = hijo.getHijos().get(0).getValor();
                     int paramSize = hijo.getHijos().get(1).getHijos().size();
-                    quad = new Quadruple(Quadruple.Operations.CALL,id,Integer.toString(paramSize),"");
+                    quad = new Quadruple(Quadruple.Operations.CALL,scope + "." +id,Integer.toString(paramSize),"");
                     ie.operations.add(quad);
                     break;
                 case "PUT":
@@ -199,7 +198,7 @@ public class CodigoIntermedio {
                     ie.operations.add(quad);
                     break;
                 case "ASSIGNMENT":
-                    MathExp(hijo);
+                    MathExp(hijo, scope);
                     hijo.setE_lugar(hijo.getValor());
                     quad = new Quadruple(Quadruple.Operations.ASSIGN,hijo.getHijos().get(1).getE_lugar(),"",hijo.getHijos().get(0).getE_lugar());
                     ie.operations.add(quad);
@@ -230,7 +229,7 @@ public class CodigoIntermedio {
                 case "BooleanExp":
                     hijo.setVerdadero(verdadero);//setea verdadero
                     hijo.setFalso(nodo.getSiguiente());//setea falso, debido a que es while es el siguiente
-                    boolExp(hijo);//se ejecuta la expresion booleana
+                    boolExp(hijo, scope);//se ejecuta la expresion booleana
                     quad = new Quadruple(verdadero);//crea etiqueta de verdader
                     ie.operations.add(quad);
                     break;
@@ -264,7 +263,7 @@ public class CodigoIntermedio {
                 case "BooleanExp":
                     hijo.setVerdadero(verdadero);
                     hijo.setFalso(falso);//asigna caso verdadero y falso en su hijo antes de ejecutar
-                    boolExp(hijo);
+                    boolExp(hijo,scope);
                     break;
                 case "CONTENT":
                     hijo.setSiguiente(nodo.getSiguiente());
@@ -280,7 +279,7 @@ public class CodigoIntermedio {
                     break;
                 case "ELSIF_BLOCK":
                     hijo.setSiguiente(nodo.getSiguiente());//asigna siguiente al bloque elsif para saber donde sigue
-                    elsifBLock(hijo);
+                    elsifBLock(hijo, scope);
                 break;
                 case "ELSE_BLOCK":
                     hijo.setSiguiente(nodo.getSiguiente());//asigna siguiente al bloque else para saber donde sigue
@@ -292,7 +291,7 @@ public class CodigoIntermedio {
         }
     }
 
-    public void elsifBLock(Nodo nodo){
+    public void elsifBLock(Nodo nodo, String scope){
         Label verdadero = new Label();//Crear caso verdader
         Label falso=null;
         if (!hasElse && !nodo.getHijos().get(nodo.getHijos().size()-1).getNombre().equals("ELSIF_BLOCK")) {
@@ -307,7 +306,7 @@ public class CodigoIntermedio {
                 case "BooleanExp":
                     hijo.setVerdadero(verdadero);
                     hijo.setFalso(falso);//Setea los valores falsos y verdaderos en 'E' antes de ejecutar
-                    boolExp(hijo);
+                    boolExp(hijo, scope);
                     break;
                 case "CONTENT":
                     hijo.setSiguiente(nodo.getSiguiente());//asigna siguiente
@@ -329,13 +328,13 @@ public class CodigoIntermedio {
                     break;
                 case "ELSIF_BLOCK":
                     hijo.setSiguiente(nodo.getSiguiente());//asigna siguiente antes de correr bloque elsif
-                    elsifBLock(hijo);
+                    elsifBLock(hijo, scope);
                     break;
             }
         }
     }
 
-    public void boolExp(Nodo nodo){
+    public void boolExp(Nodo nodo,String scope){
         int i=-1;
         for (Nodo hijo : nodo.getHijos()) {
             i++;
@@ -357,10 +356,10 @@ public class CodigoIntermedio {
                             hijo.setFalso(nodo.getFalso());
                         }
                     }
-                    boolExp(hijo);
+                    boolExp(hijo, scope);
                 break;
                 case "OPREL":
-                    MathExp(hijo);
+                    MathExp(hijo,scope);
                     String temp1 = hijo.getHijos().get(0).getE_lugar();
                     String temp2 = hijo.getHijos().get(1).getE_lugar();
                     temporal= new Temporal();
@@ -472,7 +471,7 @@ public class CodigoIntermedio {
         ie.operations.add(quad);
     }
 
-    public void MathExp(Nodo nodo){
+    public void MathExp(Nodo nodo, String scope){
         for (Nodo hijo : nodo.getHijos()) {
             switch(hijo.getNombre()){
                 case "ID":
@@ -483,7 +482,7 @@ public class CodigoIntermedio {
                     break;
                 case "OPSUM":
                 case "OPMULT":
-                    MathExp(hijo);
+                    MathExp(hijo, scope);
                     temporal = new Temporal();
                     hijo.setE_lugar(temporal.getTemporal());
                     Operations operation=null;
@@ -506,14 +505,14 @@ public class CodigoIntermedio {
                     break;
                 case "MATHEMATICAL_EXPRESSION":
                 case "PARENTHESIS":
-                    MathExp(hijo);
+                    MathExp(hijo,scope);
                     hijo.setE_lugar(hijo.getHijos().get(0).getE_lugar());
                     break;
                 case "Call_Subroutine":
-                    parameterCallValidation(hijo.getHijos().get(1));
+                    parameterCallValidation(hijo.getHijos().get(1),scope);
                     String id = hijo.getHijos().get(0).getValor();
                     int paramSize = hijo.getHijos().get(1).getHijos().size();
-                    quad = new Quadruple(Quadruple.Operations.CALL,id,Integer.toString(paramSize),"");
+                    quad = new Quadruple(Quadruple.Operations.CALL,scope + "." +id,Integer.toString(paramSize),"");
                     ie.operations.add(quad);
                     temporal=new Temporal();
                     hijo.setE_lugar(temporal.getTemporal());
@@ -523,8 +522,8 @@ public class CodigoIntermedio {
         }
     }
 
-    public void parameterCallValidation(Nodo nodo){
-        MathExp(nodo);
+    public void parameterCallValidation(Nodo nodo,String scope){
+        MathExp(nodo,scope);
         for (Nodo hijo : nodo.getHijos()) {
             Quadruple quad = new Quadruple(Quadruple.Operations.PARAM,hijo.getE_lugar(),"","");
             ie.operations.add(quad);
