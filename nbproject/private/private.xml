@@ -12,12 +12,10 @@
     </editor-bookmarks>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/andre/Documents/Proyecto%20Compi%202/Ada95-Compiler/src/Pack/parser.cup</file>
-            <file>file:/C:/Users/andre/Documents/Proyecto%20Compi%202/Ada95-Compiler/src/Pack/MainGui.java</file>
-            <file>file:/C:/Users/andre/Documents/Proyecto%20Compi%202/Ada95-Compiler/src/Pack/lexer.flex</file>
-            <file>file:/C:/Users/andre/Documents/Proyecto%20Compi%202/Ada95-Compiler/src/Pack/SymbolTable.java</file>
-            <file>file:/C:/Users/andre/Documents/Proyecto%20Compi%202/Ada95-Compiler/src/Pack/SemanticAnalysis.java</file>
-            <file>file:/C:/Users/andre/Documents/Proyecto%20Compi%202/Ada95-Compiler/src/Pack/VariableTableNode.java</file>
+            <file>file:/C:/Users/pc/Desktop/git%20repositories/Ada95-Compiler/src/Pack/SemanticAnalysis.java</file>
+            <file>file:/C:/Users/pc/Desktop/git%20repositories/Ada95-Compiler/src/Pack/MainGui.java</file>
+            <file>file:/C:/Users/pc/Desktop/git%20repositories/Ada95-Compiler/src/Pack/Nodo.java</file>
+            <file>file:/C:/Users/pc/Desktop/git%20repositories/Ada95-Compiler/src/Pack/parser.cup</file>
         </group>
     </open-files>
 </project-private>

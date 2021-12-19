@@ -221,6 +221,8 @@ public class MainGui extends javax.swing.JFrame {
                 fr.close();
                 reader.close();
                 outputArea.append("Archivo abierto: " + archivoAbierto.getName() + "\n");
+                //clean column
+                
             }
             catch (Exception e )
             {
@@ -387,19 +389,20 @@ public class MainGui extends javax.swing.JFrame {
     }//GEN-LAST:event_limpiarOutputActionPerformed
 
     private void inputAreaCaretUpdate(javax.swing.event.CaretEvent evt) {//GEN-FIRST:event_inputAreaCaretUpdate
+        
         int line = 0, column =0, caretpos = inputArea.getCaretPosition();
         String texto = inputArea.getText();
 
         for( int i = 0; i < caretpos; i++)
-            if( texto.charAt(i+line) == 13)
+            
+            if( texto.charAt(i) == 10)
             {
+                
                 line++;
                 column = 0;
             }
             else
                 column++;
-        column++;
-        line++;
         
         colLabel.setText("Columna: " + column);
 
