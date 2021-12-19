@@ -1,12 +1,23 @@
-_Hello:
-_b := 0.0
-_c := 4.0
-_a := _b
-etiq5:
-if _a >= _c goto etiq6
-_b := 0.0
-t1 := _a + 1
-_a := t1
-goto etiq5
-etiq6:
+_Hola:
+print "Ingrese numero: "
+read _num1
+print "El factorial es: "
+params _num1
+call _Hola.factorial, 1
+t6 := RET
+_result := t6
+print _result
 fin_programa
+_Hola.factorial:
+if _n = 0 goto etiq28
+goto etiq27
+etiq28:
+RET := 1
+etiq27:
+t8 := _n - 1
+params t8
+call _Hola.factorial, 1
+t9 := RET
+t10 := _n * t9
+RET := t10
+fin_funcion _Hola.factorial
