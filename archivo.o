@@ -1,17 +1,12 @@
 _Hello:
-params 5
-call _Hello.prueba, 1
-t4 := RET
-_asd := t4
-print _asd
+_b := 0.0
+_c := 4.0
+_a := _b
+etiq5:
+if _a >= _c goto etiq6
+_b := 0.0
+t1 := _a + 1
+_a := t1
+goto etiq5
+etiq6:
 fin_programa
-_Hello.Hola:
-t5 := _fdvfd + _asd
-_asdasd := t5
-fin_funcion _Hello.Hola
-_Hello.prueba:
-t6 := 1 + 2
-_zxc := t6
-t7 := 1 + 2
-RET := t7
-fin_funcion _Hello.prueba

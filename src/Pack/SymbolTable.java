@@ -23,7 +23,17 @@ public class SymbolTable {
         return null;
     }
     
-
+    public void assignVariable(String id){
+        //marca la variable en la tabla como asignada
+        for (int i = 0; i < symbolList.size(); i++) {
+            if( symbolList.get(i).getId().equals(id) && symbolList.get(i).isActive()){
+                if(symbolList.get(i) instanceof VariableTableNode){
+                    ((VariableTableNode) symbolList.get(i)).setAssigned(true);
+                }
+            }
+        }
+    }
+    
     public static int sizeOf(String type){
         if(type.equals("integer")){
             return integer_size;
