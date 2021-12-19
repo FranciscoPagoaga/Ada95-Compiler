@@ -53,10 +53,12 @@ public class SemanticAnalysis {
                 validateOut(nodo, scopeActual);
             break;
             case "GET":
+                setAssigned(nodo);
                 typeValidation(nodo, scopeActual);
                 validateOut(nodo, scopeActual);
             break;
             case "Call_Subroutine":
+                validateSubroutine(nodo, scopeActual);
                 SymbolTableNode tmpNode = symbolTable.findActiveSymbol(nodo.getHijos().get(0).getValor());
                 if (tmpNode != null) {
                     if (!(tmpNode instanceof FunctionTableNode)) {

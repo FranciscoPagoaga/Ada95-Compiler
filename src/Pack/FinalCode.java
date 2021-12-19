@@ -207,7 +207,6 @@ public class FinalCode {
                             }
                         }
                     }
-
                     String t2= null;
                     if (finalTemps.get(quad.getOp2()) !=null) {
                         t2 = finalTemps.get(quad.getOp2()).reg;
@@ -217,7 +216,7 @@ public class FinalCode {
                             t2 = getAvailableTemp();
                             body.append("li " + t2 + ", " + quad.getOp2() + "\n");
                             type = OperationType.INTEGER_OPERATION;
-                        } else {
+                        } else if (quad.getOp2().contains("_")) {
                             String identifier = quad.getOp2();
                             idFixer = new StringBuilder();
                             idFixer.append(identifier).deleteCharAt(0);
@@ -237,6 +236,8 @@ public class FinalCode {
                                     type = OperationType.INTEGER_OPERATION;
                                 }
                             }
+                        }else{
+                            t2=$t0;
                         }
                     }
                     String ope = "";
@@ -432,7 +433,7 @@ public class FinalCode {
                         idFixer.append(identifier).deleteCharAt(0);
                         VariableTableNode var = (VariableTableNode) semanticTable.getSymbolTable().findSymbol(idFixer.toString(),scopeFixer.toString() );
                         if (!var.getCurrent_reg().equals("")) {
-                            body.append("move " + t1 + "," + var.getCurrent_reg() + "\n");
+                            body.append("move " + var.getCurrent_reg() + "," + t1 + "\n");
                         } else if (!var.getFinal_direction().equals("")) {
                             body.append("sw " + t1 + "," + var.getFinal_direction() + "\n");
                         }else{
@@ -440,7 +441,7 @@ public class FinalCode {
                         }
                     }else{
                         t2 =getAvailableTemp();
-                        body.append("move " + t1 + "," + t2 + "\n");
+                        body.append("move " + t2 + "," + t1 + "\n");
                     }
 
                     setAvailable(t1);

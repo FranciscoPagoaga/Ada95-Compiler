@@ -176,7 +176,11 @@ public class CodigoIntermedio {
                     parameterCallValidation(hijo.getHijos().get(1), scope);
                     String id = hijo.getHijos().get(0).getValor();
                     int paramSize = hijo.getHijos().get(1).getHijos().size();
-                    quad = new Quadruple(Quadruple.Operations.CALL,scope + "." +id,Integer.toString(paramSize),"");
+                    if (scope.split("\\.")[scope.split("\\.").length - 1].equals(id)) {
+                        quad = new Quadruple(Quadruple.Operations.CALL,scope,Integer.toString(paramSize),"");
+                    }else{
+                        quad = new Quadruple(Quadruple.Operations.CALL,scope + "." +id,Integer.toString(paramSize),"");                        
+                    }
                     ie.operations.add(quad);
                     break;
                 case "PUT":
@@ -512,7 +516,11 @@ public class CodigoIntermedio {
                     parameterCallValidation(hijo.getHijos().get(1),scope);
                     String id = hijo.getHijos().get(0).getValor();
                     int paramSize = hijo.getHijos().get(1).getHijos().size();
-                    quad = new Quadruple(Quadruple.Operations.CALL,scope + "." +id,Integer.toString(paramSize),"");
+                    if (scope.split("\\.")[scope.split("\\.").length - 1].equals(id)) {
+                        quad = new Quadruple(Quadruple.Operations.CALL,scope,Integer.toString(paramSize),"");
+                    }else{
+                        quad = new Quadruple(Quadruple.Operations.CALL,scope + "." +id,Integer.toString(paramSize),"");                        
+                    }
                     ie.operations.add(quad);
                     temporal=new Temporal();
                     hijo.setE_lugar(temporal.getTemporal());
