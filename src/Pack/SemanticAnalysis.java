@@ -74,14 +74,19 @@ public class SemanticAnalysis {
                 currentDirection = prevOffset;
             break;
             case "FOR_BLOCK":
-                typeValidation(nodo, scope);
+                setAssigned(nodo);
+                String counterType = typeValidation(nodo, scope);
                 Nodo tmp = new Nodo("");
                 tmp.addHijo(nodo.getHijos().get(1));
                 tmp.addHijo(nodo.getHijos().get(2));
-                typeValidation(tmp, scope);
+                if(!counterType.equals(typeValidation(tmp, scope)) || !counterType.equals("Integer")){
+                    // error aqui
+                    System.out.println(scopeActual+":"+nodo.getFila()+":"+nodo.getColumna()+":"+ " El contador, inicio y fin del ciclo for deben ser enteros");
+                }
             break;
             case "ASSIGNMENT":
                 validateIn(nodo, scopeActual);
+                setAssigned(nodo);
                 Nodo valNode = new Nodo("");
                 valNode.addHijo(nodo.getHijos().get(1));
                 validateOut(valNode, scopeActual);
@@ -94,6 +99,10 @@ public class SemanticAnalysis {
                 }
             break;
         }
+    }
+    
+    public void setAssigned(Nodo nodo){
+        symbolTable.assignVariable(nodo.getHijos().get(0).getValor());
     }
 
     public void validateExit(Nodo nodo, String scopeActual){
@@ -147,7 +156,7 @@ public class SemanticAnalysis {
                 currentDirection += 1;
             }
             Nodo actualNode = nodo.getHijos().get(i);
-            VariableTableNode tmpvnode = new VariableTableNode(actualNode.getValor(), scopeActual, tipo, currentDirection, 0);//0 indica que no es un parametro
+            VariableTableNode tmpvnode = new VariableTableNode(actualNode.getValor(), scopeActual, tipo, currentDirection, 0, false);//0 indica que no es un parametro
             //agrega variable a lista de simbolos, retorna true si se pudo, false si ya existia
             if (!this.symbolTable.addSymbol(tmpvnode)) {
                 //System.out.println("El identificador \""+tmpvnode.Id+"\" en el scope "+tmpvnode.Scope+" ya esta declarado");
@@ -262,7 +271,7 @@ public class SemanticAnalysis {
                 currentDirection += 1;
             }
             Nodo actualNode = ID_LIST.getHijos().get(i);
-            VariableTableNode tmpvnode = new VariableTableNode(actualNode.getValor(), scopeActual, tipo, currentDirection, parameter_mode_int );
+            VariableTableNode tmpvnode = new VariableTableNode(actualNode.getValor(), scopeActual, tipo, currentDirection, parameter_mode_int, true);
             tmpfnode.Add(tipo);
             //se agregan los parametros en tabla de simbolos general
             if (!this.symbolTable.addSymbol(tmpvnode)) {
@@ -317,6 +326,12 @@ public class SemanticAnalysis {
                     tmpNode = symbolTable.findActiveSymbol(hijos.getValor());
                     if (tmpNode != null) {
                         if (tmpNode instanceof VariableTableNode){
+                            if(!((VariableTableNode)tmpNode).isAssigned()){
+                                // error aqui
+                                System.out.println(scopeActual+":"+hijos.getFila()+":"+hijos.getColumna()+":"+ "No se le ha asignado un valor a la variable " + tmpNode.getId());
+                                    has_error=true;
+                                    return "Integer";
+                            }
                             String tmpType = ((VariableTableNode) tmpNode).getType();
                             if (type != ""){
                                 if(type.equals(tmpType)){
@@ -459,12 +474,12 @@ public class SemanticAnalysis {
                 String type = typeValidation(tmpNodo, scopeActual);
                 if(!type.equals(funcNode.getParams().get(i))){
                     has_error=true;
-                    System.out.println("El parametro " + (i+1) + " en el llamado de la funcion " + funcNode.getId()+ " no es del tipo correcto: " + scopeActual);
+                    System.out.println(scopeActual+":"+nodo.getFila()+":"+nodo.getColumna()+":"+"El parametro " + (i+1) + " en el llamado de la funcion " + funcNode.getId()+ " no es del tipo correcto: " + scopeActual);
                 }
             }
         }else{
             has_error=true;
-            System.out.println("Los parametros enviados no son los correctos");
+            System.out.println(scopeActual+":"+nodo.getFila()+":"+nodo.getColumna()+":"+"Los parametros enviados no son los correctos");
         }
     }
 
