@@ -1,23 +1,73 @@
 _Hola:
-print "Ingrese numero: "
+_menu := 0
+etiq165:
+if _menu <> 1 goto etiq166
+goto etiq164
+etiq166:
+print "1 Suma\n"
+print "2 Resta\n"
+print "3 Multiplicacion\n"
+print "4 Division\n"
+print "5 Salir\n"
+read _op
+if _op = 1 goto etiq174
+goto etiq175
+etiq174:
+print "Ingrese Numero "
 read _num1
-print "El factorial es: "
-params _num1
-call _Hola.factorial, 1
-t6 := RET
-_result := t6
+print "Ingrese Numero "
+read _num2
+t33 := _num1 + _num2
+_result := t33
 print _result
+print "\n"
+goto etiq173
+etiq175:
+if _op = 2 goto etiq184
+goto etiq185
+etiq184:
+print "Ingrese Numero "
+read _num1
+print "Ingrese Numero "
+read _num2
+t35 := _num1 - _num2
+_result := t35
+print _result
+print "\n"
+goto etiq173
+etiq185:
+if _op = 3 goto etiq194
+goto etiq195
+etiq194:
+print "Ingrese Numero "
+read _num1
+print "Ingrese Numero "
+read _num2
+t37 := _num1 * _num2
+_result := t37
+print _result
+print "\n"
+goto etiq173
+etiq195:
+if _op = 4 goto etiq204
+goto etiq205
+etiq204:
+print "Ingrese Numero "
+read _num1
+print "Ingrese Numero "
+read _num2
+t39 := _num1 / _num2
+_result := t39
+print _result
+print "\n"
+goto etiq173
+etiq205:
+if _op = 5 goto etiq214
+goto etiq173
+etiq214:
+_menu := 1
+goto etiq173
+etiq173:
+goto etiq165
+etiq164:
 fin_programa
-_Hola.factorial:
-if _n = 0 goto etiq28
-goto etiq27
-etiq28:
-RET := 1
-etiq27:
-t8 := _n - 1
-params t8
-call _Hola.factorial, 1
-t9 := RET
-t10 := _n * t9
-RET := t10
-fin_funcion _Hola.factorial

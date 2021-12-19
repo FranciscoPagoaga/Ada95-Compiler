@@ -1,7 +1,0 @@
-Procedure Hello is
-	a:integer;
-begin
-	while a< L and b< c  or a< b loop
-		a := a+1;
-	end loop;
-end Hello;

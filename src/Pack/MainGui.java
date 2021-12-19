@@ -328,7 +328,7 @@ public class MainGui extends javax.swing.JFrame {
                 SemanticAnalysis analysis = new SemanticAnalysis(new SymbolTable());
                 analysis.Traverse(par.padre, "");
                 
-                
+               if(!analysis.isHas_error()){
                 File file = new File("./archivo.adb");
                 File intermediateCodeFile = new File(file.getAbsolutePath().replace(".adb", "") + ".o");
                 CodigoIntermedio initIntermedio = null;
@@ -365,6 +365,8 @@ public class MainGui extends javax.swing.JFrame {
                 } catch (IOException ex) {
                     Logger.getLogger(MainGui.class.getName()).log(Level.SEVERE, null, ex);
                 }
+                outputArea.append("Se compilo exitosamente \n");
+               }
             }
         }
         

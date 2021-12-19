@@ -1117,9 +1117,11 @@ F::= NUM:e {:
     :}; 
 
 //bloque loop
-loop_block ::= LOOP content:a END LOOP PYC {: 
+loop_block ::= LOOP:l content:a END LOOP PYC {: 
                     Nodo tmp = new Nodo("LOOP_BLOCK");
                     tmp.setNumNodo(parser.contador++);
+                    tmp.setFila(lright+1);
+                    tmp.setColumna(lleft);
                     
                     Nodo tmp3 = new Nodo("CONTENT");
                     tmp3.setNumNodo(parser.contador++);
@@ -1185,9 +1187,11 @@ exit_cycle ::=EXIT WHEN:w condition:e PYC {:
 				;
 
 // Bloque for
-for_block ::= FOR ID:id IN NUM:num1 DOSPUNTOS NUM:num2 LOOP content:a END LOOP PYC {: 
+for_block ::= FOR:f ID:id IN NUM:num1 DOSPUNTOS NUM:num2 LOOP content:a END LOOP PYC {: 
 				Nodo tmp = new Nodo("FOR_BLOCK");
     			tmp.setNumNodo(parser.contador++);
+                tmp.setFila(fright+1);
+                tmp.setColumna(fleft);
 
 				Nodo tmp3 = new Nodo("ID");
                             //line column
@@ -1636,8 +1640,8 @@ call_subroutine ::= ID:id PARIZQ parameter_values:f PARDER {:
                         tmp.setValor("NULL");
                         
                         //line column
-                        //tmp.setFila(idright+1);
-                        //tmp.setColumna(idleft);
+                        tmp.setFila(idright+1);
+                        tmp.setColumna(idleft);
                         
 
                         Nodo tmp2 = new Nodo("ID");
